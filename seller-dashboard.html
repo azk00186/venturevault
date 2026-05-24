@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09090e;--s1:#13131a;--s2:#1a1a24;--b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);--w:#fff;--m1:rgba(255,255,255,0.55);--m2:rgba(255,255,255,0.3);--green:#2dd4a0;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--w);font-size:15px;display:flex}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(9,9,14,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:7px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.ln{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
+.ln em{font-style:italic;color:var(--gold)}
+.nav-r{display:flex;gap:10px}
+.user-info{font-size:13px;color:var(--m1)}
+.signout{background:none;border:1px solid var(--b2);color:var(--m1);padding:7px 14px;border-radius:7px;font-size:12px;cursor:pointer;transition:all 0.2s}
+.signout:hover{border-color:var(--red);color:var(--red)}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--s1);border-right:1px solid var(--b1);min-height:100vh;padding-top:64px;position:fixed;top:0;left:0;bottom:0;overflow-y:auto}
+.sb-head{padding:20px 18px 12px;font-size:10px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1.5px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 18px;color:var(--m1);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent}
+.sb-item:hover{background:rgba(255,255,255,0.03);color:var(--w)}
+.sb-item.on{background:rgba(200,146,42,0.07);border-left-color:var(--gold);color:var(--w);font-weight:600}
+.sb-icon{font-size:15px;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.sb-badge.g{background:rgba(45,212,160,0.1);color:var(--green);border-color:rgba(45,212,160,0.2)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding-top:64px}
+.main-inner{padding:28px;max-width:960px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:18px}
+.kpi-v{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;display:block;margin-bottom:3px}
+.kpi-l{font-size:12px;color:var(--m2);display:block}
+
+/* PANEL */
+.panel{background:var(--s1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.ph{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ph-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.ph-act{font-size:12px;color:var(--gold);cursor:pointer;font-weight:500}
+.ph-act:hover{opacity:0.7}
+.pb{padding:16px 18px}
+
+/* LISTING CARD in dashboard */
+.listing-card{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.lc-em{font-size:28px;flex-shrink:0}
+.lc-info{flex:1;min-width:0}
+.lc-title{font-size:14px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-meta{font-size:12px;color:var(--m1)}
+.lc-stats{display:flex;gap:16px;flex-shrink:0}
+.lcs{text-align:center}
+.lcs-v{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;display:block}
+.lcs-l{font-size:10px;color:var(--m2);display:block}
+.lc-acts{display:flex;gap:8px;flex-shrink:0}
+.lca-btn{font-size:12px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all 0.2s}
+.lca-edit{background:var(--gold-d);color:var(--gold);border:1px solid rgba(200,146,42,0.25)}
+.lca-view{background:rgba(255,255,255,0.05);color:var(--m1);border:1px solid var(--b2)}
+.lca-view:hover{border-color:var(--w);color:var(--w)}
+.status-pill{font-size:10px;font-weight:700;padding:2px 9px;border-radius:4px;display:inline-block;margin-left:6px}
+.sp-live{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.2)}
+.sp-pending{background:rgba(200,146,42,0.1);color:var(--gold);border:1px solid rgba(200,146,42,0.2)}
+
+/* ENQUIRY in dashboard */
+.enq-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.enq-item:last-child{border-bottom:none}
+.enq-av{width:36px;height:36px;border-radius:50%;background:var(--gold-d);border:1px solid rgba(200,146,42,0.2);display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.enq-body{flex:1;min-width:0}
+.enq-name{font-size:13px;font-weight:600}
+.enq-listing{font-size:12px;color:var(--m1);margin-top:1px}
+.enq-msg{font-size:12px;color:var(--m2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.enq-time{font-size:11px;color:var(--m2);flex-shrink:0}
+.enq-badge{display:block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:3px;width:fit-content}
+.eb-new{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.eb-read{background:rgba(45,212,160,0.08);color:var(--green);border:1px solid rgba(45,212,160,0.15)}
+
+/* REPLY FORM */
+.reply-form{margin-top:12px;display:none;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--b1)}
+.reply-form.open{display:block}
+.reply-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:8px;outline:none;resize:vertical;min-height:80px;line-height:1.5}
+.reply-input:focus{border-color:rgba(200,146,42,0.5)}
+.reply-btns{display:flex;gap:8px;margin-top:8px}
+.reply-send{background:var(--gold);color:var(--bg);border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer}
+.reply-cancel{background:none;border:1px solid var(--b2);color:var(--m1);padding:9px 14px;border-radius:7px;font-size:13px;cursor:pointer}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--m1);font-size:14px}
+.empty{text-align:center;padding:32px;color:var(--m2);font-size:13px}
+
+/* MOBILE */
+@media(max-width:860px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .lc-stats{display:none}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="14-homepage-fixed.html"><div class="lm">V</div><span class="ln">Venture<em>Vault</em></span></a>
+  <div class="nav-r">
+    <span class="user-info" id="userInfo">Loading...</span>
+    <button class="signout" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<aside class="sidebar">
+  <div class="sb-head">Seller Dashboard</div>
+  <div class="sb-item on" id="nav-overview" onclick="showSection('overview')"><span class="sb-icon">📊</span>Overview</div>
+  <div class="sb-item" id="nav-listings" onclick="showSection('listings')"><span class="sb-icon">📋</span>My Listings</div>
+  <div class="sb-item" id="nav-enquiries" onclick="showSection('enquiries')"><span class="sb-icon">💬</span>Enquiries<span class="sb-badge" id="enqBadge" style="display:none">0</span></div>
+  <div class="sb-item" id="nav-messages" onclick="showSection('messages')"><span class="sb-icon">📨</span>Messages</div>
+  <div class="sb-item" id="nav-docs" onclick="showSection('docs')"><span class="sb-icon">📄</span>Documents</div>
+  <div style="padding:16px 18px;border-top:1px solid var(--b1);margin-top:auto;position:absolute;bottom:0;left:0;right:0">
+    <a href="seller-live.html" style="display:block;background:var(--gold);color:var(--bg);text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">+ New Listing</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="main-inner">
+
+    <!-- OVERVIEW -->
+    <div id="sec-overview">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px">Good to see you, <span id="sellerName">...</span></h1>
+      <p style="font-size:14px;color:var(--m1);margin-bottom:24px">Here's how your listings are performing today.</p>
+      <div class="kpi-row">
+        <div class="kpi"><span class="kpi-v" style="color:var(--gold)" id="kpi-listings">—</span><span class="kpi-l">Active Listings</span></div>
+        <div class="kpi"><span class="kpi-v" style="color:var(--green)" id="kpi-enquiries">—</span><span class="kpi-l">Total Enquiries</span></div>
+        <div class="kpi"><span class="kpi-v" style="color:var(--blue)" id="kpi-unread">—</span><span class="kpi-l">Unread Messages</span></div>
+        <div class="kpi"><span class="kpi-v" style="color:var(--purple)" id="kpi-score">—</span><span class="kpi-l">Avg Trust Score</span></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📋 Your Listings</span><a href="seller-live.html" style="font-size:12px;color:var(--gold);font-weight:600">+ Add New</a></div>
+        <div class="pb" id="overview-listings"><div class="loading">Loading your listings...</div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="ph-t">💬 Recent Enquiries</span><span class="ph-act" onclick="showSection('enquiries')">View All</span></div>
+        <div class="pb" id="overview-enquiries"><div class="loading">Loading enquiries...</div></div>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <div id="sec-listings" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600">My Listings</h1>
+        <a href="seller-live.html" style="background:var(--gold);color:var(--bg);padding:10px 22px;border-radius:40px;font-size:13px;font-weight:700;text-decoration:none">+ New Listing</a>
+      </div>
+      <div id="listings-list"><div class="loading">Loading...</div></div>
+    </div>
+
+    <!-- ENQUIRIES -->
+    <div id="sec-enquiries" style="display:none">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:20px">Enquiries</h1>
+      <div class="panel">
+        <div class="ph"><span class="ph-t">💬 All Buyer Enquiries</span></div>
+        <div class="pb" id="enquiries-list"><div class="loading">Loading enquiries...</div></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="sec-messages" style="display:none">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:20px">Messages</h1>
+      <div class="empty">Select an enquiry to view the message thread.</div>
+    </div>
+
+    <!-- DOCS -->
+    <div id="sec-docs" style="display:none">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:20px">Document Access Requests</h1>
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📄 Pending Requests</span></div>
+        <div class="pb" id="docs-list"><div class="empty">No pending document access requests.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://azmjhgvkweaibdbntzze.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_RW2tSWtiL6aVq_rlEhnD3w__WhSv5Ve'
+const { createClient } = supabase
+const db = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+let currentUser = null
+let myListings = []
+let myEnquiries = []
+
+// ── AUTH GUARD ──
+async function init(){
+  const { data: { user } } = await db.auth.getUser()
+  if(!user){ window.location.href = 'auth.html?redirect=seller-dashboard.html'; return }
+  currentUser = user
+  const { data: profile } = await db.from('profiles').select('*').eq('id', user.id).single()
+  const name = profile ? (profile.first_name || user.email) : user.email
+  document.getElementById('sellerName').textContent = name
+  document.getElementById('userInfo').textContent = name
+  loadAll()
+}
+
+async function loadAll(){
+  await Promise.all([loadListings(), loadEnquiries()])
+  updateKPIs()
+}
+
+async function loadListings(){
+  const { data, error } = await db.from('listings')
+    .select('*, enquiries(id)')
+    .eq('seller_id', currentUser.id)
+    .order('created_at', { ascending: false })
+  if(error){ console.error(error); return }
+  myListings = data || []
+  renderListings('overview-listings', myListings.slice(0,3))
+  renderListings('listings-list', myListings)
+}
+
+async function loadEnquiries(){
+  const { data, error } = await db.from('enquiries')
+    .select('*, listings(title,sector), profiles!buyer_id(first_name,last_name), messages(id,is_read,sender_id)')
+    .eq('seller_id', currentUser.id)
+    .order('created_at', { ascending: false })
+  if(error){ console.error(error); return }
+  myEnquiries = data || []
+  const unread = myEnquiries.filter(e => e.status==='new').length
+  if(unread > 0){
+    const badge = document.getElementById('enqBadge')
+    badge.textContent = unread; badge.style.display='inline'
+  }
+  renderEnquiries('overview-enquiries', myEnquiries.slice(0,4))
+  renderEnquiries('enquiries-list', myEnquiries)
+}
+
+function updateKPIs(){
+  const live = myListings.filter(l=>l.status==='live').length
+  const total = myListings.length
+  document.getElementById('kpi-listings').textContent = live || total || '0'
+  document.getElementById('kpi-enquiries').textContent = myEnquiries.length
+  const unread = myEnquiries.filter(e=>e.status==='new').length
+  document.getElementById('kpi-unread').textContent = unread
+  const avgScore = myListings.length ? Math.round(myListings.reduce((a,l)=>a+(l.trust_score||0),0)/myListings.length) : 0
+  document.getElementById('kpi-score').textContent = avgScore || '—'
+}
+
+function renderListings(containerId, listings){
+  const el = document.getElementById(containerId)
+  if(!listings || !listings.length){ el.innerHTML = '<div class="empty">No listings yet. <a href="seller-live.html" style="color:var(--gold)">Create your first listing →</a></div>'; return }
+  el.innerHTML = listings.map(l => `
+    <div class="listing-card">
+      <div class="lc-em">${sectorEmoji(l.sector)}</div>
+      <div class="lc-info">
+        <div class="lc-title">${l.title} <span class="status-pill ${l.status==='live'?'sp-live':'sp-pending'}">${l.status==='live'?'● Live':'⏳ Pending'}</span></div>
+        <div class="lc-meta">📍 ${l.city||''} ${l.region||''} · £${(l.asking_price||0).toLocaleString()} · Trust: ${l.trust_score||0}/100</div>
+      </div>
+      <div class="lc-stats">
+        <div class="lcs"><span class="lcs-v" style="color:var(--green)">${l.enquiries?.length||0}</span><span class="lcs-l">Enquiries</span></div>
+        <div class="lcs"><span class="lcs-v" style="color:var(--gold)">${l.trust_score||0}</span><span class="lcs-l">Score</span></div>
+      </div>
+      <div class="lc-acts">
+        <button class="lca-btn lca-edit" onclick="editListing('${l.id}')">Edit</button>
+        <button class="lca-btn lca-view" onclick="viewListing('${l.id}')">View</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+function renderEnquiries(containerId, enquiries){
+  const el = document.getElementById(containerId)
+  if(!enquiries || !enquiries.length){ el.innerHTML = '<div class="empty">No enquiries yet. Make sure your listing is live and your trust score is high.</div>'; return }
+  el.innerHTML = enquiries.map(e => {
+    const buyer = e.profiles || {}
+    const name = [buyer.first_name, buyer.last_name].filter(Boolean).join(' ') || 'Anonymous Buyer'
+    const isNew = e.status === 'new'
+    return `
+      <div class="enq-item">
+        <div class="enq-av">👤</div>
+        <div class="enq-body">
+          <div class="enq-name">${name}</div>
+          <div class="enq-listing">Re: ${e.listings?.title || 'Your listing'}</div>
+          <div class="enq-msg">${e.initial_message || 'Buyer has submitted an enquiry'}</div>
+          ${e.buyer_finance ? `<div style="font-size:11px;color:var(--green);margin-top:3px">💰 ${e.buyer_finance} · Budget: ${e.buyer_budget||'Not specified'}</div>` : ''}
+          <span class="enq-badge ${isNew?'eb-new':'eb-read'}">${isNew?'NEW':'READ'}</span>
+          <div class="reply-form" id="reply-${e.id}">
+            <textarea class="reply-input" placeholder="Type your reply to ${name}..." id="msg-${e.id}"></textarea>
+            <div class="reply-btns">
+              <button class="reply-send" onclick="sendReply('${e.id}')">Send Reply →</button>
+              <button class="reply-cancel" onclick="toggleReply('${e.id}')">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="enq-time">${timeAgo(e.created_at)}</div>
+          <button style="margin-top:8px;background:var(--gold-d);border:1px solid rgba(200,146,42,0.25);color:var(--gold);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif" onclick="toggleReply('${e.id}');markRead('${e.id}')">Reply</button>
+        </div>
+      </div>
+    `
+  }).join('')
+}
+
+async function sendReply(enquiryId){
+  const input = document.getElementById('msg-'+enquiryId)
+  const body = input.value.trim()
+  if(!body) return
+  const { error } = await db.from('messages').insert({ enquiry_id: enquiryId, sender_id: currentUser.id, body })
+  if(error){ alert('Failed to send: '+error.message); return }
+  await db.from('enquiries').update({ status:'replied', updated_at: new Date() }).eq('id', enquiryId)
+  input.value = ''
+  document.getElementById('reply-'+enquiryId).classList.remove('open')
+  alert('✓ Reply sent! Buyer has been notified.')
+  loadEnquiries()
+}
+
+async function markRead(enquiryId){
+  await db.from('enquiries').update({ status:'read' }).eq('id', enquiryId).eq('status','new')
+}
+
+function toggleReply(id){ document.getElementById('reply-'+id).classList.toggle('open') }
+
+function editListing(id){ window.location.href = '15-photos-video-edit.html?listing='+id }
+function viewListing(id){ window.location.href = '15-photos-video-edit.html?id='+id }
+
+function sectorEmoji(sector){
+  const m={'Food & Takeaway':'🍕','Retail & Shops':'🛒','Pub / Bar':'🍺','Hair & Beauty':'✂️','Post Office':'📮','Hotel / B&B':'🏨','Care & Health':'🏥','Automotive':'🚗','Pet Services':'🐕','Online / Tech':'💻'}
+  return m[sector] || '🏪'
+}
+
+function timeAgo(ts){
+  if(!ts) return ''
+  const diff = (Date.now() - new Date(ts)) / 1000
+  if(diff < 60) return 'just now'
+  if(diff < 3600) return Math.floor(diff/60)+'m ago'
+  if(diff < 86400) return Math.floor(diff/3600)+'hr ago'
+  return Math.floor(diff/86400)+'d ago'
+}
+
+function showSection(s){
+  ['overview','listings','enquiries','messages','docs'].forEach(id=>{
+    document.getElementById('sec-'+id).style.display = id===s?'block':'none'
+    document.getElementById('nav-'+id).classList.toggle('on', id===s)
+  })
+}
+
+async function signOut(){
+  await db.auth.signOut()
+  window.location.href = '14-homepage-fixed.html'
+}
+
+// Real-time: new enquiry notification
+function subscribeToNewEnquiries(){
+  db.channel('seller-enquiries')
+    .on('postgres_changes',{ event:'INSERT', schema:'public', table:'enquiries', filter:`seller_id=eq.${currentUser.id}` },
+    ()=>{ loadEnquiries(); alert('🔔 New enquiry received!') })
+    .subscribe()
+}
+
+init().then(() => subscribeToNewEnquiries())
+</script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyer Passport — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#080808;--deep:#0d0d0f;--surface:#131317;--surface2:#1a1a20;--surface3:#22222a;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.15);--white:#fff;--muted:rgba(255,255,255,0.45);--muted2:rgba(255,255,255,0.22);--green:#2dd4a0;--blue:#60a5fa;--red:#f87171}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);line-height:1.6;min-height:100vh}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 48px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-mark{width:36px;height:36px;border:1.5px solid var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--gold)}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--white)}
+.logo-name em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;padding:8px 15px;border-radius:7px;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-pill{background:var(--gold-d);border:1px solid rgba(200,146,42,0.3);color:var(--gold);padding:8px 18px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600}
+.nav-cta{background:var(--gold);color:var(--black);border:none;padding:9px 22px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.nav-cta:hover{background:var(--gold-l)}
+
+/* PAGE HERO */
+.bp-hero{padding:110px 48px 56px;position:relative;overflow:hidden;text-align:center}
+.bph-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(200,146,42,0.09) 0%,transparent 60%)}
+.bph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(200,146,42,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(200,146,42,0.025) 1px,transparent 1px);background-size:70px 70px}
+.bph-inner{position:relative;z-index:1;max-width:620px;margin:0 auto}
+.bph-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(200,146,42,0.3);background:rgba(200,146,42,0.07);color:var(--gold-l);font-size:10px;font-weight:600;padding:5px 15px;border-radius:40px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:22px}
+.bph-inner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,60px);font-weight:400;letter-spacing:-1.5px;line-height:1.05;margin-bottom:14px}
+.bph-inner h1 em{font-style:italic;color:var(--gold)}
+.bph-inner p{color:var(--muted);font-size:14px;max-width:480px;margin:0 auto 28px;line-height:1.8;font-weight:300}
+.bph-benefits{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.bph-b{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;padding:7px 13px}
+.bph-b .check{color:var(--green)}
+
+/* PROGRESS STEPS */
+.progress-bar{max-width:640px;margin:0 auto;padding:0 48px 0}
+.steps-row{display:flex;align-items:center;margin-bottom:0}
+.step-item{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.step-num{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);transition:all 0.4s;flex-shrink:0}
+.step-item.active .step-num{border-color:var(--gold);color:var(--gold);background:var(--gold-d)}
+.step-item.done .step-num{background:var(--gold);border-color:var(--gold);color:var(--black);font-size:14px}
+.step-label{font-size:12px;color:var(--muted);font-weight:500;transition:color 0.3s}
+.step-item.active .step-label{color:var(--white);font-weight:600}
+.step-item.done .step-label{color:var(--gold)}
+.step-connector{flex:1;height:1px;background:var(--border);margin:0 10px;min-width:20px}
+.step-connector.done{background:var(--gold)}
+
+/* FORM WRAP */
+.bp-wrap{max-width:640px;margin:0 auto;padding:32px 48px 80px}
+.bp-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:16px;animation:slideIn 0.4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.bp-card h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:6px}
+.bp-card>p{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.7}
+.bf-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bf-group{margin-bottom:0}
+.bf-group.full{grid-column:1/-1}
+.bf-label{display:block;font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.bf-input,.bf-select,.bf-textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:11px 14px;border-radius:9px;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+.bf-input:focus,.bf-select:focus,.bf-textarea:focus{border-color:rgba(200,146,42,0.5);background:rgba(255,255,255,0.06)}
+.bf-input::placeholder,.bf-textarea::placeholder{color:var(--muted2)}
+.bf-select option{background:var(--surface)}
+.bf-textarea{resize:vertical;min-height:90px;line-height:1.6}
+.sector-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.schip{background:rgba(255,255,255,0.03);border:1px solid var(--border2);color:var(--muted);font-size:11px;padding:7px 13px;border-radius:7px;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif;user-select:none}
+.schip.sel{background:var(--gold-d);border-color:rgba(200,146,42,0.4);color:var(--gold);font-weight:600}
+.budget-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.bopt{background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:12px;color:var(--muted);font-weight:500}
+.bopt.sel{background:var(--gold-d);border-color:rgba(200,146,42,0.4);color:var(--gold);font-weight:600}
+.finance-opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.fopt{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:9px;padding:13px 16px;cursor:pointer;transition:all 0.2s}
+.fopt:hover{border-color:rgba(200,146,42,0.2)}
+.fopt.sel{background:var(--gold-d);border-color:rgba(200,146,42,0.4)}
+.fopt-icon{font-size:20px;flex-shrink:0}
+.fopt-title{font-size:13px;font-weight:600;color:var(--white)}
+.fopt-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.fopt.sel .fopt-title{color:var(--gold)}
+.fopt-radio{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);margin-left:auto;flex-shrink:0;transition:all 0.2s}
+.fopt.sel .fopt-radio{background:var(--gold);border-color:var(--gold)}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.3s}
+.upload-zone:hover{border-color:rgba(200,146,42,0.4);background:rgba(200,146,42,0.03)}
+.upload-zone.done{border-color:rgba(45,212,160,0.4);background:rgba(45,212,160,0.04)}
+.uz-icon{font-size:26px;display:block;margin-bottom:8px}
+.uz-text{font-size:13px;color:var(--muted)}
+.uz-hint{font-size:11px;color:var(--muted2);margin-top:4px}
+.bp-actions{display:flex;align-items:center;gap:10px;margin-top:20px}
+.bp-next{flex:1;background:var(--gold);color:var(--black);border:none;padding:14px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.bp-next:hover{background:var(--gold-l)}
+.bp-back{background:none;border:1px solid var(--border2);color:var(--muted);padding:13px 22px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s}
+.bp-back:hover{border-color:var(--white);color:var(--white)}
+
+/* PASSPORT CARD */
+.passport-wrap{animation:slideIn 0.5s ease}
+.passport-card{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid rgba(200,146,42,0.35);border-radius:18px;padding:28px;position:relative;overflow:hidden;margin-bottom:16px}
+.pc-shimmer{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(200,146,42,0.1) 0%,transparent 60%)}
+.pc-watermark{position:absolute;bottom:-20px;right:-10px;font-size:120px;opacity:0.03;pointer-events:none}
+.pc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;position:relative;z-index:1}
+.pc-title-row{display:flex;align-items:center;gap:10px}
+.pc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+.pc-badges{display:flex;gap:6px;flex-wrap:wrap}
+.pc-badge{font-size:9px;font-weight:800;padding:4px 11px;border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+.pcb-verified{background:var(--gold);color:var(--black)}
+.pcb-finance{background:rgba(45,212,160,0.15);border:1px solid rgba(45,212,160,0.3);color:var(--green)}
+.pcb-id{background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.3);color:var(--blue)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative;z-index:1}
+.pc-field{}
+.pcf-label{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.pcf-value{font-size:14px;font-weight:600;color:var(--white);display:block}
+.pcf-value.gold{color:var(--gold)}
+.pcf-value.green{color:var(--green)}
+.pc-sectors{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pc-sector-chip{background:rgba(200,146,42,0.1);border:1px solid rgba(200,146,42,0.2);color:var(--gold);font-size:10px;padding:2px 9px;border-radius:4px;font-weight:500}
+.pc-footer{display:flex;align-items:center;gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.07);position:relative;z-index:1;flex-wrap:wrap}
+.pc-verified-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600}
+.pc-ref{margin-left:auto;font-size:10px;color:var(--muted2);font-family:monospace}
+
+/* SUCCESS STATE */
+.success-actions{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px}
+.sa-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px}
+.sa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.sa-btn{background:var(--gold);color:var(--black);border:none;padding:13px 18px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;display:block;text-decoration:none;width:100%}
+.sa-btn:hover{background:var(--gold-l)}
+.sa-btn-ghost{background:none;border:1px solid var(--border2);color:var(--muted);padding:12px 18px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;text-align:center;transition:all 0.2s;display:block;width:100%}
+.sa-btn-ghost:hover{border-color:var(--white);color:var(--white)}
+.sa-note{font-size:12px;color:var(--muted);line-height:1.7;padding:14px;background:rgba(45,212,160,0.04);border:1px solid rgba(45,212,160,0.12);border-radius:8px}
+.sa-note strong{color:var(--green)}
+
+/* HOW IT WORKS (buyer) */
+.bp-hiw{max-width:640px;margin:0 auto;padding:0 48px 80px}
+.bh-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:20px;text-align:center}
+.bh-title em{font-style:italic;color:var(--gold)}
+.bh-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bh-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.bh-icon{font-size:22px;margin-bottom:10px;display:block}
+.bh-t{font-size:13px;font-weight:600;color:var(--white);margin-bottom:6px}
+.bh-p{font-size:11px;color:var(--muted);line-height:1.7}
+
+@media(max-width:900px){
+  nav{padding:0 18px}
+  .nav-links,.nav-pill{display:none}
+  .bp-hero{padding:88px 18px 44px}
+  .progress-bar{padding:0 18px}
+  .bp-wrap{padding:24px 18px 60px}
+  .bp-card{padding:24px}
+  .bf-grid{grid-template-columns:1fr}
+  .budget-options{grid-template-columns:repeat(2,1fr)}
+  .pc-grid{grid-template-columns:1fr}
+  .sa-grid{grid-template-columns:1fr}
+  .bp-hiw{padding:0 18px 60px}
+  .bh-cards{grid-template-columns:1fr}
+  .steps-row{overflow-x:auto;padding-bottom:8px}
+  .step-label{display:none}
+  .step-connector{min-width:16px;max-width:30px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html"><div class="logo-mark">V</div><span class="logo-name">Venture<em>Vault</em></span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="browse.html">Buy</a></li>
+    <li><a href="seller.html">Sell</a></li>
+    <li><a href="valuation.html">AI Valuation</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-pill">🪪 Buyer Passport</span>
+    <button class="nav-cta" onclick="location.href='seller.html'">Sell a Business</button>
+  </div>
+</nav>
+
+<div class="bp-hero">
+  <div class="bph-bg"></div><div class="bph-grid"></div>
+  <div class="bph-inner">
+    <div class="bph-tag">🪪 For Buyers</div>
+    <h1>Your <em>Buyer Passport</em><br>Opens Every Door</h1>
+    <p>Complete your profile once. Sellers instantly see you're a verified, serious buyer — not a time-waster. Get faster responses, priority access, and more deals.</p>
+    <div class="bph-benefits">
+      <div class="bph-b"><span class="check">✓</span> Sellers respond faster</div>
+      <div class="bph-b"><span class="check">✓</span> Skip the queue on popular listings</div>
+      <div class="bph-b"><span class="check">✓</span> Show finance is ready</div>
+      <div class="bph-b"><span class="check">✓</span> Free to create</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="progress-bar" style="padding-top:36px;padding-bottom:0;max-width:640px;margin:0 auto;padding-left:48px;padding-right:48px">
+  <div class="steps-row">
+    <div class="step-item active" id="si1"><div class="step-num" id="sn1">1</div><span class="step-label">Personal Info</span></div>
+    <div class="step-connector" id="sc1"></div>
+    <div class="step-item" id="si2"><div class="step-num" id="sn2">2</div><span class="step-label">Buying Criteria</span></div>
+    <div class="step-connector" id="sc2"></div>
+    <div class="step-item" id="si3"><div class="step-num" id="sn3">3</div><span class="step-label">Finance</span></div>
+    <div class="step-connector" id="sc3"></div>
+    <div class="step-item" id="si4"><div class="step-num" id="sn4">4</div><span class="step-label">ID Verify</span></div>
+    <div class="step-connector" id="sc4"></div>
+    <div class="step-item" id="si5"><div class="step-num" id="sn5">5</div><span class="step-label">Your Passport</span></div>
+  </div>
+</div>
+
+<div class="bp-wrap">
+  <!-- STEP 1: Personal Info -->
+  <div class="bp-card" id="card1">
+    <h2>Personal Information</h2>
+    <p>Your personal details stay private. Sellers only see your verified summary — never your address or email.</p>
+    <div class="bf-grid">
+      <div class="bf-group"><label class="bf-label">First Name</label><input class="bf-input" id="bpFirst" placeholder="John"></div>
+      <div class="bf-group"><label class="bf-label">Last Name</label><input class="bf-input" id="bpLast" placeholder="Smith"></div>
+      <div class="bf-group full"><label class="bf-label">Email Address</label><input class="bf-input" id="bpEmail" type="email" placeholder="john@example.com"></div>
+      <div class="bf-group"><label class="bf-label">Phone Number</label><input class="bf-input" id="bpPhone" placeholder="07700 000 000"></div>
+      <div class="bf-group"><label class="bf-label">Your Location</label>
+        <select class="bf-select" id="bpRegion">
+          <option value="">Select region...</option>
+          <option>Greater London</option><option>South East England</option><option>South West England</option>
+          <option>East of England</option><option>West Midlands</option><option>Yorkshire</option>
+          <option>North West England</option><option>Scotland</option><option>Wales</option><option>Northern Ireland</option>
+        </select>
+      </div>
+      <div class="bf-group full"><label class="bf-label">Brief Background</label><textarea class="bf-textarea" id="bpBackground" placeholder="e.g. Experienced in retail management, looking to own my first business..."></textarea></div>
+    </div>
+    <div class="bp-actions"><button class="bp-next" onclick="nextStep(1)">Continue → Buying Criteria</button></div>
+  </div>
+
+  <!-- STEP 2: Buying Criteria -->
+  <div class="bp-card" id="card2" style="display:none">
+    <h2>Buying Criteria</h2>
+    <p>Tell sellers what you're looking for. This gets shown on your passport when you enquire on a listing.</p>
+    <div style="margin-bottom:18px">
+      <label class="bf-label" style="display:block;margin-bottom:8px">Maximum Budget</label>
+      <div class="budget-options" id="budgetOpts">
+        <div class="bopt" onclick="selectBudget(this,'Under £50,000')">Under £50k</div>
+        <div class="bopt" onclick="selectBudget(this,'Under £100,000')">Under £100k</div>
+        <div class="bopt" onclick="selectBudget(this,'Under £250,000')">Under £250k</div>
+        <div class="bopt" onclick="selectBudget(this,'Under £500,000')">Under £500k</div>
+        <div class="bopt" onclick="selectBudget(this,'Under £1,000,000')">Under £1m</div>
+        <div class="bopt" onclick="selectBudget(this,'£1,000,000+')">£1m+</div>
+      </div>
+    </div>
+    <div style="margin-bottom:18px">
+      <label class="bf-label" style="display:block;margin-bottom:8px">Preferred Sectors (select all that apply)</label>
+      <div class="sector-chips" id="sectorChips">
+        <span class="schip sel" onclick="this.classList.toggle('sel')">🍕 Food & Takeaway</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🛒 Retail & Shops</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🍺 Pub / Bar</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">✂️ Hair & Beauty</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🏨 Hotel / B&B</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">📮 Post Office</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🚗 Automotive</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🏥 Care & Health</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">💻 Online / Tech</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🐕 Pet Services</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🏗️ Construction</span>
+        <span class="schip" onclick="this.classList.toggle('sel')">🍔 Fast Food</span>
+      </div>
+    </div>
+    <div class="bf-grid">
+      <div class="bf-group"><label class="bf-label">Preferred Location</label>
+        <select class="bf-select" id="bpPrefLoc">
+          <option>Any UK Region</option><option>Greater London</option><option>South East</option>
+          <option>North West</option><option>Yorkshire</option><option>West Midlands</option>
+          <option>Scotland</option><option>Wales</option>
+        </select>
+      </div>
+      <div class="bf-group"><label class="bf-label">Purchase Timeline</label>
+        <select class="bf-select" id="bpTimeline">
+          <option>Within 1 month</option><option>1–3 months</option>
+          <option>3–6 months</option><option>6–12 months</option>
+        </select>
+      </div>
+      <div class="bf-group"><label class="bf-label">Business Experience</label>
+        <select class="bf-select" id="bpExp">
+          <option>First time buyer</option><option>Previously owned a business</option>
+          <option>Currently own a business</option><option>Industry professional</option>
+        </select>
+      </div>
+      <div class="bf-group"><label class="bf-label">Preferred Tenure</label>
+        <select class="bf-select">
+          <option>Any</option><option>Leasehold only</option><option>Freehold only</option>
+        </select>
+      </div>
+    </div>
+    <div class="bp-actions">
+      <button class="bp-back" onclick="prevStep(2)">← Back</button>
+      <button class="bp-next" onclick="nextStep(2)">Continue → Finance Details</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Finance -->
+  <div class="bp-card" id="card3" style="display:none">
+    <h2>Finance Details</h2>
+    <p>Sellers prioritise buyers with funding ready. Your finance status is shown on your passport — it dramatically increases your response rate.</p>
+    <label class="bf-label" style="display:block;margin-bottom:10px">Finance Status</label>
+    <div class="finance-opts" id="financeOpts">
+      <div class="fopt sel" onclick="selectFinance(this,'Cash Buyer — Funds Available')"><span class="fopt-icon">💰</span><div><div class="fopt-title">Cash Buyer</div><div class="fopt-desc">Funds immediately available — fastest to complete</div></div><div class="fopt-radio"></div></div>
+      <div class="fopt" onclick="selectFinance(this,'Bank Loan Pre-Approved')"><span class="fopt-icon">🏦</span><div><div class="fopt-title">Bank Loan Pre-Approved</div><div class="fopt-desc">Formal loan offer in place from a lender</div></div><div class="fopt-radio"></div></div>
+      <div class="fopt" onclick="selectFinance(this,'Business Loan Pending')"><span class="fopt-icon">📋</span><div><div class="fopt-title">Business Loan Pending</div><div class="fopt-desc">Application in progress with a bank or lender</div></div><div class="fopt-radio"></div></div>
+      <div class="fopt" onclick="selectFinance(this,'Investor Backed')"><span class="fopt-icon">📈</span><div><div class="fopt-title">Investor Backed</div><div class="fopt-desc">Private investor or partnership funding</div></div><div class="fopt-radio"></div></div>
+      <div class="fopt" onclick="selectFinance(this,'Seeking Finance')"><span class="fopt-icon">🔍</span><div><div class="fopt-title">Seeking Finance</div><div class="fopt-desc">Actively looking for funding options</div></div><div class="fopt-radio"></div></div>
+    </div>
+    <div class="bf-grid" style="margin-top:18px">
+      <div class="bf-group"><label class="bf-label">Available Deposit</label>
+        <select class="bf-select" id="bpDeposit">
+          <option>Up to £25,000</option><option>£25,000–£50,000</option>
+          <option>£50,000–£100,000</option><option>£100,000–£250,000</option><option>£250,000+</option>
+        </select>
+      </div>
+      <div class="bf-group"><label class="bf-label">How Did You Hear About Us?</label>
+        <select class="bf-select">
+          <option>Google Search</option><option>Social Media</option><option>Recommended</option>
+          <option>Daltons / Other Site</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="bp-actions">
+      <button class="bp-back" onclick="prevStep(3)">← Back</button>
+      <button class="bp-next" onclick="nextStep(3)">Continue → Verify ID</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: ID Verification -->
+  <div class="bp-card" id="card4" style="display:none">
+    <h2>Identity Verification</h2>
+    <p>A one-time, automated check via Stripe Identity. Takes 60 seconds on your phone. Gives you the "ID Verified" badge that sellers trust most.</p>
+    <div class="upload-zone" id="idZone" onclick="verifyID()">
+      <span class="uz-icon">🪪</span>
+      <div class="uz-text">Click to Verify Your Identity</div>
+      <div class="uz-hint">Passport or driving licence · Fully automated · Powered by Stripe Identity</div>
+    </div>
+    <div style="margin-top:16px;padding:14px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.15);border-radius:9px">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px">🔒 Privacy Protected</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.7">Your ID document is processed securely by Stripe and never stored by VentureVault. We only receive a pass/fail confirmation. Your details are never sold or shared.</div>
+    </div>
+    <div class="bp-actions" style="margin-top:16px">
+      <button class="bp-back" onclick="prevStep(4)">← Back</button>
+      <button class="bp-next" id="idSkipBtn" onclick="nextStep(4)" style="background:rgba(255,255,255,0.06);border:1px solid var(--border2);color:var(--muted);font-weight:500">Skip for now (no verified badge)</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Passport -->
+  <div id="card5" style="display:none" class="passport-wrap">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:44px;margin-bottom:10px">🎉</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px">Your Passport Is Ready</h2>
+      <p style="color:var(--muted);font-size:13px">This is what sellers see the moment you enquire on a listing.</p>
+    </div>
+
+    <!-- THE PASSPORT CARD -->
+    <div class="passport-card" id="passportCard">
+      <div class="pc-shimmer"></div>
+      <div class="pc-watermark">🪪</div>
+      <div class="pc-header">
+        <div class="pc-title-row">
+          <div class="pc-title">🪪 Buyer Passport</div>
+        </div>
+        <div class="pc-badges">
+          <span class="pc-badge pcb-verified">VERIFIED</span>
+          <span class="pc-badge pcb-finance" id="pbFinanceBadge">CASH BUYER</span>
+          <span class="pc-badge pcb-id" id="pbIdBadge">ID CHECKED</span>
+        </div>
+      </div>
+      <div class="pc-grid">
+        <div class="pc-field"><span class="pcf-label">Buyer Name</span><span class="pcf-value" id="pbName">John Smith</span></div>
+        <div class="pc-field"><span class="pcf-label">Location</span><span class="pcf-value" id="pbLocation">Greater London</span></div>
+        <div class="pc-field"><span class="pcf-label">Maximum Budget</span><span class="pcf-value gold" id="pbBudget">Under £250,000</span></div>
+        <div class="pc-field"><span class="pcf-label">Finance Status</span><span class="pcf-value green" id="pbFinance">Cash Buyer</span></div>
+        <div class="pc-field"><span class="pcf-label">Available Deposit</span><span class="pcf-value" id="pbDeposit">£50,000–£100,000</span></div>
+        <div class="pc-field"><span class="pcf-label">Timeline</span><span class="pcf-value" id="pbTimeline">1–3 months</span></div>
+        <div class="pc-field" style="grid-column:1/-1"><span class="pcf-label">Preferred Sectors</span><div class="pc-sectors" id="pbSectors"></div></div>
+      </div>
+      <div class="pc-footer">
+        <div class="pc-verified-item">✓ ID Verified</div>
+        <div class="pc-verified-item">✓ Finance Confirmed</div>
+        <div class="pc-verified-item">✓ Profile Complete</div>
+        <div class="pc-ref" id="pbRef">VV-2026-XXXX</div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="success-actions">
+      <div class="sa-title">What Happens Now</div>
+      <div class="sa-grid">
+        <button class="sa-btn" onclick="location.href='browse.html'">Start Browsing → </button>
+        <button class="sa-btn-ghost" onclick="window.print()">Download PDF</button>
+      </div>
+      <div class="sa-note"><strong>Your passport is now live.</strong> Every time you enquire on a listing, sellers instantly see your passport — your budget, finance status, and verification badges. Verified buyers get an average 3× faster response from sellers on VentureVault.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="bp-hiw">
+  <h2 class="bh-title">Why a <em>Buyer Passport?</em></h2>
+  <div class="bh-cards">
+    <div class="bh-card"><span class="bh-icon">⚡</span><div class="bh-t">3× Faster Responses</div><p class="bh-p">Sellers respond to verified passport holders 3× faster than anonymous enquiries. Your badge does the work for you.</p></div>
+    <div class="bh-card"><span class="bh-icon">🔐</span><div class="bh-t">Trust Before You Call</div><p class="bh-p">Sellers can see your budget, finance and verification before even speaking to you — no awkward qualification calls.</p></div>
+    <div class="bh-card"><span class="bh-icon">🎯</span><div class="bh-t">Matched Listings</div><p class="bh-p">Our system auto-alerts you when a new listing matches your passport criteria — so you see it before anyone else.</p></div>
+    <div class="bh-card"><span class="bh-icon">🤝</span><div class="bh-t">Priority Access</div><p class="bh-p">Some sellers choose to share full financials and documents exclusively with passport-verified buyers first.</p></div>
+  </div>
+</div>
+
+<script>
+let state={step:1,firstName:'',lastName:'',region:'',budget:'Under £250,000',sectors:[],finance:'Cash Buyer — Funds Available',timeline:'1–3 months',deposit:'',idVerified:false,ref:'VV-'+new Date().getFullYear()+'-'+Math.floor(1000+Math.random()*9000)};
+
+function nextStep(from){
+  if(from===1){
+    const f=document.getElementById('bpFirst').value.trim();
+    const l=document.getElementById('bpLast').value.trim();
+    const e=document.getElementById('bpEmail').value.trim();
+    if(!f||!l){alert('Please enter your first and last name.');return}
+    if(!e||!e.includes('@')){alert('Please enter a valid email address.');return}
+    state.firstName=f; state.lastName=l;
+    state.region=document.getElementById('bpRegion').value||'UK';
+  }
+  if(from===2){
+    const sel=[...document.querySelectorAll('.schip.sel')].map(c=>c.textContent);
+    if(sel.length===0){alert('Please select at least one sector.');return}
+    state.sectors=sel;
+    state.timeline=document.getElementById('bpTimeline').value;
+  }
+  if(from===3){
+    state.deposit=document.getElementById('bpDeposit').value;
+  }
+  if(from===4){
+    buildPassport();
+  }
+  showStep(from+1);
+}
+
+function prevStep(from){showStep(from-1)}
+
+function showStep(n){
+  for(let i=1;i<=5;i++){
+    const c=document.getElementById('card'+i);
+    if(c)c.style.display=i===n?'block':'none';
+    const si=document.getElementById('si'+i);
+    const sc=document.getElementById('sc'+i);
+    if(si){
+      si.className='step-item'+(i<n?' done':i===n?' active':'');
+      if(i<n&&document.getElementById('sn'+i))document.getElementById('sn'+i).textContent='✓';
+    }
+    if(sc&&i<5)sc.className='step-connector'+(i<n?' done':'');
+  }
+  state.step=n;
+  window.scrollTo({top:120,behavior:'smooth'});
+}
+
+function selectBudget(el,val){
+  document.querySelectorAll('.bopt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  state.budget=val;
+}
+
+function selectFinance(el,val){
+  document.querySelectorAll('.fopt').forEach(f=>f.classList.remove('sel'));
+  el.classList.add('sel');
+  state.finance=val;
+}
+
+function verifyID(){
+  const zone=document.getElementById('idZone');
+  zone.innerHTML='<span class="uz-icon">⏳</span><div class="uz-text" style="color:var(--gold)">Connecting to Stripe Identity...</div><div class="uz-hint">Please wait...</div>';
+  setTimeout(()=>{
+    zone.classList.add('done');
+    zone.innerHTML='<span class="uz-icon">✅</span><div class="uz-text" style="color:var(--green)">Identity Verified Successfully</div><div class="uz-hint" style="color:var(--green)">Powered by Stripe Identity · Your data is secure</div>';
+    document.getElementById('idSkipBtn').textContent='Continue → View Your Passport';
+    document.getElementById('idSkipBtn').style.background='var(--gold)';
+    document.getElementById('idSkipBtn').style.color='var(--black)';
+    document.getElementById('idSkipBtn').style.border='none';
+    document.getElementById('idSkipBtn').style.fontWeight='700';
+    state.idVerified=true;
+  },1800);
+}
+
+function buildPassport(){
+  document.getElementById('pbName').textContent=state.firstName+' '+state.lastName;
+  document.getElementById('pbLocation').textContent=state.region;
+  document.getElementById('pbBudget').textContent=state.budget;
+  document.getElementById('pbFinance').textContent=state.finance.split('—')[0].trim();
+  document.getElementById('pbTimeline').textContent=state.timeline;
+  document.getElementById('pbDeposit').textContent=state.deposit||'Not specified';
+  document.getElementById('pbRef').textContent=state.ref;
+  const sc=document.getElementById('pbSectors');
+  sc.innerHTML=state.sectors.slice(0,6).map(s=>`<span class="pc-sector-chip">${s}</span>`).join('');
+  const fb=document.getElementById('pbFinanceBadge');
+  if(state.finance.includes('Cash'))fb.textContent='CASH BUYER';
+  else if(state.finance.includes('Pre-Approved'))fb.textContent='FINANCE READY';
+  else fb.textContent='FINANCE PENDING';
+  if(!state.idVerified){
+    document.getElementById('pbIdBadge').style.display='none';
+  }
+}
+
+// Pre-select first budget option
+document.querySelector('.bopt').classList.add('sel');
+</script>
+</body>
+</html>

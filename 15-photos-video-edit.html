@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Listing — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090e;--s1:#13131a;--s2:#1a1a24;--s3:#21212e;
+  --b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);
+  --gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);
+  --w:#fff;--m1:rgba(255,255,255,0.55);--m2:rgba(255,255,255,0.3);
+  --green:#2dd4a0;--red:#f87171;--blue:#60a5fa;
+  --purple:#a78bfa;--pink:#f472b6;--orange:#fb923c;
+  --r:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--w);line-height:1.6;overflow-x:hidden;font-size:15px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(9,9,14,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:7px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.ln{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
+.ln em{font-style:italic;color:var(--gold)}
+.nav-r{display:flex;gap:10px;align-items:center}
+.nbtn{background:var(--gold);color:var(--bg);border:none;padding:9px 20px;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer}
+.nbtn:hover{background:var(--gold-l)}
+.nghost{background:none;border:1px solid var(--b2);color:var(--m1);padding:8px 18px;border-radius:40px;font-size:13px;cursor:pointer;transition:all 0.2s}
+.nghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* MODE BAR */
+.mode-bar{margin-top:64px;background:var(--s1);border-bottom:1px solid var(--b1);padding:12px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mode-lbl{font-size:13px;color:var(--m1);font-weight:500}
+.mode-toggle{display:inline-flex;background:rgba(255,255,255,0.04);border:1px solid var(--b2);border-radius:40px;padding:3px}
+.mt{padding:8px 20px;border-radius:40px;font-size:13px;font-weight:600;border:none;background:none;color:var(--m1);cursor:pointer;transition:all 0.3s}
+.mt.on{background:var(--gold);color:var(--bg)}
+.mt.on.d{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--w)}
+
+/* PAGE TABS */
+.page-tabs{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 28px;display:flex;gap:0;overflow-x:auto}
+.ptab{padding:14px 20px;font-size:14px;font-weight:600;color:var(--m1);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s}
+.ptab:hover{color:var(--w)}
+.ptab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* LAYOUT */
+.wrap{max-width:1160px;margin:0 auto;padding:28px 28px 80px;display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start}
+.main-col{}
+
+/* PANEL */
+.panel{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.ph{padding:16px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ph-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.ph-s{font-size:13px;color:var(--m1)}
+.pb{padding:20px}
+
+/* HERO */
+.lhero{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.lvis{height:220px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lvis-bg{position:absolute;inset:0}
+.lvis-em{font-size:90px;opacity:0.12;position:relative;z-index:1}
+.lvis-badges{position:absolute;top:14px;left:14px;display:flex;gap:7px;flex-wrap:wrap;z-index:3}
+.badge{font-size:11px;font-weight:700;padding:5px 12px;border-radius:5px;backdrop-filter:blur(10px)}
+.bg{background:rgba(45,212,160,0.15);border:1px solid rgba(45,212,160,0.3);color:var(--green)}
+.bo{background:var(--gold-d);border:1px solid rgba(200,146,42,0.35);color:var(--gold-l)}
+.bb{background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.3);color:var(--blue)}
+.bp{background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);color:var(--purple)}
+.ring-wrap{position:absolute;bottom:14px;right:14px;z-index:3;background:rgba(9,9,14,0.88);border:1px solid var(--b2);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(16px)}
+.ring-info-label{font-size:11px;color:var(--m2);display:block;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.ring-info-val{font-size:14px;font-weight:700;display:block;color:var(--green)}
+.lbody{padding:20px 24px}
+.lsector{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px}
+.ltitle{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:5px;line-height:1.2}
+.lloc{font-size:14px;color:var(--m1)}
+.kn-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b1);border-top:1px solid var(--b1)}
+.kn{background:var(--s2);padding:16px;text-align:center}
+.kn-v{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;display:block;line-height:1;margin-bottom:4px}
+.kn-l{font-size:12px;color:var(--m2);display:block}
+
+/* HEALTH */
+.health-row{display:flex;align-items:flex-start;gap:24px}
+.health-info{flex:1}
+.health-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.health-desc{font-size:13px;color:var(--m1);line-height:1.7;margin-bottom:14px}
+.hbars{display:flex;flex-direction:column;gap:8px}
+.hbar-row{display:flex;align-items:center;gap:10px}
+.hbar-l{font-size:13px;color:var(--m1);width:120px;flex-shrink:0}
+.hbar-track{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px}
+.hbar-v{font-size:13px;font-weight:700;width:30px;text-align:right;flex-shrink:0}
+
+/* SCORE CARDS */
+.score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
+.sc{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px}
+.sc-icon{font-size:24px;flex-shrink:0}
+.sc-name{font-size:13px;font-weight:600;margin-bottom:5px}
+.sc-track{width:100%;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.sc-fill{height:100%;border-radius:3px}
+.sc-val{font-size:12px;font-weight:600}
+
+/* BAR CHART */
+.bchart{display:flex;align-items:flex-end;gap:5px;height:100px;margin-bottom:8px}
+.bbar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:opacity 0.2s;min-width:0}
+.bbar:hover{opacity:0.8}
+.bbar-tip{display:none;position:absolute;bottom:calc(100%+6px);left:50%;transform:translateX(-50%);background:rgba(9,9,14,0.95);border:1px solid var(--b2);color:var(--w);font-size:11px;padding:4px 9px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none}
+.bbar:hover .bbar-tip{display:block}
+.bbar-lbls{display:flex;gap:5px}
+.bbar-lbl{flex:1;font-size:10px;color:var(--m2);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* HEATMAP */
+.hm-days{display:flex;padding-left:46px;margin-bottom:4px;gap:4px}
+.hm-day{flex:1;font-size:12px;color:var(--m1);text-align:center;font-weight:500}
+.hm-grid{display:grid;grid-template-columns:46px repeat(7,1fr);gap:4px}
+.hm-time{font-size:12px;color:var(--m1);display:flex;align-items:center;font-weight:500}
+.hm-cell{height:28px;border-radius:5px;cursor:pointer;transition:transform 0.15s;position:relative}
+.hm-cell:hover{transform:scale(1.1);z-index:2}
+.hm-cell::after{content:attr(data-tip);display:none;position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);background:rgba(9,9,14,0.96);border:1px solid var(--b2);color:var(--w);font-size:11px;padding:4px 9px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none}
+.hm-cell:hover::after{display:block}
+.hm-legend{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--m1)}
+.hm-swatch{width:16px;height:16px;border-radius:4px}
+
+/* GAUGE */
+.gauge-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gauge{text-align:center}
+.gauge-arc-track{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:8;stroke-linecap:round}
+.gauge-arc-fill{fill:none;stroke-width:8;stroke-linecap:round}
+.gauge-value-text{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700}
+.gauge-lbl{font-size:13px;font-weight:700;color:var(--w);margin-top:8px}
+.gauge-sub{font-size:12px;color:var(--m1);line-height:1.5;margin-top:4px}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut-svg-wrap{position:relative;flex-shrink:0}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dc-n{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;line-height:1}
+.dc-l{font-size:11px;color:var(--m2)}
+.donut-legend{display:flex;flex-direction:column;gap:8px;flex:1}
+.dl{display:flex;align-items:center;gap:8px}
+.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dl-name{font-size:13px;color:var(--m1);flex:1}
+.dl-val{font-size:13px;font-weight:600}
+.dl-pct{font-size:11px;color:var(--m2);margin-left:3px}
+
+/* COMPARABLE RANGE */
+.comp-item{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.comp-em{font-size:22px;flex-shrink:0}
+.comp-info{flex:1}
+.comp-name{font-size:14px;font-weight:600}
+.comp-detail{font-size:12px;color:var(--m1);margin-top:2px}
+.comp-price{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--green);text-align:right;flex-shrink:0}
+.comp-date{font-size:11px;color:var(--m2);margin-top:2px}
+.range-wrap{margin-top:16px}
+.range-row{display:flex;justify-content:space-between;font-size:13px;color:var(--m1);margin-bottom:8px}
+.range-track{height:12px;background:rgba(255,255,255,0.07);border-radius:6px;position:relative;overflow:visible}
+.range-fill{position:absolute;top:0;height:100%;border-radius:6px;background:linear-gradient(to right,var(--gold),var(--green))}
+.range-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:var(--w);border-radius:50%;border:3px solid var(--gold);box-shadow:0 2px 10px rgba(0,0,0,0.5)}
+.range-vals{display:flex;justify-content:space-between;font-size:12px;color:var(--m2);margin-top:6px}
+
+/* TIMELINE */
+.tl-item{display:flex;gap:14px;align-items:flex-start;padding-bottom:14px}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0;padding-top:3px}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.tl-line{width:2px;flex:1;min-height:20px;margin-top:4px;border-radius:1px;background:var(--b2)}
+.tl-item:last-child .tl-line{display:none}
+.tl-year{font-size:12px;color:var(--m2);font-weight:700;width:36px;flex-shrink:0;padding-top:1px}
+.tl-text{font-size:13px;color:var(--m1);line-height:1.6;flex:1}
+.tl-text strong{color:var(--w);font-weight:600}
+
+/* INSIGHT */
+.insight{background:rgba(45,212,160,0.04);border:1px solid rgba(45,212,160,0.14);border-radius:9px;padding:13px 16px;margin-top:14px;font-size:13px;color:var(--m1);line-height:1.7}
+.insight strong{color:var(--green)}
+.insight.gold{background:rgba(200,146,42,0.04);border-color:rgba(200,146,42,0.14)}
+.insight.gold strong{color:var(--gold-l)}
+.insight.pu{background:rgba(167,139,250,0.04);border-color:rgba(167,139,250,0.14)}
+.insight.pu strong{color:var(--purple)}
+
+/* GALLERY */
+.gallery-main{position:relative;border-radius:12px;overflow:hidden;background:var(--s2);margin-bottom:14px;aspect-ratio:16/9}
+.gm-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.gm-em{font-size:80px;opacity:0.15}
+.gm-prev,.gm-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(9,9,14,0.8);border:1px solid var(--b2);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all 0.2s;backdrop-filter:blur(10px);z-index:2}
+.gm-prev{left:14px}.gm-next{right:14px}
+.gm-prev:hover,.gm-next:hover{background:rgba(200,146,42,0.2);border-color:rgba(200,146,42,0.4)}
+.gm-label{position:absolute;bottom:14px;left:14px;background:rgba(9,9,14,0.88);border:1px solid var(--b2);border-radius:7px;padding:6px 14px;font-size:13px;backdrop-filter:blur(10px);color:var(--m1);z-index:2}
+.gm-count{position:absolute;bottom:14px;right:14px;background:rgba(9,9,14,0.88);border:1px solid var(--b2);border-radius:7px;padding:6px 14px;font-size:13px;font-weight:600;backdrop-filter:blur(10px);z-index:2}
+.thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.thumb{border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:var(--s2);border:2px solid transparent;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:28px;opacity:0.5}
+.thumb:hover{border-color:var(--gold);opacity:0.8}
+.thumb.active{border-color:var(--gold);opacity:1}
+
+/* VIDEO */
+.video-container{position:relative;border-radius:12px;overflow:hidden;background:var(--s2);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.vc-overlay{position:absolute;inset:0;background:linear-gradient(135deg,#1a0f05,#2d1a08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.vc-em{font-size:60px;opacity:0.15}
+.play-btn{width:72px;height:72px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;transition:all 0.25s;box-shadow:0 8px 32px rgba(200,146,42,0.4);position:relative;z-index:2}
+.play-btn:hover{transform:scale(1.08)}
+.vc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;position:relative;z-index:2}
+.vc-sub{font-size:14px;color:var(--m1);position:relative;z-index:2}
+.vc-duration{background:rgba(9,9,14,0.88);border:1px solid var(--b2);border-radius:6px;padding:5px 12px;font-size:13px;font-weight:600;position:absolute;bottom:14px;right:14px}
+.video-player{display:none;flex-direction:column;border-radius:12px;overflow:hidden}
+.vp-screen{aspect-ratio:16/9;background:linear-gradient(135deg,#0d0805,#1a1205);display:flex;align-items:center;justify-content:center;position:relative}
+.vp-em{font-size:70px;opacity:0.1}
+.vp-playing-lbl{position:absolute;font-size:15px;color:var(--m1)}
+.vp-controls{background:rgba(9,9,14,0.95);padding:12px 18px;display:flex;align-items:center;gap:14px}
+.vp-play{width:36px;height:36px;background:var(--gold);border:none;border-radius:50%;color:var(--bg);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vp-bar{flex:1;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer;position:relative}
+.vp-progress{height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 0.3s linear}
+.vp-time{font-size:13px;color:var(--m1);white-space:nowrap}
+.chapter{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border:1px solid var(--b1);border-radius:9px;cursor:pointer;transition:all 0.2s;margin-bottom:6px}
+.chapter:hover{border-color:rgba(200,146,42,0.3)}
+.chapter.active{border-color:rgba(200,146,42,0.4);background:rgba(200,146,42,0.07)}
+.ch-time{font-size:13px;font-weight:700;color:var(--gold);width:40px;flex-shrink:0}
+.ch-icon{font-size:18px;flex-shrink:0}
+.ch-name{font-size:14px;font-weight:600;flex:1}
+.ch-desc{font-size:12px;color:var(--m1);margin-top:1px}
+
+/* DESCRIPTION */
+.desc-body{font-size:15px;color:var(--m1);line-height:1.85}
+.desc-body p{margin-bottom:16px}
+.desc-body strong{color:var(--w);font-weight:600}
+.desc-highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0}
+.dh{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:10px}
+.dh-icon{font-size:20px;flex-shrink:0}
+.dh-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.dh-text{font-size:13px;color:var(--m1);line-height:1.5}
+.desc-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.dtag{font-size:13px;font-weight:500;padding:6px 14px;border-radius:6px;background:var(--s2);border:1px solid var(--b1);color:var(--m1)}
+
+/* DEMO BARS */
+.demo-section{margin-bottom:18px}
+.demo-title{font-size:12px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.demo-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.demo-label{font-size:13px;color:var(--m1);width:80px;flex-shrink:0}
+.demo-track{flex:1;height:8px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden}
+.demo-fill{height:100%;border-radius:4px}
+.demo-val{font-size:13px;font-weight:700;width:34px;text-align:right;flex-shrink:0}
+
+/* PLATFORM VERIFIED */
+.plat-verified{background:linear-gradient(135deg,rgba(167,139,250,0.07),rgba(96,165,250,0.04));border:1px solid rgba(167,139,250,0.18);border-radius:10px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.pv-icon{font-size:28px;flex-shrink:0}
+.pv-name{font-size:14px;font-weight:700}
+.pv-status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:5px;margin-top:3px}
+.pv-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.pv-stats{margin-left:auto;text-align:right}
+.pv-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;display:block;line-height:1}
+.pv-lbl{font-size:11px;color:var(--m2)}
+
+/* SIDEBAR */
+.side-col{display:flex;flex-direction:column;gap:14px;position:sticky;top:80px}
+.side-panel{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.price-block{padding:22px;text-align:center}
+.pb-lbl{font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+.pb-price{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:var(--gold);display:block;line-height:1}
+.pb-price.d{background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pb-type{font-size:12px;color:var(--m2);display:block;margin-top:4px}
+.pb-turn{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
+.pb-t-l{font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.pb-t-v{font-size:17px;font-weight:700;color:var(--green);display:block}
+.enq-form{padding:18px;border-top:1px solid var(--b1)}
+.ef-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.ef-g{margin-bottom:11px}
+.ef-l{display:block;font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.ef-i{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:14px;padding:10px 13px;border-radius:9px;outline:none;transition:border-color 0.2s}
+.ef-i:focus{border-color:rgba(200,146,42,0.5)}
+.ef-i::placeholder{color:var(--m2)}
+.ef-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ef-btn{width:100%;background:var(--gold);color:var(--bg);border:none;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:all 0.2s}
+.ef-btn:hover{background:var(--gold-l)}
+.ef-btn.d{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--w)}
+.ef-note{text-align:center;font-size:12px;color:var(--m2);margin-top:9px}
+.trust-list{padding:16px 18px;border-top:1px solid var(--b1);display:flex;flex-direction:column;gap:9px}
+.tl-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--m1)}
+.tl-ico{font-size:16px;flex-shrink:0}
+.tl-row strong{color:var(--w)}
+.seller-block{padding:16px 18px;border-top:1px solid var(--b1)}
+.sb-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.sb-av{width:42px;height:42px;border-radius:50%;background:var(--gold-d);border:1px solid rgba(200,146,42,0.2);display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.sb-name{font-size:14px;font-weight:700}
+.sb-stat{font-size:12px;color:var(--m1);margin-top:1px}
+.sb-verified{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--green);background:rgba(45,212,160,0.1);border:1px solid rgba(45,212,160,0.18);padding:3px 9px;border-radius:4px;margin-top:4px}
+.sb-resp{display:flex;justify-content:space-between;font-size:13px;padding-top:10px;border-top:1px solid var(--b1)}
+.sb-resp-v{font-weight:700;color:var(--green)}
+.docs-block{padding:14px 18px;border-top:1px solid var(--b1);background:rgba(96,165,250,0.03)}
+.docs-title{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
+.doc-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--m1);padding:6px 0;border-bottom:1px solid var(--b1)}
+.doc-row:last-of-type{border-bottom:none}
+.doc-ico{font-size:15px;flex-shrink:0}
+.doc-name{flex:1}
+.doc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(96,165,250,0.1);color:var(--blue);border:1px solid rgba(96,165,250,0.18)}
+.doc-btn{width:100%;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);color:var(--blue);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px;border-radius:8px;cursor:pointer;margin-top:12px;transition:all 0.2s}
+.doc-btn:hover{background:rgba(96,165,250,0.2)}
+.doc-btn.pu{background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.2);color:var(--purple)}
+
+/* MOBILE */
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:16px;gap:14px}
+  .side-col{position:static}
+  .kn-bar{grid-template-columns:repeat(2,1fr)}
+  .gauge-row{grid-template-columns:repeat(3,1fr)}
+  .score-grid{grid-template-columns:1fr}
+  .health-row{flex-direction:column}
+  .donut-wrap{flex-direction:column}
+  .ef-row{grid-template-columns:1fr}
+  .desc-highlights{grid-template-columns:1fr}
+  .thumbs{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:560px){
+  .gauge-row{grid-template-columns:1fr 1fr}
+  .kn-bar{grid-template-columns:1fr 1fr}
+  .lvis{height:170px}
+  .ltitle{font-size:22px}
+  .thumbs{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="14-homepage-fixed.html"><div class="lm">V</div><span class="ln">Venture<em>Vault</em></span></a>
+  <div class="nav-r">
+    <button class="nghost" onclick="history.back()">← All Listings</button>
+    <button class="nbtn" onclick="document.querySelector('.enq-form').scrollIntoView({behavior:'smooth'})">Enquire Now</button>
+  </div>
+</nav>
+
+<!-- MODE + TABS -->
+<div class="mode-bar">
+  <span class="mode-lbl">View as:</span>
+  <div class="mode-toggle">
+    <button class="mt on" id="mp" onclick="switchMode('physical')">🏪 Physical Business</button>
+    <button class="mt d" id="md" onclick="switchMode('digital')">⚡ Digital Asset</button>
+  </div>
+</div>
+<div class="page-tabs">
+  <div class="ptab on" id="tab-overview" onclick="showTab('overview')">📊 Overview & Charts</div>
+  <div class="ptab" id="tab-photos" onclick="showTab('photos')">📷 Photos</div>
+  <div class="ptab" id="tab-video" onclick="showTab('video')">🎥 Video Tour</div>
+  <div class="ptab" id="tab-desc" onclick="showTab('desc')">📖 Full Description</div>
+</div>
+
+<!-- ═══════════ PHYSICAL ═══════════ -->
+<div id="pv">
+
+  <!-- ── OVERVIEW TAB ── -->
+  <div class="wrap" id="pv-overview">
+    <div class="main-col">
+
+      <!-- HERO -->
+      <div class="lhero">
+        <div class="lvis">
+          <div class="lvis-bg" style="background:linear-gradient(135deg,#1a0f05,#2d1a08,#0d0805)"></div>
+          <div class="lvis-em">🍺</div>
+          <div class="lvis-badges">
+            <span class="badge bo">⭐ Featured</span>
+            <span class="badge bg">✓ ID Verified</span>
+            <span class="badge bg">★★★★★ Hygiene</span>
+            <span class="badge bb">💬 Replies &lt;2 hrs</span>
+          </div>
+          <div class="ring-wrap">
+            <svg width="54" height="54" viewBox="0 0 54 54" style="overflow:visible;display:block">
+              <circle cx="27" cy="27" r="21" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+              <circle cx="27" cy="27" r="21" fill="none" stroke="var(--green)" stroke-width="6"
+                stroke-dasharray="132" stroke-dashoffset="9"
+                stroke-linecap="round" transform="rotate(-90 27 27)"/>
+              <text x="27" y="24" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="13" font-weight="700" fill="var(--green)">94</text>
+              <text x="27" y="35" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.4)" font-weight="600">TRUST</text>
+            </svg>
+            <div><span class="ring-info-label">Health Score</span><span class="ring-info-val">Excellent</span></div>
+          </div>
+        </div>
+        <div class="lbody">
+          <div class="lsector">🍺 Pub / Bar / Restaurant</div>
+          <div class="ltitle">Sports Bar & Restaurant — Busy High Street</div>
+          <div class="lloc">📍 Maidstone, Kent &nbsp;·&nbsp; Newly fitted 2024 &nbsp;·&nbsp; 2,250 ft²</div>
+        </div>
+        <div class="kn-bar">
+          <div class="kn"><span class="kn-v" style="color:var(--gold)">£275k</span><span class="kn-l">Asking Price</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--green)">£18,000</span><span class="kn-l">Weekly Turnover</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--blue)">7 Days</span><span class="kn-l">Opening</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--purple)">14 Yrs</span><span class="kn-l">Established</span></div>
+        </div>
+      </div>
+
+      <!-- HEALTH -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">💚 Business Health at a Glance</span><span class="ph-s">Top 8% of all listings</span></div>
+        <div class="pb">
+          <div class="health-row">
+            <svg width="110" height="110" viewBox="0 0 110 110" style="flex-shrink:0;overflow:visible;display:block">
+              <circle cx="55" cy="55" r="44" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+              <circle cx="55" cy="55" r="44" fill="none" stroke="var(--green)" stroke-width="10"
+                stroke-dasharray="277" stroke-dashoffset="22"
+                stroke-linecap="round" transform="rotate(-90 55 55)"/>
+              <text x="55" y="50" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="22" font-weight="700" fill="var(--green)">94</text>
+              <text x="55" y="64" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.4)" font-weight="600">OUT OF 100</text>
+            </svg>
+            <div class="health-info">
+              <div class="health-title">Overall Health: <span style="color:var(--green)">Excellent</span></div>
+              <div class="health-desc">Strong financials, verified identity, uploaded accounts, fast response time and 5-star hygiene rating all contribute to this exceptional score.</div>
+              <div class="hbars">
+                <div class="hbar-row"><span class="hbar-l">Financial Health</span><div class="hbar-track"><div class="hbar-fill" style="width:92%;background:var(--green)"></div></div><span class="hbar-v" style="color:var(--green)">92</span></div>
+                <div class="hbar-row"><span class="hbar-l">Transparency</span><div class="hbar-track"><div class="hbar-fill" style="width:96%;background:var(--green)"></div></div><span class="hbar-v" style="color:var(--green)">96</span></div>
+                <div class="hbar-row"><span class="hbar-l">Seller Trust</span><div class="hbar-track"><div class="hbar-fill" style="width:88%;background:var(--gold)"></div></div><span class="hbar-v" style="color:var(--gold)">88</span></div>
+                <div class="hbar-row"><span class="hbar-l">Location Value</span><div class="hbar-track"><div class="hbar-fill" style="width:90%;background:var(--green)"></div></div><span class="hbar-v" style="color:var(--green)">90</span></div>
+                <div class="hbar-row"><span class="hbar-l">Growth Trend</span><div class="hbar-track"><div class="hbar-fill" style="width:78%;background:var(--gold)"></div></div><span class="hbar-v" style="color:var(--gold)">78</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="score-grid">
+            <div class="sc"><span class="sc-icon">⭐</span><div><div class="sc-name">Hygiene Rating</div><div class="sc-track"><div class="sc-fill" style="width:100%;background:var(--green)"></div></div><div class="sc-val" style="color:var(--green)">5 Stars — Excellent</div></div></div>
+            <div class="sc"><span class="sc-icon">💬</span><div><div class="sc-name">Response Speed</div><div class="sc-track"><div class="sc-fill" style="width:90%;background:var(--green)"></div></div><div class="sc-val" style="color:var(--green)">Replies in under 2 hours</div></div></div>
+            <div class="sc"><span class="sc-icon">📄</span><div><div class="sc-name">Documents Available</div><div class="sc-track"><div class="sc-fill" style="width:100%;background:var(--blue)"></div></div><div class="sc-val" style="color:var(--blue)">Accounts · Lease · Cert</div></div></div>
+            <div class="sc"><span class="sc-icon">🔐</span><div><div class="sc-name">Seller Verification</div><div class="sc-track"><div class="sc-fill" style="width:100%;background:var(--green)"></div></div><div class="sc-val" style="color:var(--green)">ID Verified via Stripe</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAR CHART — WEEKLY TURNOVER -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📊 Weekly Turnover — Last 12 Months</span><span class="ph-s">£000s per week average</span></div>
+        <div class="pb">
+          <div class="bchart" id="pBars"></div>
+          <div class="bbar-lbls" id="pLabels"></div>
+          <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;align-items:center">
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--m1)"><div style="width:12px;height:12px;background:var(--green);border-radius:3px;opacity:0.8"></div>Weekly Turnover (£000s)</div>
+            <div style="background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.15);color:var(--green);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px">↑ Growing — up 14% vs last year</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEATMAP -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">🔥 Busiest Times — When Money Comes In</span><span class="ph-s">Hover any cell for detail</span></div>
+        <div class="pb">
+          <div class="hm-days"><span class="hm-day">Mon</span><span class="hm-day">Tue</span><span class="hm-day">Wed</span><span class="hm-day">Thu</span><span class="hm-day">Fri</span><span class="hm-day">Sat</span><span class="hm-day">Sun</span></div>
+          <div class="hm-grid" id="hmGrid"></div>
+          <div class="hm-legend">
+            <span>Quiet</span>
+            <div style="display:flex;gap:3px">
+              <div class="hm-swatch" style="background:#1a2a3a"></div>
+              <div class="hm-swatch" style="background:#1e4060"></div>
+              <div class="hm-swatch" style="background:#1a6a44"></div>
+              <div class="hm-swatch" style="background:#28a86a"></div>
+              <div class="hm-swatch" style="background:#2dd4a0"></div>
+            </div>
+            <span>Busiest</span>
+            <span style="margin-left:auto;color:var(--green);font-weight:600;font-size:13px">🟢 Fri & Sat evenings peak</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAUGES -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">⚙️ How Easy Is This Business to Run?</span></div>
+        <div class="pb">
+          <div class="gauge-row">
+            <div class="gauge">
+              <svg width="100" height="62" viewBox="0 0 100 62">
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-track"/>
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-fill" stroke="var(--green)" stroke-dasharray="120" stroke-dashoffset="72"/>
+                <text x="50" y="48" text-anchor="middle" class="gauge-value-text" fill="var(--green)">Low</text>
+              </svg>
+              <div class="gauge-lbl">Owner Dependency</div>
+              <div class="gauge-sub">Management team in place. Can run without owner daily.</div>
+            </div>
+            <div class="gauge">
+              <svg width="100" height="62" viewBox="0 0 100 62">
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-track"/>
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-fill" stroke="var(--green)" stroke-dasharray="120" stroke-dashoffset="18"/>
+                <text x="50" y="48" text-anchor="middle" class="gauge-value-text" fill="var(--green)">Long</text>
+              </svg>
+              <div class="gauge-lbl">Lease Remaining</div>
+              <div class="gauge-sub">18 years left. Excellent long-term security.</div>
+            </div>
+            <div class="gauge">
+              <svg width="100" height="62" viewBox="0 0 100 62">
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-track"/>
+                <path d="M12,56 A38,38,0,0,1,88,56" class="gauge-arc-fill" stroke="var(--gold)" stroke-dasharray="120" stroke-dashoffset="50"/>
+                <text x="50" y="48" text-anchor="middle" class="gauge-value-text" fill="var(--gold)">Med</text>
+              </svg>
+              <div class="gauge-lbl">Growth Potential</div>
+              <div class="gauge-sub">Delivery platforms not yet used — clear upside.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVENUE DONUT -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">💰 Where the Money Comes From</span><span class="ph-s">Weekly revenue breakdown</span></div>
+        <div class="pb">
+          <div class="donut-wrap">
+            <div class="donut-svg-wrap">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="38" fill="none" stroke="var(--gold)" stroke-width="20" stroke-dasharray="107 239" stroke-dashoffset="0" transform="rotate(-90,55,55)"/>
+                <circle cx="55" cy="55" r="38" fill="none" stroke="var(--green)" stroke-width="20" stroke-dasharray="72 239" stroke-dashoffset="-107" transform="rotate(-90,55,55)"/>
+                <circle cx="55" cy="55" r="38" fill="none" stroke="var(--blue)" stroke-width="20" stroke-dasharray="36 239" stroke-dashoffset="-179" transform="rotate(-90,55,55)"/>
+                <circle cx="55" cy="55" r="38" fill="none" stroke="var(--purple)" stroke-width="20" stroke-dasharray="24 239" stroke-dashoffset="-215" transform="rotate(-90,55,55)"/>
+              </svg>
+              <div class="donut-center"><span class="dc-n">£18k</span><span class="dc-l">per week</span></div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl"><div class="dl-dot" style="background:var(--gold)"></div><span class="dl-name">Bar & Drinks</span><span class="dl-val">£8,100<span class="dl-pct">45%</span></span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--green)"></div><span class="dl-name">Food</span><span class="dl-val">£5,400<span class="dl-pct">30%</span></span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--blue)"></div><span class="dl-name">Live Events</span><span class="dl-val">£2,700<span class="dl-pct">15%</span></span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-name">Private Hire</span><span class="dl-val">£1,800<span class="dl-pct">10%</span></span></div>
+            </div>
+          </div>
+          <div class="insight gold">💡 <strong>Buyer opportunity:</strong> Delivery platforms not yet used. Adding Deliveroo/Uber Eats could add £1,500–£2,500 per week.</div>
+        </div>
+      </div>
+
+      <!-- COMPARABLE SALES -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📊 What Similar Businesses Sold For</span><span class="ph-s">Verified sales data</span></div>
+        <div class="pb">
+          <div class="comp-item"><span class="comp-em">🍺</span><div class="comp-info"><div class="comp-name">Sports Bar · Canterbury, Kent</div><div class="comp-detail">1,800 ft² · £14k p/w · Leasehold</div></div><div><div class="comp-price">£248,000</div><div class="comp-date">Jan 2026</div></div></div>
+          <div class="comp-item"><span class="comp-em">🍺</span><div class="comp-info"><div class="comp-name">Pub & Grill · Chatham, Kent</div><div class="comp-detail">2,100 ft² · £16k p/w · Leasehold</div></div><div><div class="comp-price">£265,000</div><div class="comp-date">Nov 2025</div></div></div>
+          <div class="comp-item"><span class="comp-em">🍺</span><div class="comp-info"><div class="comp-name">Bar Restaurant · Tunbridge Wells</div><div class="comp-detail">2,400 ft² · £20k p/w · Freehold</div></div><div><div class="comp-price">£310,000</div><div class="comp-date">Sep 2025</div></div></div>
+          <div class="range-wrap">
+            <div class="range-row"><span>Comparable range</span><strong style="color:var(--gold)">This listing: £275,000</strong></div>
+            <div class="range-track"><div class="range-fill" style="left:0;width:100%"></div><div class="range-marker" style="left:55%"></div></div>
+            <div class="range-vals"><span>£230k</span><span style="color:var(--gold);font-weight:700">£275k ← This listing</span><span>£320k</span></div>
+          </div>
+          <div class="insight gold">This listing is <strong>priced in line with the market</strong> — justified by the 2024 refurbishment and higher turnover.</div>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📖 The Business Story</span></div>
+        <div class="pb">
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div><span class="tl-year">2010</span><div class="tl-text"><strong>Founded</strong> as a traditional pub. Built loyal local following in first 2 years.</div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div><span class="tl-year">2016</span><div class="tl-text"><strong>Converted to sports bar</strong> — 8 screens, live sports licence. Revenue up 40%.</div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div><span class="tl-year">2020</span><div class="tl-text"><strong>Survived pandemic</strong> through delivery and private hire — strong resilience shown.</div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-line"></div></div><span class="tl-year">2024</span><div class="tl-text"><strong>Full £60,000 refurbishment</strong> — 18 screens, new kitchen, beer garden, cellar. 5-star hygiene.</div></div>
+          <div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:var(--blue)"></div></div><span class="tl-year">2026</span><div class="tl-text"><strong>Listed for sale</strong> — owner retiring after 14 years. Full handover offered.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="side-col">
+      <div class="side-panel">
+        <div class="price-block">
+          <span class="pb-lbl">Asking Price</span>
+          <span class="pb-price">£275,000</span>
+          <span class="pb-type">Leasehold · 18 years remaining</span>
+          <div class="pb-turn"><span class="pb-t-l">Weekly Turnover</span><span class="pb-t-v">£18,000 per week</span></div>
+        </div>
+        <div class="enq-form">
+          <div class="ef-title">🔒 Request Full Details</div>
+          <div class="ef-row">
+            <div class="ef-g"><label class="ef-l">First Name</label><input class="ef-i" id="enqFirst" placeholder="John"></div>
+            <div class="ef-g"><label class="ef-l">Last Name</label><input class="ef-i" id="enqLast" placeholder="Smith"></div>
+          </div>
+          <div class="ef-g"><label class="ef-l">Email</label><input class="ef-i" id="enqEmail" type="email" placeholder="john@example.com"></div>
+          <div class="ef-g"><label class="ef-l">Phone</label><input class="ef-i" id="enqPhone" placeholder="07700 000 000"></div>
+          <button class="ef-btn" id="enqBtn" onclick="submitEnquiry()">Send Enquiry →</button>
+          <p class="ef-note">Free · Seller notified by SMS instantly</p>
+        </div>
+        <div class="trust-list">
+          <div class="tl-row"><span class="tl-ico">🔐</span><span><strong>ID Verified</strong> seller via Stripe</span></div>
+          <div class="tl-row"><span class="tl-ico">⭐</span><span><strong>5-Star</strong> Food Hygiene Rating</span></div>
+          <div class="tl-row"><span class="tl-ico">💬</span><span>Responds in <strong>under 2 hours</strong></span></div>
+          <div class="tl-row"><span class="tl-ico">📄</span><span>Full <strong>accounts on request</strong></span></div>
+        </div>
+        <div class="seller-block">
+          <div class="sb-row"><div class="sb-av">👤</div><div><div class="sb-name">Listed by Owner</div><div class="sb-stat">14 years · Retiring</div><div class="sb-verified">✓ ID Verified Seller</div></div></div>
+          <div class="sb-resp"><span>Avg response time</span><span class="sb-resp-v">1.8 hours</span></div>
+        </div>
+        <div class="docs-block">
+          <div class="docs-title">🔒 Documents (Hidden from public)</div>
+          <div class="doc-row"><span class="doc-ico">📄</span><span class="doc-name">Business Accounts (3 yrs)</span><span class="doc-badge">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">📋</span><span class="doc-name">Lease Agreement</span><span class="doc-badge">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">⭐</span><span class="doc-name">Hygiene Certificate</span><span class="doc-badge">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">🍺</span><span class="doc-name">Premises Licence</span><span class="doc-badge">HIDDEN</span></div>
+          <button class="doc-btn" onclick="requestDocs()">🔓 Request Document Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PHOTOS TAB (physical) ── -->
+  <div class="wrap" id="pv-photos" style="display:none">
+    <div class="main-col">
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📷 Business Photos</span><span class="ph-s">8 photos · Click arrows to browse</span></div>
+        <div class="pb">
+          <div class="gallery-main">
+            <div class="gm-bg"><span class="gm-em" id="mainEmoji">🍺</span></div>
+            <div class="gm-prev" onclick="prevPhoto()">‹</div>
+            <div class="gm-next" onclick="nextPhoto()">›</div>
+            <div class="gm-label" id="photoLabel">Main bar area — evening setup</div>
+            <div class="gm-count" id="photoCount">1 / 8</div>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+          <div class="insight gold" style="margin-top:14px">💡 <strong>Tip:</strong> Request access to full-resolution photos and floor plan via the enquiry form.</div>
+        </div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="side-panel">
+        <div class="price-block">
+          <span class="pb-lbl">Asking Price</span>
+          <span class="pb-price">£275,000</span>
+          <span class="pb-type">Leasehold · 18 years</span>
+        </div>
+        <div class="enq-form">
+          <div class="ef-title">Enquire About This Listing</div>
+          <div class="ef-g"><label class="ef-l">Email</label><input class="ef-i" type="email" placeholder="john@example.com"></div>
+          <div class="ef-g"><label class="ef-l">Phone</label><input class="ef-i" placeholder="07700 000 000"></div>
+          <button class="ef-btn" onclick="alert('Enquiry sent!')">Send Enquiry →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VIDEO TAB (physical) ── -->
+  <div class="wrap" id="pv-video" style="display:none">
+    <div class="main-col">
+      <div class="panel">
+        <div class="ph"><span class="ph-t">🎥 Video Tour</span><span class="ph-s">7-minute walkthrough · March 2026</span></div>
+        <div class="pb">
+          <div class="video-container" id="vidContainer">
+            <div class="vc-overlay">
+              <div class="vc-em">🍺</div>
+              <div class="play-btn" onclick="startVideo()">▶</div>
+              <div class="vc-title">Full Business Walkthrough</div>
+              <div class="vc-sub">Bar · Kitchen · Beer Garden · Cellar · Office</div>
+              <div class="vc-duration">7:24</div>
+            </div>
+          </div>
+          <div class="video-player" id="vidPlayer">
+            <div class="vp-screen"><div class="vp-em">🍺</div><div class="vp-playing-lbl" id="nowPlaying">▶ Now showing: Main bar area</div></div>
+            <div class="vp-controls">
+              <button class="vp-play" id="vpBtn" onclick="togglePlay()">⏸</button>
+              <div class="vp-bar" onclick="seekVid(event)"><div class="vp-progress" id="vpProg"></div></div>
+              <span class="vp-time" id="vpTime">0:00 / 7:24</span>
+              <span style="font-size:16px;cursor:pointer;color:var(--m1)">🔊</span>
+            </div>
+          </div>
+          <div style="margin-top:18px">
+            <div style="font-size:12px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Chapters — Click to Jump</div>
+            <div class="chapter active" onclick="jumpTo(this,'Main Bar Area',0)"><span class="ch-time">0:00</span><span class="ch-icon">🍺</span><div><div class="ch-name">Main Bar Area</div><div class="ch-desc">18 screens, bar counter, seating for 80</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+            <div class="chapter" onclick="jumpTo(this,'Commercial Kitchen',25)"><span class="ch-time">1:45</span><span class="ch-icon">🍳</span><div><div class="ch-name">Commercial Kitchen</div><div class="ch-desc">Full equipment, extraction system</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+            <div class="chapter" onclick="jumpTo(this,'Beer Garden',45)"><span class="ch-time">3:12</span><span class="ch-icon">🌿</span><div><div class="ch-name">Beer Garden</div><div class="ch-desc">New decking, 40 covers, all-weather cover</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+            <div class="chapter" onclick="jumpTo(this,'Cellar & Storage',65)"><span class="ch-time">4:50</span><span class="ch-icon">🏚️</span><div><div class="ch-name">Cellar & Storage</div><div class="ch-desc">Temperature-controlled, full barrel setup</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+            <div class="chapter" onclick="jumpTo(this,'Office & Back of House',80)"><span class="ch-time">5:58</span><span class="ch-icon">💼</span><div><div class="ch-name">Office & Back of House</div><div class="ch-desc">EPOS, safe, staff facilities</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+            <div class="chapter" onclick="jumpTo(this,'Owner Summary',90)"><span class="ch-time">6:40</span><span class="ch-icon">🎤</span><div><div class="ch-name">Owner Summary</div><div class="ch-desc">Why selling, handover offer</div></div><span style="color:var(--m2);font-size:14px">▶</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="side-panel">
+        <div class="price-block"><span class="pb-lbl">Asking Price</span><span class="pb-price">£275,000</span></div>
+        <div class="enq-form">
+          <div class="ef-title">Enquire Now</div>
+          <div class="ef-g"><label class="ef-l">Email</label><input class="ef-i" type="email" placeholder="john@example.com"></div>
+          <button class="ef-btn" onclick="alert('Enquiry sent!')">Send Enquiry →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DESCRIPTION TAB (physical) ── -->
+  <div class="wrap" id="pv-desc" style="display:none">
+    <div class="main-col">
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📖 Full Business Description</span><span class="ph-s">AI-written from seller interview · Seller approved</span></div>
+        <div class="pb">
+          <div class="desc-body">
+            <p>This is a <strong>rare opportunity to acquire a thriving, fully refurbished sports bar and restaurant</strong> in a prime Maidstone high street location. Established in 2010 and comprehensively refurbished in 2024 at a cost of £60,000, the business is presented in exceptional condition and is ready for immediate trade under new ownership.</p>
+            <p>The premises extend to approximately <strong>2,250 square feet</strong> comprising a main bar with 80 covers, fully equipped commercial kitchen, private function room for 30 guests, a new beer garden with all-weather cover, and a temperature-controlled cellar. Held on a <strong>secure 18-year leasehold</strong> at a competitive rent, with rent review not due for 3 years.</p>
+            <p>Trading 7 days a week, the business generates a consistent <strong>weekly turnover of approximately £18,000</strong>, with peak revenue Thursday–Saturday driven by live sports events. Full premises licence including 24-hour alcohol, entertainment and late-night refreshment. <strong>5-Star FSA hygiene rating</strong>.</p>
+            <p>The business employs <strong>12 staff</strong> — 2 full-time managers, 4 full-time bar/kitchen, 6 part-time — all expected to remain under TUPE. Owner works 3 days per week supervisory. <strong>Up to 8 weeks handover</strong> offered. All equipment included: 18 screens, commercial kitchen, EPOS system, DJ booth, all furniture.</p>
+            <p>The owner is selling after 14 years due to retirement and is highly motivated to find the right buyer to continue the business's excellent reputation.</p>
+          </div>
+          <div class="desc-highlights">
+            <div class="dh"><span class="dh-icon">📍</span><div><div class="dh-title">Prime Location</div><div class="dh-text">High street position with strong passing trade and loyal customer base</div></div></div>
+            <div class="dh"><span class="dh-icon">🔑</span><div><div class="dh-title">18-Year Lease</div><div class="dh-text">Secure tenure, competitive rent, next review in 3 years</div></div></div>
+            <div class="dh"><span class="dh-icon">👥</span><div><div class="dh-title">12 Staff in Place</div><div class="dh-text">TUPE transfer — all staff expected to remain</div></div></div>
+            <div class="dh"><span class="dh-icon">🛠️</span><div><div class="dh-title">£60k Refurb 2024</div><div class="dh-text">New kitchen, 18 screens, beer garden — nothing to spend</div></div></div>
+            <div class="dh"><span class="dh-icon">📺</span><div><div class="dh-title">Full Licences</div><div class="dh-text">24hr alcohol, entertainment, late-night — all in place</div></div></div>
+            <div class="dh"><span class="dh-icon">📈</span><div><div class="dh-title">Growth Opportunity</div><div class="dh-text">Delivery platforms not yet used — est. £1,500–£2,500/week upside</div></div></div>
+          </div>
+          <div class="desc-tags">
+            <span class="dtag">🍺 Fully Licensed</span><span class="dtag">📺 Live Sports</span><span class="dtag">🌿 Beer Garden</span>
+            <span class="dtag">👥 TUPE Staff</span><span class="dtag">🏆 5-Star Hygiene</span><span class="dtag">🔑 18-Year Lease</span>
+            <span class="dtag">🛠️ Refurb 2024</span><span class="dtag">📦 All Equipment Included</span><span class="dtag">🎤 Handover Offered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="side-panel">
+        <div class="price-block"><span class="pb-lbl">Asking Price</span><span class="pb-price">£275,000</span><span class="pb-type">Leasehold · 18 years</span></div>
+        <div class="enq-form">
+          <div class="ef-title">Enquire Now</div>
+          <div class="ef-g"><label class="ef-l">Email</label><input class="ef-i" type="email" placeholder="john@example.com"></div>
+          <div class="ef-g"><label class="ef-l">Phone</label><input class="ef-i" placeholder="07700 000 000"></div>
+          <button class="ef-btn" onclick="alert('Enquiry sent!')">Send Enquiry →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /pv -->
+
+
+<!-- ═══════════ DIGITAL ═══════════ -->
+<div id="dv" style="display:none">
+  <div class="wrap" id="dv-overview">
+    <div class="main-col">
+
+      <!-- HERO digital -->
+      <div class="lhero">
+        <div class="lvis" style="background:linear-gradient(135deg,#12000e,#280018,#0d000a)">
+          <div class="lvis-em" style="color:var(--pink)">📸</div>
+          <div class="lvis-badges">
+            <span class="badge bp">📸 Instagram</span>
+            <span class="badge bg">✓ Stats Auto-Verified</span>
+            <span class="badge bg">✓ Seller ID Verified</span>
+            <span class="badge bb">⚡ Escrow Protected</span>
+          </div>
+          <div class="ring-wrap">
+            <svg width="54" height="54" viewBox="0 0 54 54" style="overflow:visible;display:block">
+              <circle cx="27" cy="27" r="21" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+              <circle cx="27" cy="27" r="21" fill="none" stroke="var(--purple)" stroke-width="6"
+                stroke-dasharray="132" stroke-dashoffset="14"
+                stroke-linecap="round" transform="rotate(-90 27 27)"/>
+              <text x="27" y="24" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="13" font-weight="700" fill="var(--purple)">89</text>
+              <text x="27" y="35" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.4)" font-weight="600">HEALTH</text>
+            </svg>
+            <div><span class="ring-info-label">Channel Health</span><span class="ring-info-val" style="color:var(--purple)">Strong</span></div>
+          </div>
+        </div>
+        <div class="lbody">
+          <div class="lsector" style="color:var(--purple)">⚡ Instagram Page · Beauty & Lifestyle</div>
+          <div class="ltitle">Beauty Instagram Account · 220k Followers</div>
+          <div class="lloc">🌐 UK-based audience · 73% female · Ages 18–34 · 4 years old</div>
+        </div>
+        <div class="kn-bar">
+          <div class="kn"><span class="kn-v" style="color:var(--pink)">220k</span><span class="kn-l">Followers</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--green)">£2,800</span><span class="kn-l">Monthly Revenue</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--blue)">6.2%</span><span class="kn-l">Engagement Rate</span></div>
+          <div class="kn"><span class="kn-v" style="color:var(--purple)">4 Yrs</span><span class="kn-l">Account Age</span></div>
+        </div>
+      </div>
+
+      <!-- PLATFORM VERIFIED -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">✅ Platform-Verified Stats</span><span class="ph-s">Live data from Instagram API — not self-reported</span></div>
+        <div class="pb">
+          <div class="plat-verified">
+            <span class="pv-icon">📸</span>
+            <div><div class="pv-name">Instagram — Connected & Verified</div><div class="pv-status"><div class="pv-dot"></div>Live data as of today</div></div>
+            <div class="pv-stats"><span class="pv-num" style="color:var(--purple)">220,483</span><span class="pv-lbl">Followers (real-time)</span></div>
+          </div>
+          <div class="score-grid">
+            <div class="sc"><span class="sc-icon">👥</span><div><div class="sc-name">Follower Authenticity</div><div class="sc-track"><div class="sc-fill" style="width:92%;background:var(--green)"></div></div><div class="sc-val" style="color:var(--green)">92% real followers</div></div></div>
+            <div class="sc"><span class="sc-icon">💬</span><div><div class="sc-name">Engagement Rate</div><div class="sc-track"><div class="sc-fill" style="width:77%;background:var(--purple)"></div></div><div class="sc-val" style="color:var(--purple)">6.2% — Above average</div></div></div>
+            <div class="sc"><span class="sc-icon">📈</span><div><div class="sc-name">Follower Growth</div><div class="sc-track"><div class="sc-fill" style="width:68%;background:var(--gold)"></div></div><div class="sc-val" style="color:var(--gold)">+3,200/month avg</div></div></div>
+            <div class="sc"><span class="sc-icon">🎯</span><div><div class="sc-name">Niche Consistency</div><div class="sc-track"><div class="sc-fill" style="width:95%;background:var(--green)"></div></div><div class="sc-val" style="color:var(--green)">Beauty · Lifestyle</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIGITAL BAR CHART — follower growth -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">📊 Follower Growth — Last 12 Months</span><span class="ph-s">Thousands of followers per month</span></div>
+        <div class="pb">
+          <div class="bchart" id="dBars"></div>
+          <div class="bbar-lbls" id="dLabels"></div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <div style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.15);color:var(--purple);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px">↑ +38k followers in 12 months</div>
+            <div style="background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.15);color:var(--green);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px">✓ No bought followers detected</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIENCE DEMOGRAPHICS -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">👥 Audience Demographics</span><span class="ph-s">API verified data</span></div>
+        <div class="pb" style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+          <div>
+            <div class="demo-section">
+              <div class="demo-title">Gender Split</div>
+              <div class="demo-row"><span class="demo-label">Female</span><div class="demo-track"><div class="demo-fill" style="width:73%;background:var(--pink)"></div></div><span class="demo-val">73%</span></div>
+              <div class="demo-row"><span class="demo-label">Male</span><div class="demo-track"><div class="demo-fill" style="width:27%;background:var(--blue)"></div></div><span class="demo-val">27%</span></div>
+            </div>
+            <div class="demo-section">
+              <div class="demo-title">Age Breakdown</div>
+              <div class="demo-row"><span class="demo-label">18–24</span><div class="demo-track"><div class="demo-fill" style="width:38%;background:var(--purple)"></div></div><span class="demo-val">38%</span></div>
+              <div class="demo-row"><span class="demo-label">25–34</span><div class="demo-track"><div class="demo-fill" style="width:35%;background:var(--purple)"></div></div><span class="demo-val">35%</span></div>
+              <div class="demo-row"><span class="demo-label">35–44</span><div class="demo-track"><div class="demo-fill" style="width:18%;background:var(--blue)"></div></div><span class="demo-val">18%</span></div>
+              <div class="demo-row"><span class="demo-label">45+</span><div class="demo-track"><div class="demo-fill" style="width:9%;background:var(--m2)"></div></div><span class="demo-val">9%</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="demo-section">
+              <div class="demo-title">Top Locations</div>
+              <div class="demo-row"><span class="demo-label">UK</span><div class="demo-track"><div class="demo-fill" style="width:62%;background:var(--green)"></div></div><span class="demo-val">62%</span></div>
+              <div class="demo-row"><span class="demo-label">USA</span><div class="demo-track"><div class="demo-fill" style="width:18%;background:var(--blue)"></div></div><span class="demo-val">18%</span></div>
+              <div class="demo-row"><span class="demo-label">Australia</span><div class="demo-track"><div class="demo-fill" style="width:8%;background:var(--gold)"></div></div><span class="demo-val">8%</span></div>
+              <div class="demo-row"><span class="demo-label">Other</span><div class="demo-track"><div class="demo-fill" style="width:12%;background:var(--m2)"></div></div><span class="demo-val">12%</span></div>
+            </div>
+            <div class="insight pu" style="margin-top:0">💡 <strong>62% UK audience</strong> is highly valuable for UK beauty brands seeking sponsored posts.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVENUE BAR CHART -->
+      <div class="panel">
+        <div class="ph"><span class="ph-t">💰 Monthly Revenue — Last 12 Months</span><span class="ph-s">Verified earnings in £</span></div>
+        <div class="pb">
+          <div class="bchart" id="rBars"></div>
+          <div class="bbar-lbls" id="rLabels"></div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center">
+            <div style="background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.15);color:var(--green);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px">↑ Revenue up 28% year on year</div>
+            <div style="font-size:13px;color:var(--m1)">Range: £1,800 – £3,400/mo</div>
+          </div>
+          <!-- Revenue breakdown donut -->
+          <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--b1)">
+            <div style="font-size:12px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px">Revenue by Source</div>
+            <div class="donut-wrap">
+              <div class="donut-svg-wrap">
+                <svg width="110" height="110" viewBox="0 0 110 110">
+                  <circle cx="55" cy="55" r="38" fill="none" stroke="var(--pink)" stroke-width="20" stroke-dasharray="96 239" stroke-dashoffset="0" transform="rotate(-90,55,55)"/>
+                  <circle cx="55" cy="55" r="38" fill="none" stroke="var(--purple)" stroke-width="20" stroke-dasharray="60 239" stroke-dashoffset="-96" transform="rotate(-90,55,55)"/>
+                  <circle cx="55" cy="55" r="38" fill="none" stroke="var(--gold)" stroke-width="20" stroke-dasharray="48 239" stroke-dashoffset="-156" transform="rotate(-90,55,55)"/>
+                  <circle cx="55" cy="55" r="38" fill="none" stroke="var(--blue)" stroke-width="20" stroke-dasharray="36 239" stroke-dashoffset="-204" transform="rotate(-90,55,55)"/>
+                </svg>
+                <div class="donut-center"><span class="dc-n">£2.8k</span><span class="dc-l">per month</span></div>
+              </div>
+              <div class="donut-legend">
+                <div class="dl"><div class="dl-dot" style="background:var(--pink)"></div><span class="dl-name">Brand Sponsorships</span><span class="dl-val">£1,120<span class="dl-pct">40%</span></span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-name">Affiliate Commissions</span><span class="dl-val">£700<span class="dl-pct">25%</span></span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--gold)"></div><span class="dl-name">Instagram Shop</span><span class="dl-val">£560<span class="dl-pct">20%</span></span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--blue)"></div><span class="dl-name">Content Licensing</span><span class="dl-val">£420<span class="dl-pct">15%</span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="insight pu">💡 <strong>Growth opportunity:</strong> TikTok and YouTube Shorts not yet used. Could add £600–£1,200/month.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR digital -->
+    <div class="side-col">
+      <div class="side-panel">
+        <div class="price-block" style="background:linear-gradient(135deg,rgba(167,139,250,0.07),rgba(96,165,250,0.03))">
+          <span class="pb-lbl">Asking Price</span>
+          <span class="pb-price d">£28,000</span>
+          <span class="pb-type">Digital asset · Escrow protected</span>
+          <div class="pb-turn" style="border-color:rgba(167,139,250,0.12)"><span class="pb-t-l">Monthly Revenue</span><span class="pb-t-v" style="color:var(--purple)">£2,800 per month</span></div>
+        </div>
+        <div class="enq-form">
+          <div class="ef-title">⚡ Request Analytics Access</div>
+          <div class="ef-row">
+            <div class="ef-g"><label class="ef-l">First Name</label><input class="ef-i" placeholder="John"></div>
+            <div class="ef-g"><label class="ef-l">Last Name</label><input class="ef-i" placeholder="Smith"></div>
+          </div>
+          <div class="ef-g"><label class="ef-l">Email</label><input class="ef-i" type="email" placeholder="john@example.com"></div>
+          <div class="ef-g"><label class="ef-l">Phone</label><input class="ef-i" placeholder="07700 000 000"></div>
+          <button class="ef-btn d" onclick="alert('Sent! Full analytics access granted once seller approves.')">Request Full Analytics →</button>
+          <p class="ef-note">Free · Escrow protected · Safe transfer</p>
+        </div>
+        <div class="trust-list">
+          <div class="tl-row"><span class="tl-ico">✅</span><span><strong>Stats verified</strong> from Instagram API</span></div>
+          <div class="tl-row"><span class="tl-ico">🔐</span><span><strong>ID Verified</strong> seller via Stripe</span></div>
+          <div class="tl-row"><span class="tl-ico">💰</span><span><strong>Escrow protected</strong> transfer</span></div>
+          <div class="tl-row"><span class="tl-ico">🔄</span><span>Guided <strong>account handover</strong></span></div>
+        </div>
+        <div class="docs-block" style="background:rgba(167,139,250,0.03);border-top-color:rgba(167,139,250,0.1)">
+          <div class="docs-title" style="color:var(--purple)">🔒 Available to Approved Buyers</div>
+          <div class="doc-row"><span class="doc-ico">📊</span><span class="doc-name">Full Analytics Dashboard</span><span class="doc-badge" style="background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.18)">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">💰</span><span class="doc-name">Brand Deal Contracts</span><span class="doc-badge" style="background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.18)">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">📧</span><span class="doc-name">Email List (8,400 subs)</span><span class="doc-badge" style="background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.18)">HIDDEN</span></div>
+          <div class="doc-row"><span class="doc-ico">🔑</span><span class="doc-name">Account Credentials</span><span class="doc-badge" style="background:rgba(45,212,160,0.1);color:var(--green);border-color:rgba(45,212,160,0.18)">ESCROW</span></div>
+          <button class="doc-btn pu" onclick="alert('Access requested! Seller will review within 4 hours.')">🔓 Request Full Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /dv -->
+
+<script>
+// ── MODE SWITCH ──
+function switchMode(m){
+  document.getElementById('pv').style.display = m==='physical' ? 'block' : 'none'
+  document.getElementById('dv').style.display = m==='digital' ? 'block' : 'none'
+  document.getElementById('mp').className = 'mt' + (m==='physical' ? ' on' : '')
+  document.getElementById('md').className = 'mt d' + (m==='digital' ? ' on' : '')
+  if(m==='digital') buildDigitalCharts()
+  else buildPhysicalCharts()
+}
+
+// ── TABS ──
+const ALL_TABS = ['overview','photos','video','desc']
+function showTab(t){
+  ALL_TABS.forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('on', id===t)
+    // physical views
+    const pEl = document.getElementById('pv-'+id)
+    if(pEl) pEl.style.display = id===t ? 'grid' : 'none'
+    // digital only has overview
+    if(id==='overview'){
+      const dEl = document.getElementById('dv-overview')
+      if(dEl) dEl.style.display = id===t ? 'grid' : 'none'
+    }
+  })
+}
+
+// ── BAR CHART ──
+function buildBarChart(cId, lId, data, labels, colorFn){
+  const c = document.getElementById(cId)
+  const l = document.getElementById(lId)
+  if(!c||!l) return
+  c.innerHTML = ''; l.innerHTML = ''
+  const mx = Math.max(...data)
+  data.forEach((v,i) => {
+    const bar = document.createElement('div')
+    bar.className = 'bbar'
+    const pct = Math.round((v/mx)*100)
+    bar.style.cssText = `height:${pct}%;background:${colorFn(i,v,pct)};border-radius:4px 4px 0 0`
+    const tip = document.createElement('div')
+    tip.className = 'bbar-tip'
+    tip.textContent = labels[i] + ': ' + (typeof v === 'number' && v > 1000 ? '£'+v.toLocaleString() : v+'k')
+    bar.appendChild(tip)
+    c.appendChild(bar)
+    const lbl = document.createElement('div')
+    lbl.className = 'bbar-lbl'; lbl.textContent = labels[i]
+    l.appendChild(lbl)
+  })
+}
+
+function buildPhysicalCharts(){
+  const months = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May']
+  const rev = [14,15,16,14,17,16,18,17,19,18,20,18]
+  buildBarChart('pBars','pLabels', rev, months, (i,v,pct) => {
+    const g = Math.round(100+v*7), b = Math.round(180-v*5)
+    return `rgba(45,${g},${b},0.85)`
+  })
+  buildHeatmap()
+}
+
+function buildDigitalCharts(){
+  const months = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May']
+  const growth = [182,185,188,190,194,198,202,207,211,216,219,220]
+  buildBarChart('dBars','dLabels', growth, months, (i,v,pct) => `rgba(167,139,250,${0.4+pct*0.006})`)
+  const rev = [1800,2100,2200,2400,2100,2300,2500,2600,2800,2700,2900,2800]
+  buildBarChart('rBars','rLabels', rev, months, (i,v,pct) => `rgba(45,212,160,${0.4+pct*0.006})`)
+}
+
+// ── HEATMAP ──
+function buildHeatmap(){
+  const grid = document.getElementById('hmGrid')
+  if(!grid) return
+  grid.innerHTML = ''
+  const times = ['8am','12pm','4pm','8pm']
+  const vals = [
+    [0.1,0.1,0.2,0.1,0.2,0.3,0.2],
+    [0.3,0.3,0.4,0.4,0.5,0.6,0.4],
+    [0.2,0.3,0.3,0.4,0.6,0.8,0.5],
+    [0.4,0.5,0.5,0.7,1.0,1.0,0.6],
+  ]
+  const tips = [
+    ['Mon 8am — Slow','Tue 8am — Slow','Wed 8am — Slow','Thu 8am','Fri 8am','Sat 8am','Sun 8am — Closed'],
+    ['Mon noon','Tue noon','Wed noon','Thu noon — Busy','Fri noon — Busy','Sat noon — Busy','Sun noon'],
+    ['Mon 4pm','Tue 4pm','Wed 4pm','Thu 4pm — Sports night 🏆','Fri 4pm — Peak builds','Sat 4pm — Peak','Sun 4pm'],
+    ['Mon 8pm','Tue 8pm','Wed 8pm','Thu 8pm — Live sport 🏆','Fri 8pm — Busiest 🔥','Sat 8pm — Busiest 🔥','Sun 8pm — Wind down'],
+  ]
+  function heatColor(v){
+    if(v<0.25) return `rgba(20,60,90,${0.3+v*1.2})`
+    if(v<0.5)  return `rgba(20,140,100,${0.5+v*0.6})`
+    if(v<0.75) return `rgba(30,190,120,${0.6+v*0.4})`
+    return `rgba(45,212,160,${0.7+v*0.3})`
+  }
+  times.forEach((t,ri) => {
+    const te = document.createElement('div'); te.className='hm-time'; te.textContent=t
+    grid.appendChild(te)
+    vals[ri].forEach((v,ci) => {
+      const cell = document.createElement('div'); cell.className='hm-cell'
+      cell.style.background = heatColor(v)
+      cell.setAttribute('data-tip', tips[ri][ci])
+      grid.appendChild(cell)
+    })
+  })
+}
+
+// ── PHOTOS ──
+const photos = [
+  {em:'🍺',label:'Main bar area — evening setup'},
+  {em:'🍳',label:'Commercial kitchen — full equipment'},
+  {em:'🌿',label:'Beer garden — new decking 2024'},
+  {em:'🚪',label:'Front entrance — double fronted'},
+  {em:'🏚️',label:'Cellar — temperature controlled'},
+  {em:'🎉',label:'Private function room — 30 covers'},
+  {em:'📺',label:'Screen setup — 18 mounted TVs'},
+  {em:'🪑',label:'Main seating — 80 covers'}
+]
+let curPhoto = 0
+
+function buildThumbs(){
+  const t = document.getElementById('thumbs'); if(!t) return; t.innerHTML=''
+  photos.forEach((p,i) => {
+    const d = document.createElement('div')
+    d.className = 'thumb' + (i===0?' active':'')
+    d.textContent = p.em; d.onclick = () => goPhoto(i)
+    t.appendChild(d)
+  })
+}
+function goPhoto(i){
+  curPhoto = i
+  document.getElementById('mainEmoji').textContent = photos[i].em
+  document.getElementById('photoLabel').textContent = photos[i].label
+  document.getElementById('photoCount').textContent = (i+1)+' / '+photos.length
+  document.querySelectorAll('.thumb').forEach((t,j) => t.classList.toggle('active', j===i))
+}
+function nextPhoto(){ goPhoto((curPhoto+1)%photos.length) }
+function prevPhoto(){ goPhoto((curPhoto-1+photos.length)%photos.length) }
+
+// ── VIDEO ──
+let playing=false, progress=0, vpInt
+function startVideo(){
+  document.getElementById('vidContainer').style.display='none'
+  const vp=document.getElementById('vidPlayer'); vp.style.display='flex'; vp.style.flexDirection='column'
+  playing=true; startProg()
+}
+function togglePlay(){
+  playing=!playing
+  document.getElementById('vpBtn').textContent = playing?'⏸':'▶'
+  if(playing) startProg(); else clearInterval(vpInt)
+}
+function startProg(){
+  clearInterval(vpInt)
+  vpInt = setInterval(()=>{
+    if(progress>=100){clearInterval(vpInt);return}
+    progress += 0.25
+    document.getElementById('vpProg').style.width = progress+'%'
+    const total=444, cur=Math.round(total*progress/100)
+    const m=Math.floor(cur/60), s=cur%60
+    document.getElementById('vpTime').textContent = m+':'+(s<10?'0':'')+s+' / 7:24'
+  },200)
+}
+function seekVid(e){
+  const r=e.currentTarget.getBoundingClientRect()
+  progress = ((e.clientX-r.left)/r.width)*100
+  document.getElementById('vpProg').style.width=progress+'%'
+}
+function jumpTo(el,name,pct){
+  document.querySelectorAll('.chapter').forEach(c=>c.classList.remove('active'))
+  el.classList.add('active')
+  progress=pct
+  if(!playing) startVideo()
+  const lbl=document.getElementById('nowPlaying')
+  if(lbl) lbl.textContent='▶ Now showing: '+name
+}
+
+// ── ENQUIRY ──
+async function submitEnquiry(){
+  const btn = document.getElementById('enqBtn')
+  const first = document.getElementById('enqFirst')?.value.trim()
+  const last = document.getElementById('enqLast')?.value.trim()
+  const email = document.getElementById('enqEmail')?.value.trim()
+  const phone = document.getElementById('enqPhone')?.value.trim()
+  if(!first||!email){ alert('Please enter your name and email.'); return }
+  btn.textContent='Sending...'; btn.disabled=true
+  // In production this calls db.sendEnquiry() from supabase-client.js
+  // For now simulate
+  await new Promise(r=>setTimeout(r,1200))
+  btn.textContent='✓ Enquiry Sent!'
+  btn.style.background='var(--green)'; btn.style.color='var(--bg)'
+  setTimeout(()=>alert('✓ Enquiry sent!\n\nThe seller has been notified by SMS and email. You can expect a response within 2 hours.'),100)
+}
+
+function requestDocs(){
+  alert('Document access request sent!\n\nThe seller will review your Buyer Passport and respond within 24 hours. You\'ll receive an email with secure access if approved.')
+}
+
+// ── INIT ──
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{ buildPhysicalCharts(); buildThumbs() }, 80)
+})
+window.addEventListener('resize', ()=>{
+  const isDigital = document.getElementById('dv').style.display !== 'none'
+  isDigital ? buildDigitalCharts() : buildPhysicalCharts()
+})
+</script>
+</body>
+</html>

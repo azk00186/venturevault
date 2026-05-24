@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Business Valuation — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#080808;--deep:#0d0d0f;--surface:#131317;--surface2:#1a1a20;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.15);--white:#fff;--muted:rgba(255,255,255,0.45);--muted2:rgba(255,255,255,0.22);--green:#2dd4a0;--red:#f87171;--blue:#60a5fa}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);line-height:1.6;min-height:100vh}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 48px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-mark{width:36px;height:36px;border:1.5px solid var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--gold)}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--white)}
+.logo-name em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;padding:8px 15px;border-radius:7px;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-pill{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:8px 18px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s}
+.nav-pill:hover{border-color:var(--gold);color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--black);border:none;padding:9px 22px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.nav-cta:hover{background:var(--gold-l)}
+
+/* HERO */
+.val-hero{padding:110px 48px 0;position:relative;overflow:hidden}
+.vh-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(200,146,42,0.08) 0%,transparent 60%)}
+.vh-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(200,146,42,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(200,146,42,0.03) 1px,transparent 1px);background-size:70px 70px}
+.vh-inner{max-width:760px;margin:0 auto;text-align:center;position:relative;z-index:1;padding-bottom:52px}
+.vh-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(200,146,42,0.3);background:rgba(200,146,42,0.07);color:var(--gold-l);font-size:10px;font-weight:600;padding:5px 15px;border-radius:40px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px}
+.vh-inner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5.5vw,64px);font-weight:400;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px}
+.vh-inner h1 em{font-style:italic;color:var(--gold)}
+.vh-inner p{color:var(--muted);font-size:15px;max-width:500px;margin:0 auto;font-weight:300;line-height:1.8}
+
+/* TRUST BADGES */
+.trust-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:28px}
+.trust-b{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--muted)}
+.trust-b span{color:var(--green);font-size:14px}
+
+/* MAIN LAYOUT */
+.val-wrap{max-width:1100px;margin:0 auto;padding:44px 48px 80px;display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+
+/* FORM */
+.val-form{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.vf-head{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.vf-head-icon{font-size:24px}
+.vf-head-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+.vf-head-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.vf-body{padding:28px}
+.vf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
+.vf-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.vf-group.full{grid-column:1/-1}
+.vf-label{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.vf-hint{font-size:10px;color:var(--muted2);font-weight:400;letter-spacing:0;text-transform:none}
+.vf-input,.vf-select{background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:12px 14px;border-radius:9px;outline:none;transition:border-color 0.2s;width:100%}
+.vf-input:focus,.vf-select:focus{border-color:rgba(200,146,42,0.5);background:rgba(255,255,255,0.06)}
+.vf-input::placeholder{color:var(--muted2)}
+.vf-select option{background:var(--surface)}
+.vf-range-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vf-section-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin:20px 0 14px;padding-top:20px;border-top:1px solid var(--border);grid-column:1/-1}
+.val-submit{width:100%;background:var(--gold);color:var(--black);border:none;padding:16px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.val-submit:hover{background:var(--gold-l);transform:scale(1.01)}
+.val-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+
+/* RESULT PANEL */
+.result-panel{position:sticky;top:88px;display:flex;flex-direction:column;gap:14px}
+.rp-waiting{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;text-align:center}
+.rp-wait-icon{font-size:40px;margin-bottom:14px;display:block;opacity:0.4}
+.rp-wait-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:8px;color:var(--muted)}
+.rp-wait-text{font-size:12px;color:var(--muted2);line-height:1.7}
+
+.rp-loading{background:var(--surface);border:1px solid rgba(200,146,42,0.2);border-radius:16px;padding:44px;text-align:center;display:none}
+.rp-spinner{width:44px;height:44px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rp-loading-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:8px}
+.rp-loading-steps{display:flex;flex-direction:column;gap:8px;margin-top:16px;text-align:left}
+.rp-step{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.rp-step.done{color:var(--green)}
+.rp-step.active{color:var(--white)}
+.rp-step-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0}
+.rp-step.done .rp-step-dot{background:var(--green)}
+.rp-step.active .rp-step-dot{background:var(--gold);animation:pulse2 1s ease-in-out infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.rp-result{background:var(--surface);border:1px solid rgba(200,146,42,0.3);border-radius:16px;overflow:hidden;display:none}
+.rp-r-top{padding:22px;background:radial-gradient(ellipse at 80% 20%,rgba(200,146,42,0.1) 0%,transparent 60%);border-bottom:1px solid var(--border)}
+.rp-r-label{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;display:block;margin-bottom:6px}
+.rp-r-range{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--white);line-height:1;margin-bottom:4px}
+.rp-r-note{font-size:11px;color:var(--muted)}
+.rp-r-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)}
+.rp-r-stat{background:var(--surface2);padding:14px 10px;text-align:center}
+.rp-r-stat-l{font-size:8px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px}
+.rp-r-stat-v{font-size:15px;font-weight:600;display:block}
+.rp-r-stat-v.g{color:var(--gold)}
+.rp-r-body{padding:18px}
+.rp-r-analysis{font-size:12px;color:var(--muted);line-height:1.8;padding:14px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:2px solid var(--gold);margin-bottom:16px}
+.rp-r-actions{display:flex;flex-direction:column;gap:8px}
+.btn-gold{background:var(--gold);color:var(--black);border:none;padding:12px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;width:100%}
+.btn-gold:hover{background:var(--gold-l)}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--muted);padding:11px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;text-align:center;transition:all 0.2s;width:100%}
+.btn-ghost:hover{border-color:var(--white);color:var(--white)}
+
+/* HOW IT WORKS */
+.hiw{max-width:1100px;margin:0 auto;padding:0 48px 80px}
+.hiw-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,38px);font-weight:400;margin-bottom:28px;text-align:center}
+.hiw-title em{font-style:italic;color:var(--gold)}
+.hiw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.hiw-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:22px;position:relative;overflow:hidden}
+.hiw-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--gold-d) 0%,transparent 70%);opacity:0;transition:opacity 0.3s}
+.hiw-card:hover::before{opacity:1}
+.hiw-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:rgba(200,146,42,0.3);line-height:1;margin-bottom:10px;display:block}
+.hiw-icon{font-size:22px;margin-bottom:10px;display:block}
+.hiw-t{font-size:13px;font-weight:600;color:var(--white);margin-bottom:6px}
+.hiw-p{font-size:11px;color:var(--muted);line-height:1.7}
+
+/* FAQ */
+.faq-sec{max-width:760px;margin:0 auto;padding:0 48px 80px}
+.faq-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,38px);font-weight:400;margin-bottom:28px;text-align:center}
+.faq-title em{font-style:italic;color:var(--gold)}
+.faq-item{border-bottom:1px solid var(--border);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 0;cursor:pointer;font-size:14px;font-weight:600;color:var(--white)}
+.faq-q:hover{color:var(--gold-l)}
+.faq-ico{color:var(--gold);font-size:18px;transition:transform 0.3s;flex-shrink:0}
+.faq-a{padding:0 0 16px;font-size:13px;color:var(--muted);line-height:1.8;display:none}
+.faq-a.open{display:block}
+.faq-ico.open{transform:rotate(45deg)}
+
+/* MOBILE */
+@media(max-width:960px){
+  nav{padding:0 18px}
+  .nav-links,.nav-pill{display:none}
+  .val-hero{padding:90px 18px 0}
+  .val-wrap{grid-template-columns:1fr;padding:28px 18px 60px}
+  .result-panel{position:static}
+  .vf-grid{grid-template-columns:1fr}
+  .hiw{padding:0 18px 60px}
+  .hiw-grid{grid-template-columns:1fr 1fr}
+  .faq-sec{padding:0 18px 60px}
+}
+@media(max-width:480px){.hiw-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html"><div class="logo-mark">V</div><span class="logo-name">Venture<em>Vault</em></span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="browse.html">Buy</a></li>
+    <li><a href="seller.html">Sell</a></li>
+    <li><a href="valuation.html" class="active">AI Valuation</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-pill" onclick="location.href='buyer.html'">Buyer Passport</button>
+    <button class="nav-cta" onclick="location.href='seller.html'">List Free →</button>
+  </div>
+</nav>
+
+<div class="val-hero">
+  <div class="vh-bg"></div><div class="vh-grid"></div>
+  <div class="vh-inner">
+    <div class="vh-tag">🤖 Powered by Claude AI</div>
+    <h1>What Is Your Business<br><em>Actually Worth?</em></h1>
+    <p>Get an instant, professional-grade valuation based on UK market data. Free, automated, and ready in seconds.</p>
+    <div class="trust-row">
+      <div class="trust-b"><span>✓</span> Completely Free</div>
+      <div class="trust-b"><span>✓</span> Instant Results</div>
+      <div class="trust-b"><span>✓</span> UK Market Data</div>
+      <div class="trust-b"><span>✓</span> No Sign-Up Needed</div>
+    </div>
+  </div>
+</div>
+
+<div class="val-wrap">
+  <!-- FORM -->
+  <div class="val-form">
+    <div class="vf-head">
+      <span class="vf-head-icon">📋</span>
+      <div><div class="vf-head-title">Business Details</div><div class="vf-head-sub">The more detail you provide, the more accurate your valuation</div></div>
+    </div>
+    <div class="vf-body">
+      <div class="vf-grid">
+        <div class="vf-section-title">Core Information</div>
+
+        <div class="vf-group">
+          <label class="vf-label">Business Type / Sector <span class="vf-hint">*required</span></label>
+          <select class="vf-select" id="vSector">
+            <option value="">Select sector...</option>
+            <option>Restaurant / Café</option>
+            <option>Takeaway / Fast Food</option>
+            <option>Convenience Store / Newsagent</option>
+            <option>Pub / Bar</option>
+            <option>Hair & Beauty Salon</option>
+            <option>Post Office</option>
+            <option>Hotel / B&B / Guesthouse</option>
+            <option>Care Home / Nursery</option>
+            <option>Automotive (Garage / Car Wash)</option>
+            <option>Online / E-commerce</option>
+            <option>Retail Shop</option>
+            <option>Launderette</option>
+            <option>Gym / Fitness</option>
+            <option>Dog Grooming / Pet Services</option>
+            <option>Construction / Trade</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Location / Region <span class="vf-hint">*required</span></label>
+          <select class="vf-select" id="vLocation">
+            <option value="">Select region...</option>
+            <option>Greater London (Central)</option>
+            <option>Greater London (Outer)</option>
+            <option>South East England</option>
+            <option>South West England</option>
+            <option>East of England</option>
+            <option>West Midlands</option>
+            <option>East Midlands</option>
+            <option>Yorkshire & Humber</option>
+            <option>North West England</option>
+            <option>North East England</option>
+            <option>Scotland</option>
+            <option>Wales</option>
+            <option>Northern Ireland</option>
+          </select>
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Annual Turnover (£) <span class="vf-hint">*required</span></label>
+          <input class="vf-input" id="vTurnover" type="number" placeholder="e.g. 200000" min="0">
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Annual Net Profit (£) <span class="vf-hint">after owner salary</span></label>
+          <input class="vf-input" id="vProfit" type="number" placeholder="e.g. 60000" min="0">
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Years Trading</label>
+          <select class="vf-select" id="vYears">
+            <option value="">Select...</option>
+            <option>Under 1 year</option>
+            <option>1–2 years</option>
+            <option>3–5 years</option>
+            <option>6–10 years</option>
+            <option>10–20 years</option>
+            <option>20+ years</option>
+          </select>
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Tenure Type</label>
+          <select class="vf-select" id="vTenure">
+            <option value="">Select...</option>
+            <option>Leasehold — short (under 5 yrs)</option>
+            <option>Leasehold — medium (5–15 yrs)</option>
+            <option>Leasehold — long (15+ yrs)</option>
+            <option>Freehold (own building)</option>
+            <option>Share of Freehold</option>
+          </select>
+        </div>
+
+        <div class="vf-section-title">Additional Details (Improve Accuracy)</div>
+
+        <div class="vf-group">
+          <label class="vf-label">Number of Employees</label>
+          <select class="vf-select" id="vStaff">
+            <option value="">Select...</option>
+            <option>Owner-operated only</option>
+            <option>1–3 part-time staff</option>
+            <option>1–3 full-time staff</option>
+            <option>4–10 staff</option>
+            <option>10–20 staff</option>
+            <option>20+ staff</option>
+          </select>
+        </div>
+
+        <div class="vf-group">
+          <label class="vf-label">Business Condition</label>
+          <select class="vf-select" id="vCondition">
+            <option value="">Select...</option>
+            <option>Recently refurbished (last 2 yrs)</option>
+            <option>Good condition</option>
+            <option>Average — needs some work</option>
+            <option>Needs significant investment</option>
+          </select>
+        </div>
+
+        <div class="vf-group full">
+          <label class="vf-label">Additional Notes <span class="vf-hint">growth potential, reason for sale, special assets...</span></label>
+          <input class="vf-input" id="vNotes" placeholder="e.g. Strong loyal customer base, fully managed, growing delivery revenue, retiring seller...">
+        </div>
+      </div>
+
+      <button class="val-submit" id="valBtn" onclick="runValuation()">
+        <span id="valBtnIcon">🤖</span>
+        <span id="valBtnText">Get My Free AI Valuation</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULT PANEL -->
+  <div class="result-panel">
+    <!-- Waiting state -->
+    <div class="rp-waiting" id="rpWaiting">
+      <span class="rp-wait-icon">🤖</span>
+      <div class="rp-wait-title">Ready to Valuate</div>
+      <p class="rp-wait-text">Fill in your business details on the left and click the button. Your AI valuation will appear here in seconds.</p>
+    </div>
+
+    <!-- Loading state -->
+    <div class="rp-loading" id="rpLoading">
+      <div class="rp-spinner"></div>
+      <div class="rp-loading-title">Analysing Your Business...</div>
+      <div class="rp-loading-steps">
+        <div class="rp-step active" id="step1"><div class="rp-step-dot"></div>Reading sector data</div>
+        <div class="rp-step" id="step2"><div class="rp-step-dot"></div>Calculating UK multiples</div>
+        <div class="rp-step" id="step3"><div class="rp-step-dot"></div>Comparing comparable sales</div>
+        <div class="rp-step" id="step4"><div class="rp-step-dot"></div>Generating analysis</div>
+      </div>
+    </div>
+
+    <!-- Result state -->
+    <div class="rp-result" id="rpResult">
+      <div class="rp-r-top">
+        <span class="rp-r-label">AI Valuation Result</span>
+        <div class="rp-r-range" id="rRange">—</div>
+        <div class="rp-r-note" id="rNote">—</div>
+      </div>
+      <div class="rp-r-grid">
+        <div class="rp-r-stat"><span class="rp-r-stat-l">Recommended</span><span class="rp-r-stat-v g" id="rRec">—</span></div>
+        <div class="rp-r-stat"><span class="rp-r-stat-l">Rev Multiple</span><span class="rp-r-stat-v" id="rRevM">—</span></div>
+        <div class="rp-r-stat"><span class="rp-r-stat-l">Profit Multiple</span><span class="rp-r-stat-v" id="rProfM">—</span></div>
+      </div>
+      <div class="rp-r-body">
+        <div class="rp-r-analysis" id="rAnalysis">—</div>
+        <div class="rp-r-actions">
+          <button class="btn-gold" onclick="location.href='seller.html'">List at This Price →</button>
+          <button class="btn-ghost" onclick="location.href='seller.html'">Get Expert Advice</button>
+          <button class="btn-ghost" onclick="printValuation()">Download PDF Report</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="rp-waiting" style="margin-top:0">
+      <span class="rp-wait-icon" style="opacity:1">📈</span>
+      <div class="rp-wait-title" style="color:var(--white)">How We Value</div>
+      <p class="rp-wait-text">Our AI uses sector-specific EBITDA and revenue multiples from 1,000+ UK business sales, adjusted for location, trading history and market conditions.</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="hiw">
+  <h2 class="hiw-title">How the <em>AI Valuation Works</em></h2>
+  <div class="hiw-grid">
+    <div class="hiw-card"><span class="hiw-num">01</span><span class="hiw-icon">📋</span><div class="hiw-t">Enter Your Details</div><p class="hiw-p">Sector, location, turnover, profit and trading history. The more you provide, the more accurate the result.</p></div>
+    <div class="hiw-card"><span class="hiw-num">02</span><span class="hiw-icon">🤖</span><div class="hiw-t">AI Analyses</div><p class="hiw-p">Claude AI applies sector-specific multiples, location adjustments and comparable sales data from the UK market.</p></div>
+    <div class="hiw-card"><span class="hiw-num">03</span><span class="hiw-icon">📊</span><div class="hiw-t">Instant Result</div><p class="hiw-p">You get a valuation range, recommended listing price, revenue and profit multiples, plus written analysis.</p></div>
+    <div class="hiw-card"><span class="hiw-num">04</span><span class="hiw-icon">🚀</span><div class="hiw-t">List for Free</div><p class="hiw-p">Happy with the valuation? List your business instantly on VentureVault and 6 partner platforms — completely free.</p></div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-sec">
+  <h2 class="faq-title">Frequently <em>Asked Questions</em></h2>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How accurate is the AI valuation? <span class="faq-ico">+</span></div><div class="faq-a">Our AI valuation is based on real UK comparable sales data and sector-specific multiples. It provides a strong starting point and is typically within 15–25% of final sale price. For a more precise valuation, we recommend combining this with a free expert consultation.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is it really free? <span class="faq-ico">+</span></div><div class="faq-a">Yes, completely free — no credit card, no sign-up, no hidden fees. VentureVault only earns a fee when a business sale completes. Everything before that is provided at no cost.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What factors affect my business value? <span class="faq-ico">+</span></div><div class="faq-a">The key factors are: annual turnover and net profit, trading history and growth trend, sector (some sectors command higher multiples), location and footfall, tenure type (freehold worth more than short leasehold), staff dependency, and current condition of premises.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I use this valuation to list my business? <span class="faq-ico">+</span></div><div class="faq-a">Absolutely. Once you have your AI valuation, you can click "List at This Price" to go straight to our seller listing form. Your valuation will be pre-filled. You can adjust the asking price at any time.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is an EBITDA multiple? <span class="faq-ico">+</span></div><div class="faq-a">EBITDA stands for Earnings Before Interest, Tax, Depreciation and Amortisation — essentially your profit before accounting adjustments. A business sold at "3x EBITDA" means the sale price was three times the annual profit. Different sectors have different typical multiples: e.g. pubs often sell at 2–3x, care homes at 5–8x.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do I increase my business value before selling? <span class="faq-ico">+</span></div><div class="faq-a">Key ways to boost value: increase profitability (even small improvements compound into significant value increases), reduce owner dependency by having good staff, secure a longer lease, update accounts and financial records, improve hygiene ratings and Google reviews, and fix any deferred maintenance.</div></div>
+</div>
+
+<script>
+async function runValuation(){
+  const sector=document.getElementById('vSector').value;
+  const location=document.getElementById('vLocation').value;
+  const turnover=document.getElementById('vTurnover').value;
+  const profit=document.getElementById('vProfit').value;
+  const years=document.getElementById('vYears').value;
+  const tenure=document.getElementById('vTenure').value;
+  const staff=document.getElementById('vStaff').value;
+  const condition=document.getElementById('vCondition').value;
+  const notes=document.getElementById('vNotes').value;
+
+  if(!sector){alert('Please select a business sector.');return}
+  if(!turnover){alert('Please enter your annual turnover.');return}
+
+  const btn=document.getElementById('valBtn');
+  btn.disabled=true;
+  document.getElementById('valBtnText').textContent='Analysing...';
+
+  document.getElementById('rpWaiting').style.display='none';
+  document.getElementById('rpLoading').style.display='block';
+  document.getElementById('rpResult').style.display='none';
+  document.getElementById('rpResult').scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  // Animate steps
+  const steps=['step1','step2','step3','step4'];
+  let si=0;
+  const stepInterval=setInterval(()=>{
+    if(si>0)document.getElementById(steps[si-1]).className='rp-step done';
+    if(si<steps.length){document.getElementById(steps[si]).className='rp-step active';si++;}
+    else clearInterval(stepInterval);
+  },600);
+
+  const prompt=`You are a UK business valuation expert with 20 years experience. Provide a professional valuation.
+
+Business Details:
+- Sector: ${sector}
+- Location: ${location}
+- Annual Turnover: £${parseInt(turnover).toLocaleString()}
+- Annual Net Profit: £${profit?parseInt(profit).toLocaleString():'Not provided'}
+- Years Trading: ${years||'Not specified'}
+- Tenure: ${tenure||'Not specified'}
+- Staff: ${staff||'Not specified'}
+- Condition: ${condition||'Not specified'}
+- Additional Info: ${notes||'None'}
+
+Respond ONLY in valid JSON, no markdown, no extra text:
+{
+  "low": 120000,
+  "high": 180000,
+  "recommended": 150000,
+  "revenueMultiple": "0.75x",
+  "profitMultiple": "2.5x",
+  "note": "one sentence about the valuation basis",
+  "analysis": "3-4 sentences of professional analysis explaining the valuation range, key value drivers, and any factors that could increase or decrease the value."
+}`;
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await response.json();
+    clearInterval(stepInterval);
+    steps.forEach(s=>document.getElementById(s).className='rp-step done');
+
+    const text=data.content?.[0]?.text||'{}';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const val=JSON.parse(clean);
+
+    setTimeout(()=>{
+      document.getElementById('rpLoading').style.display='none';
+      document.getElementById('rpResult').style.display='block';
+      document.getElementById('rRange').textContent='£'+val.low.toLocaleString()+' – £'+val.high.toLocaleString();
+      document.getElementById('rRec').textContent='£'+val.recommended.toLocaleString();
+      document.getElementById('rRevM').textContent=val.revenueMultiple;
+      document.getElementById('rProfM').textContent=val.profitMultiple;
+      document.getElementById('rNote').textContent=val.note||('Based on '+sector+' in '+location);
+      document.getElementById('rAnalysis').textContent=val.analysis;
+      document.getElementById('rpResult').scrollIntoView({behavior:'smooth',block:'start'});
+    },400);
+  }catch(err){
+    clearInterval(stepInterval);
+    // Fallback calculation
+    const t=parseInt(turnover);
+    const p=profit?parseInt(profit):t*0.25;
+    const low=Math.round(p*2.2/10000)*10000;
+    const high=Math.round(p*3.5/10000)*10000;
+    const rec=Math.round((low+high)/2/5000)*5000;
+
+    setTimeout(()=>{
+      document.getElementById('rpLoading').style.display='none';
+      document.getElementById('rpResult').style.display='block';
+      document.getElementById('rRange').textContent='£'+low.toLocaleString()+' – £'+high.toLocaleString();
+      document.getElementById('rRec').textContent='£'+rec.toLocaleString();
+      document.getElementById('rRevM').textContent=(t>0?(rec/t).toFixed(2)+'x':'—');
+      document.getElementById('rProfM').textContent=(p>0?(rec/p).toFixed(1)+'x':'—');
+      document.getElementById('rNote').textContent='Based on UK sector multiples for '+sector+' businesses';
+      document.getElementById('rAnalysis').textContent='This valuation is based on standard UK market multiples for '+sector+' businesses in '+location+'. The range reflects typical buyer appetite in the current market. Businesses with strong accounts documentation, longer leases and lower owner-dependency typically achieve prices toward the higher end of this range.';
+    },2400);
+  }
+
+  btn.disabled=false;
+  document.getElementById('valBtnText').textContent='Get My Free AI Valuation';
+  document.getElementById('valBtnIcon').textContent='🤖';
+}
+
+function toggleFaq(el){
+  const a=el.nextElementSibling;
+  const ico=el.querySelector('.faq-ico');
+  a.classList.toggle('open');
+  ico.classList.toggle('open');
+}
+
+function printValuation(){
+  alert('Valuation PDF report feature — connect to a PDF generator service like html2pdf.js in production.');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#080808;--deep:#0d0d0f;--surface:#131317;--surface2:#1a1a20;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.15);--white:#fff;--muted:rgba(255,255,255,0.45);--muted2:rgba(255,255,255,0.22);--green:#2dd4a0;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);line-height:1.5;min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.admin-sidebar{width:230px;background:var(--deep);border-right:1px solid var(--border);min-height:100vh;padding:0;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100}
+.as-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none}
+.as-lm{width:32px;height:32px;border:1.5px solid var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--gold);flex-shrink:0}
+.as-ln{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--white)}
+.as-ln em{font-style:italic;color:var(--gold)}
+.as-section{padding:20px 0 8px}
+.as-section-label{padding:0 20px 8px;font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px}
+.as-nav{list-style:none}
+.as-nav li a{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent}
+.as-nav li a:hover{color:var(--white);background:rgba(255,255,255,0.03)}
+.as-nav li a.active{color:var(--white);background:rgba(200,146,42,0.07);border-left-color:var(--gold)}
+.as-nav .ni{font-size:14px;width:18px;flex-shrink:0}
+.as-badge{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.25);color:var(--red);font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto}
+.as-badge.gold{background:var(--gold-d);border-color:rgba(200,146,42,0.25);color:var(--gold)}
+.as-badge.green{background:rgba(45,212,160,0.1);border-color:rgba(45,212,160,0.2);color:var(--green)}
+.as-user{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;display:flex;align-items:center;gap:10px}
+.as-avatar{width:32px;height:32px;border-radius:8px;background:var(--gold-d);border:1px solid rgba(200,146,42,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.as-user-info{}
+.as-user-name{font-size:12px;font-weight:600;color:var(--white)}
+.as-user-role{font-size:10px;color:var(--muted)}
+
+/* MAIN */
+.admin-main{margin-left:230px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.admin-topbar{background:rgba(8,8,8,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.at-left{display:flex;align-items:center;gap:16px}
+.at-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+.at-time{font-size:11px;color:var(--muted);padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px}
+.at-right{display:flex;align-items:center;gap:10px}
+.at-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s}
+.at-btn:hover{border-color:var(--gold);color:var(--gold)}
+.at-notif{position:relative}
+.at-notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid var(--black)}
+.at-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);background:rgba(45,212,160,0.07);border:1px solid rgba(45,212,160,0.15);padding:5px 12px;border-radius:6px}
+.at-status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse3 2s ease-in-out infinite}
+@keyframes pulse3{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* CONTENT */
+.admin-content{padding:28px 32px;flex:1}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s;cursor:default}
+.kpi:hover{border-color:rgba(200,146,42,0.2)}
+.kpi-icon{font-size:20px;margin-bottom:12px;display:block}
+.kpi-val{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--white);display:block;line-height:1;margin-bottom:4px}
+.kv-a{color:var(--gold)}
+.kpi-lbl{font-size:11px;color:var(--muted);display:block;margin-bottom:8px}
+.kpi-trend{font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px}
+.kt-up{background:rgba(45,212,160,0.1);color:var(--green)}
+.kt-down{background:rgba(248,113,113,0.1);color:var(--red)}
+.kt-warn{background:rgba(200,146,42,0.1);color:var(--gold)}
+
+/* PANELS */
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.panel-grid.three{grid-template-columns:1fr 1fr 1fr}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel.full{grid-column:1/-1}
+.panel.two-thirds{grid-column:span 2}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-size:13px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:8px}
+.ph-action{font-size:11px;color:var(--gold);cursor:pointer;font-weight:500;transition:opacity 0.2s}
+.ph-action:hover{opacity:0.7}
+.pb{padding:14px 18px}
+
+/* APPROVAL ITEMS */
+.ap-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.ap-item:last-child{border-bottom:none}
+.ap-em{font-size:20px;flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border-radius:8px}
+.ap-info{flex:1;min-width:0}
+.ap-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.ap-acts{display:flex;gap:6px;flex-shrink:0}
+.btn-ok{background:rgba(45,212,160,0.1);border:1px solid rgba(45,212,160,0.2);color:var(--green);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s;white-space:nowrap}
+.btn-ok:hover{background:rgba(45,212,160,0.2)}
+.btn-no{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s;white-space:nowrap}
+.btn-no:hover{background:rgba(248,113,113,0.2)}
+
+/* MESSAGE ITEMS */
+.msg-item{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
+.msg-item:last-child{border-bottom:none}
+.msg-av{width:34px;height:34px;border-radius:8px;background:var(--gold-d);border:1px solid rgba(200,146,42,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg-body{flex:1;min-width:0}
+.msg-name{font-size:12px;font-weight:600;color:var(--white)}
+.msg-text{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-time{font-size:10px;color:var(--muted2);margin-top:2px}
+.msg-unread{width:7px;height:7px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:8px}
+
+/* VERIFICATION ITEMS */
+.verif-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.verif-item:last-child{border-bottom:none}
+.vstatus{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.vs-v{background:rgba(45,212,160,0.1);color:var(--green)}
+.vs-p{background:rgba(200,146,42,0.1);color:var(--gold)}
+.vs-f{background:rgba(248,113,113,0.1);color:var(--red)}
+.vi-name{font-size:12px;font-weight:600;color:var(--white);flex:1}
+.vi-time{font-size:10px;color:var(--muted2);flex-shrink:0}
+
+/* ACTIVITY FEED */
+.act-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.act-text{font-size:12px;color:var(--muted);flex:1;line-height:1.5}
+.act-text strong{color:var(--white)}
+.act-time{font-size:10px;color:var(--muted2);flex-shrink:0;white-space:nowrap}
+
+/* FLAGGED */
+.flagged-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fg-card{border-radius:9px;padding:14px}
+.fg-r{background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.15)}
+.fg-o{background:rgba(200,146,42,0.05);border:1px solid rgba(200,146,42,0.15)}
+.fg-type{font-size:10px;font-weight:700;margin-bottom:5px}
+.fg-r .fg-type{color:var(--red)}
+.fg-o .fg-type{color:var(--gold)}
+.fg-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px}
+.fg-detail{font-size:11px;color:var(--muted)}
+.fg-acts{display:flex;gap:7px;margin-top:10px}
+.fg-btn{font-size:10px;font-weight:600;padding:4px 10px;border-radius:5px;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all 0.2s}
+.fg-resolve{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.2)}
+.fg-view{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border2)}
+.fg-resolve:hover{background:rgba(45,212,160,0.2)}
+
+/* MINI CHART */
+.mini-chart{height:60px;display:flex;align-items:flex-end;gap:4px;padding:0}
+.mc-bar{flex:1;border-radius:3px 3px 0 0;background:rgba(200,146,42,0.2);transition:all 0.3s;cursor:pointer}
+.mc-bar:hover{background:var(--gold)}
+.mc-bar.today{background:var(--gold)}
+
+/* PERFORMANCE TABLE */
+.perf-table{width:100%;border-collapse:collapse}
+.perf-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;padding:8px 0;border-bottom:1px solid var(--border);text-align:left}
+.perf-table td{font-size:12px;color:var(--muted);padding:10px 0;border-bottom:1px solid var(--border)}
+.perf-table td:first-child{color:var(--white);font-weight:500}
+.perf-table tr:last-child td{border-bottom:none}
+.score-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.sp-high{background:rgba(45,212,160,0.1);color:var(--green)}
+.sp-med{background:rgba(200,146,42,0.1);color:var(--gold)}
+
+/* MOBILE */
+@media(max-width:960px){
+  .admin-sidebar{display:none}
+  .admin-main{margin-left:0}
+  .admin-topbar{padding:0 16px}
+  .admin-content{padding:20px 16px}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .panel-grid{grid-template-columns:1fr}
+  .panel-grid.three{grid-template-columns:1fr}
+  .panel.two-thirds{grid-column:1}
+  .flagged-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar">
+  <a class="as-logo" href="index.html">
+    <div class="as-lm">V</div>
+    <span class="as-ln">Venture<em>Vault</em></span>
+  </a>
+  <div class="as-section">
+    <div class="as-section-label">Overview</div>
+    <ul class="as-nav">
+      <li><a class="active"><span class="ni">📊</span> Dashboard</a></li>
+      <li><a onclick="alert('Analytics panel — connect to your analytics provider in production.')"><span class="ni">📈</span> Analytics</a></li>
+    </ul>
+  </div>
+  <div class="as-section">
+    <div class="as-section-label">Listings</div>
+    <ul class="as-nav">
+      <li><a onclick="location.href='browse.html'"><span class="ni">📋</span> All Listings <span class="as-badge gold">1,247</span></a></li>
+      <li><a><span class="ni">⏳</span> Pending <span class="as-badge">4</span></a></li>
+      <li><a><span class="ni">🚩</span> Flagged <span class="as-badge">3</span></a></li>
+      <li><a><span class="ni">✅</span> Sold / Closed</a></li>
+    </ul>
+  </div>
+  <div class="as-section">
+    <div class="as-section-label">Users</div>
+    <ul class="as-nav">
+      <li><a><span class="ni">👥</span> All Users <span class="as-badge gold">8,432</span></a></li>
+      <li><a><span class="ni">🪪</span> Buyer Passports</a></li>
+      <li><a><span class="ni">🔐</span> Verifications <span class="as-badge">2</span></a></li>
+    </ul>
+  </div>
+  <div class="as-section">
+    <div class="as-section-label">Communication</div>
+    <ul class="as-nav">
+      <li><a><span class="ni">💬</span> Messages <span class="as-badge">12</span></a></li>
+      <li><a><span class="ni">📧</span> Email Logs</a></li>
+      <li><a><span class="ni">📱</span> SMS Logs</a></li>
+    </ul>
+  </div>
+  <div class="as-section">
+    <div class="as-section-label">Finance</div>
+    <ul class="as-nav">
+      <li><a><span class="ni">💰</span> Revenue</a></li>
+      <li><a><span class="ni">🧾</span> Invoices</a></li>
+    </ul>
+  </div>
+  <div class="as-section">
+    <div class="as-section-label">System</div>
+    <ul class="as-nav">
+      <li><a><span class="ni">⚙️</span> Settings</a></li>
+      <li><a><span class="ni">🔧</span> Integrations</a></li>
+      <li><a onclick="location.href='index.html'"><span class="ni">🌐</span> View Site</a></li>
+    </ul>
+  </div>
+  <div style="padding:16px 20px;border-top:1px solid var(--border);margin-top:20px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="as-avatar">👤</div>
+      <div><div class="as-user-name">Admin User</div><div class="as-user-role">Super Administrator</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="admin-main">
+  <!-- TOPBAR -->
+  <div class="admin-topbar">
+    <div class="at-left">
+      <div class="at-title">Command Centre</div>
+      <div class="at-time" id="liveTime">—</div>
+    </div>
+    <div class="at-right">
+      <div class="at-status"><div class="at-status-dot"></div>All systems live</div>
+      <button class="at-btn at-notif" onclick="alert('3 new notifications')">🔔 <div class="at-notif-dot"></div></button>
+      <button class="at-btn" onclick="location.href='seller.html'">+ New Listing</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <!-- KPIs ROW 1 -->
+    <div class="kpi-grid">
+      <div class="kpi"><span class="kpi-icon">📋</span><span class="kpi-val">1,<span class="kv-a">247</span></span><span class="kpi-lbl">Active Listings</span><span class="kpi-trend kt-up">↑ +23 this week</span></div>
+      <div class="kpi"><span class="kpi-icon">👥</span><span class="kpi-val"><span class="kv-a">8,</span>432</span><span class="kpi-lbl">Registered Users</span><span class="kpi-trend kt-up">↑ +187 this week</span></div>
+      <div class="kpi"><span class="kpi-icon">💬</span><span class="kpi-val"><span class="kv-a">3,</span>891</span><span class="kpi-lbl">Enquiries Sent</span><span class="kpi-trend kt-up">↑ +312 this week</span></div>
+      <div class="kpi"><span class="kpi-icon">💰</span><span class="kpi-val">£<span class="kv-a">12.4</span>k</span><span class="kpi-lbl">Revenue This Month</span><span class="kpi-trend kt-up">↑ +18% vs last month</span></div>
+    </div>
+    <!-- KPIs ROW 2 -->
+    <div class="kpi-grid">
+      <div class="kpi"><span class="kpi-icon">🔐</span><span class="kpi-val"><span class="kv-a">94</span>%</span><span class="kpi-lbl">ID Verification Rate</span><span class="kpi-trend kt-up">↑ High</span></div>
+      <div class="kpi"><span class="kpi-icon">⏱️</span><span class="kpi-val"><span class="kv-a">1.8</span>h</span><span class="kpi-lbl">Avg Seller Response</span><span class="kpi-trend kt-up">↓ Improving</span></div>
+      <div class="kpi"><span class="kpi-icon">🚩</span><span class="kpi-val"><span class="kv-a">3</span></span><span class="kpi-lbl">Flagged Listings</span><span class="kpi-trend kt-warn">⚠ Needs Review</span></div>
+      <div class="kpi"><span class="kpi-icon">✅</span><span class="kpi-val"><span class="kv-a">7</span></span><span class="kpi-lbl">Sales Completed</span><span class="kpi-trend kt-up">↑ This Month</span></div>
+    </div>
+
+    <!-- PANELS ROW 1 -->
+    <div class="panel-grid">
+      <!-- Pending Approvals -->
+      <div class="panel">
+        <div class="ph"><span class="ph-title">⏳ Pending Approval <span style="background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.2);color:var(--red);font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px">4 WAITING</span></span><span class="ph-action">View All</span></div>
+        <div class="pb">
+          <div class="ap-item"><div class="ap-em">🍕</div><div class="ap-info"><div class="ap-name">Pizza Restaurant · Hackney, London</div><div class="ap-meta">Trust Score: 82 · ID Verified · Listed 2h ago</div></div><div class="ap-acts"><button class="btn-ok" onclick="this.closest('.ap-item').remove()">✓ Approve</button><button class="btn-no" onclick="this.closest('.ap-item').remove()">✗ Reject</button></div></div>
+          <div class="ap-item"><div class="ap-em">🛒</div><div class="ap-info"><div class="ap-name">Newsagent · Leeds, Yorkshire</div><div class="ap-meta">Trust Score: 61 · ID Pending · Listed 4h ago</div></div><div class="ap-acts"><button class="btn-ok" onclick="this.closest('.ap-item').remove()">✓ Approve</button><button class="btn-no" onclick="this.closest('.ap-item').remove()">✗ Reject</button></div></div>
+          <div class="ap-item"><div class="ap-em">🚗</div><div class="ap-info"><div class="ap-name">Car Wash · Birmingham</div><div class="ap-meta">Trust Score: 74 · ID Verified · Listed 6h ago</div></div><div class="ap-acts"><button class="btn-ok" onclick="this.closest('.ap-item').remove()">✓ Approve</button><button class="btn-no" onclick="this.closest('.ap-item').remove()">✗ Reject</button></div></div>
+          <div class="ap-item"><div class="ap-em">✂️</div><div class="ap-info"><div class="ap-name">Barber Shop · Manchester</div><div class="ap-meta">Trust Score: 88 · ID Verified · Listed 8h ago</div></div><div class="ap-acts"><button class="btn-ok" onclick="this.closest('.ap-item').remove()">✓ Approve</button><button class="btn-no" onclick="this.closest('.ap-item').remove()">✗ Reject</button></div></div>
+        </div>
+      </div>
+      <!-- Messages -->
+      <div class="panel">
+        <div class="ph"><span class="ph-title">💬 Platform Messages <span style="background:var(--gold-d);border:1px solid rgba(200,146,42,0.2);color:var(--gold);font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px">12 UNREAD</span></span><span class="ph-action">View All</span></div>
+        <div class="pb">
+          <div class="msg-item"><div class="msg-av">👤</div><div class="msg-body"><div class="msg-name">James K. → Sports Bar, Kent</div><div class="msg-text">I'd like to arrange a viewing this week, can we...</div><div class="msg-time">2 mins ago</div></div><div class="msg-unread"></div></div>
+          <div class="msg-item"><div class="msg-av">👤</div><div class="msg-body"><div class="msg-name">Sarah M. → Convenience Store</div><div class="msg-text">Can you confirm the remaining lease term?</div><div class="msg-time">14 mins ago</div></div><div class="msg-unread"></div></div>
+          <div class="msg-item"><div class="msg-av">👤</div><div class="msg-body"><div class="msg-name">David R. → Hair Salon, Ealing</div><div class="msg-text">Are the accounts available for review?</div><div class="msg-time">1hr ago</div></div></div>
+          <div class="msg-item"><div class="msg-av">👤</div><div class="msg-body"><div class="msg-name">Priya S. → Post Office, Worcester</div><div class="msg-text">What is the remaining lease length?</div><div class="msg-time">2hrs ago</div></div></div>
+          <div class="msg-item"><div class="msg-av">👤</div><div class="msg-body"><div class="msg-name">Ali H. → Indian Takeaway, Orpington</div><div class="msg-text">Is the equipment included in the price?</div><div class="msg-time">3hrs ago</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANELS ROW 2 -->
+    <div class="panel-grid three">
+      <!-- Verifications -->
+      <div class="panel">
+        <div class="ph"><span class="ph-title">🔐 ID Verifications (Auto)</span><span class="ph-action">View All</span></div>
+        <div class="pb">
+          <div class="verif-item"><span class="vstatus vs-v">✓ Verified</span><span class="vi-name">Mohammed A.</span><span class="vi-time">5m ago</span></div>
+          <div class="verif-item"><span class="vstatus vs-v">✓ Verified</span><span class="vi-name">Lisa T.</span><span class="vi-time">22m ago</span></div>
+          <div class="verif-item"><span class="vstatus vs-p">⏳ Pending</span><span class="vi-name">Robert B.</span><span class="vi-time">35m ago</span></div>
+          <div class="verif-item"><span class="vstatus vs-f">✗ Failed</span><span class="vi-name">Unknown User</span><span class="vi-time">1hr ago</span></div>
+          <div class="verif-item"><span class="vstatus vs-v">✓ Verified</span><span class="vi-name">Emma W.</span><span class="vi-time">2hr ago</span></div>
+          <div class="verif-item"><span class="vstatus vs-v">✓ Verified</span><span class="vi-name">Kiran P.</span><span class="vi-time">3hr ago</span></div>
+        </div>
+      </div>
+      <!-- Enquiries Chart -->
+      <div class="panel">
+        <div class="ph"><span class="ph-title">📊 Enquiries — Last 7 Days</span><span class="ph-action">Full Report</span></div>
+        <div class="pb">
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--white)">3,891 <span style="font-size:16px;color:var(--green);font-family:'Outfit',sans-serif;font-weight:600">↑ 18%</span></span>
+            </div>
+            <div class="mini-chart">
+              <div class="mc-bar" style="height:40%" title="Mon"></div>
+              <div class="mc-bar" style="height:55%" title="Tue"></div>
+              <div class="mc-bar" style="height:48%" title="Wed"></div>
+              <div class="mc-bar" style="height:70%" title="Thu"></div>
+              <div class="mc-bar" style="height:65%" title="Fri"></div>
+              <div class="mc-bar" style="height:85%" title="Sat"></div>
+              <div class="mc-bar today" style="height:72%" title="Today"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px">
+              <span style="font-size:9px;color:var(--muted2)">Mon</span>
+              <span style="font-size:9px;color:var(--muted2)">Tue</span>
+              <span style="font-size:9px;color:var(--muted2)">Wed</span>
+              <span style="font-size:9px;color:var(--muted2)">Thu</span>
+              <span style="font-size:9px;color:var(--muted2)">Fri</span>
+              <span style="font-size:9px;color:var(--muted2)">Sat</span>
+              <span style="font-size:9px;color:var(--gold)">Today</span>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--border);margin:14px 0"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px"><span style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Avg per day</span><span style="font-size:18px;font-weight:600;color:var(--white);font-family:'Cormorant Garamond',serif">556</span></div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px"><span style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Response rate</span><span style="font-size:18px;font-weight:600;color:var(--green);font-family:'Cormorant Garamond',serif">78%</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Live Activity -->
+      <div class="panel">
+        <div class="ph"><span class="ph-title">⚡ Live Activity Feed</span><span class="ph-action" onclick="addActivity()">Refresh</span></div>
+        <div class="pb" id="actFeed">
+          <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div class="act-text"><strong>New enquiry</strong> on Sports Bar, Kent from verified buyer James K.</div><span class="act-time">2m</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--gold)"></div><div class="act-text"><strong>New listing submitted</strong> — Pizza Restaurant, Hackney</div><span class="act-time">14m</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--blue)"></div><div class="act-text"><strong>Buyer Passport created</strong> by James K. — Budget £250k</div><span class="act-time">28m</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div class="act-text"><strong>ID verified</strong> — Mohammed A. (seller)</div><span class="act-time">32m</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--red)"></div><div class="act-text"><strong>Listing auto-flagged</strong> — seller not responded in 7 days</div><span class="act-time">1hr</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--gold)"></div><div class="act-text"><strong>AI Valuation run</strong> — Convenience Store in Leeds</div><span class="act-time">1hr</span></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div class="act-text"><strong>Sale completed</strong> — Barber Shop, Manchester £45,000</div><span class="act-time">3hr</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLAGGED PANEL -->
+    <div class="panel full" style="margin-bottom:18px">
+      <div class="ph"><span class="ph-title">🚩 Auto-Flagged by System — Requires Attention</span><span class="ph-action">Resolve All</span></div>
+      <div class="pb">
+        <div class="flagged-grid">
+          <div class="fg-card fg-r"><div class="fg-type">⚠ NO RESPONSE — 7+ DAYS</div><div class="fg-name">Launderette · Sheffield</div><div class="fg-detail">4 buyer enquiries ignored. Auto-chase SMS sent. May need listing suspension.</div><div class="fg-acts"><button class="fg-btn fg-resolve" onclick="this.closest('.fg-card').remove()">Resolve</button><button class="fg-btn fg-view">View</button></div></div>
+          <div class="fg-card fg-r"><div class="fg-type">⚠ ID VERIFICATION FAILED</div><div class="fg-name">Kebab Shop · Wolverhampton</div><div class="fg-detail">Listing automatically held pending re-verification. Seller notified by email.</div><div class="fg-acts"><button class="fg-btn fg-resolve" onclick="this.closest('.fg-card').remove()">Resolve</button><button class="fg-btn fg-view">View</button></div></div>
+          <div class="fg-card fg-o"><div class="fg-type">⚡ LOW TRUST SCORE</div><div class="fg-name">Café · Bristol</div><div class="fg-detail">Score 38/100. Auto-email sent to seller with improvement tips and document upload link.</div><div class="fg-acts"><button class="fg-btn fg-resolve" onclick="this.closest('.fg-card').remove()">Resolve</button><button class="fg-btn fg-view">View</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE TABLE -->
+    <div class="panel full">
+      <div class="ph"><span class="ph-title">📋 Top Performing Listings This Week</span><span class="ph-action">Full Report</span></div>
+      <div class="pb">
+        <table class="perf-table">
+          <thead><tr><th>Business</th><th>Location</th><th>Enquiries</th><th>Views</th><th>Trust Score</th><th>Price</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Sports Bar & Restaurant</td><td>Maidstone, Kent</td><td><strong style="color:var(--gold)">34</strong></td><td>1,247</td><td><span class="score-pill sp-high">94 ★</span></td><td>£275,000</td><td><span style="color:var(--green);font-size:11px;font-weight:600">● Active</span></td></tr>
+            <tr><td>24Hr Convenience Store</td><td>Islington, London</td><td><strong style="color:var(--gold)">28</strong></td><td>986</td><td><span class="score-pill sp-high">88 ★</span></td><td>£120,000</td><td><span style="color:var(--green);font-size:11px;font-weight:600">● Active</span></td></tr>
+            <tr><td>Post Office + Gifts</td><td>Worcester</td><td><strong style="color:var(--gold)">21</strong></td><td>754</td><td><span class="score-pill sp-high">91 ★</span></td><td>£185,000</td><td><span style="color:var(--green);font-size:11px;font-weight:600">● Active</span></td></tr>
+            <tr><td>Indian Takeaway</td><td>Orpington, SE London</td><td><strong style="color:var(--gold)">19</strong></td><td>632</td><td><span class="score-pill sp-high">82 ★</span></td><td>£35,000</td><td><span style="color:var(--green);font-size:11px;font-weight:600">● Active</span></td></tr>
+            <tr><td>Unisex Hair Salon</td><td>Ealing, West London</td><td><strong style="color:var(--gold)">16</strong></td><td>598</td><td><span class="score-pill sp-med">76</span></td><td>£99,500</td><td><span style="color:var(--green);font-size:11px;font-weight:600">● Active</span></td></tr>
+            <tr><td>Dog Grooming Parlour</td><td>High Wycombe, Bucks</td><td><strong style="color:var(--gold)">12</strong></td><td>441</td><td><span class="score-pill sp-med">79</span></td><td>£26,995</td><td><span style="color:var(--gold);font-size:11px;font-weight:600">● Under Offer</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Live clock
+function updateTime(){
+  const now=new Date();
+  document.getElementById('liveTime').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' · '+now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+updateTime();
+setInterval(updateTime,1000);
+
+// Add live activity
+const activities=[
+  {color:'var(--green)',text:'<strong>New enquiry</strong> on Hair Salon, Ealing from verified buyer'},
+  {color:'var(--blue)',text:'<strong>New user registered</strong> — buyer from North West'},
+  {color:'var(--gold)',text:'<strong>AI Valuation run</strong> — Pub in Manchester'},
+  {color:'var(--green)',text:'<strong>Listing approved</strong> — Car Wash, Birmingham'},
+  {color:'var(--purple)',text:'<strong>Buyer Passport created</strong> — Budget £100k, Food sector'},
+];
+let actIdx=0;
+function addActivity(){
+  const feed=document.getElementById('actFeed');
+  const a=activities[actIdx%activities.length];
+  const el=document.createElement('div');
+  el.className='act-item';
+  el.style.animation='fadeIn 0.4s ease';
+  el.innerHTML=`<div class="act-dot" style="background:${a.color}"></div><div class="act-text">${a.text}</div><span class="act-time">just now</span>`;
+  feed.insertBefore(el,feed.firstChild);
+  if(feed.children.length>8)feed.removeChild(feed.lastChild);
+  actIdx++;
+}
+// Auto-refresh activity every 12 seconds
+setInterval(addActivity,12000);
+</script>
+</body>
+</html>

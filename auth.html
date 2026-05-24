@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09090e;--s1:#13131a;--s2:#1a1a24;--b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);--w:#fff;--m1:rgba(255,255,255,0.55);--m2:rgba(255,255,255,0.3);--green:#2dd4a0;--red:#f87171}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--w);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--s1);border:1px solid var(--b2);border-radius:18px;width:100%;max-width:420px;overflow:hidden}
+.card-top{padding:32px 32px 0;text-align:center}
+.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:28px}
+.lm{width:36px;height:36px;border:1.5px solid var(--gold);border-radius:8px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--gold)}
+.ln{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600}
+.ln em{font-style:italic;color:var(--gold)}
+.tabs{display:flex;background:rgba(255,255,255,0.04);border-radius:10px;padding:3px;margin-bottom:28px}
+.tab{flex:1;padding:9px;text-align:center;font-size:14px;font-weight:600;color:var(--m1);border-radius:8px;cursor:pointer;transition:all 0.2s}
+.tab.on{background:var(--gold);color:var(--bg)}
+.card-body{padding:0 32px 32px}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.fi{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:14px;padding:11px 14px;border-radius:9px;outline:none;transition:border-color 0.2s}
+.fi:focus{border-color:rgba(200,146,42,0.5)}
+.fi::placeholder{color:var(--m2)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.role-toggle{display:flex;gap:8px;margin-bottom:16px}
+.rtog{flex:1;padding:10px;border:1px solid var(--b2);border-radius:9px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:600;color:var(--m1)}
+.rtog:hover{border-color:rgba(200,146,42,0.3)}
+.rtog.on{background:var(--gold-d);border-color:rgba(200,146,42,0.4);color:var(--gold)}
+.submit{width:100%;background:var(--gold);color:var(--bg);border:none;padding:13px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:all 0.2s}
+.submit:hover{background:var(--gold-l)}
+.submit:disabled{opacity:0.6;cursor:not-allowed}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:12px;color:var(--m2)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+.note{text-align:center;font-size:12px;color:var(--m2);margin-top:12px}
+.err{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.succ{background:rgba(45,212,160,0.1);border:1px solid rgba(45,212,160,0.2);color:var(--green);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-top">
+    <a class="logo" href="14-homepage-fixed.html"><div class="lm">V</div><span class="ln">Venture<em>Vault</em></span></a>
+    <div class="tabs">
+      <div class="tab on" id="tab-in" onclick="showTab('in')">Sign In</div>
+      <div class="tab" id="tab-up" onclick="showTab('up')">Create Account</div>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <!-- SIGN IN -->
+    <div id="view-in">
+      <div class="err" id="in-err"></div>
+      <div class="succ" id="in-succ"></div>
+      <div class="fg"><label class="fl">Email Address</label><input class="fi" id="in-email" type="email" placeholder="john@example.com"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="in-pass" type="password" placeholder="••••••••"></div>
+      <button class="submit" id="in-btn" onclick="doSignIn()">Sign In →</button>
+      <p class="note">Don't have an account? <span style="color:var(--gold);cursor:pointer" onclick="showTab('up')">Create one free</span></p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="view-up" style="display:none">
+      <div class="err" id="up-err"></div>
+      <div class="succ" id="up-succ"></div>
+      <div style="margin-bottom:14px">
+        <label class="fl" style="margin-bottom:8px">I am a...</label>
+        <div class="role-toggle">
+          <div class="rtog on" id="role-buyer" onclick="setRole('buyer')">🪪 Buyer</div>
+          <div class="rtog" id="role-seller" onclick="setRole('seller')">🏪 Seller</div>
+        </div>
+      </div>
+      <div class="f2">
+        <div class="fg"><label class="fl">First Name</label><input class="fi" id="up-first" placeholder="John"></div>
+        <div class="fg"><label class="fl">Last Name</label><input class="fi" id="up-last" placeholder="Smith"></div>
+      </div>
+      <div class="fg"><label class="fl">Email Address</label><input class="fi" id="up-email" type="email" placeholder="john@example.com"></div>
+      <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="up-phone" placeholder="07700 000 000"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="up-pass" type="password" placeholder="At least 8 characters"></div>
+      <button class="submit" id="up-btn" onclick="doSignUp()">Create Free Account →</button>
+      <p class="note">Already have an account? <span style="color:var(--gold);cursor:pointer" onclick="showTab('in')">Sign in</span></p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://azmjhgvkweaibdbntzze.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_RW2tSWtiL6aVq_rlEhnD3w__WhSv5Ve'
+const { createClient } = supabase
+const db = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+let selectedRole = 'buyer'
+
+function showTab(t){
+  document.getElementById('view-in').style.display = t==='in' ? 'block' : 'none'
+  document.getElementById('view-up').style.display = t==='up' ? 'block' : 'none'
+  document.getElementById('tab-in').classList.toggle('on', t==='in')
+  document.getElementById('tab-up').classList.toggle('on', t==='up')
+}
+
+function setRole(r){
+  selectedRole = r
+  document.getElementById('role-buyer').classList.toggle('on', r==='buyer')
+  document.getElementById('role-seller').classList.toggle('on', r==='seller')
+}
+
+function showErr(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display='block' }
+function showSucc(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display='block' }
+function hideMsg(ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none' }) }
+
+async function doSignIn(){
+  const email = document.getElementById('in-email').value.trim()
+  const pass = document.getElementById('in-pass').value
+  const btn = document.getElementById('in-btn')
+  hideMsg(['in-err','in-succ'])
+  if(!email||!pass){ showErr('in-err','Please enter your email and password.'); return }
+  btn.textContent = 'Signing in...'; btn.disabled = true
+  try {
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pass })
+    if(error) throw error
+    showSucc('in-succ', '✓ Signed in! Redirecting...')
+    setTimeout(() => {
+      const redirect = new URLSearchParams(window.location.search).get('redirect')
+      window.location.href = redirect || '14-homepage-fixed.html'
+    }, 800)
+  } catch(err){
+    showErr('in-err', err.message || 'Sign in failed. Please check your details.')
+    btn.textContent = 'Sign In →'; btn.disabled = false
+  }
+}
+
+async function doSignUp(){
+  const first = document.getElementById('up-first').value.trim()
+  const last = document.getElementById('up-last').value.trim()
+  const email = document.getElementById('up-email').value.trim()
+  const phone = document.getElementById('up-phone').value.trim()
+  const pass = document.getElementById('up-pass').value
+  const btn = document.getElementById('up-btn')
+  hideMsg(['up-err','up-succ'])
+  if(!first||!last){ showErr('up-err','Please enter your first and last name.'); return }
+  if(!email||!email.includes('@')){ showErr('up-err','Please enter a valid email address.'); return }
+  if(pass.length < 8){ showErr('up-err','Password must be at least 8 characters.'); return }
+  btn.textContent = 'Creating account...'; btn.disabled = true
+  try {
+    const { data, error } = await db.auth.signUp({
+      email, password: pass,
+      options: { data: { first_name: first, last_name: last, phone, role: selectedRole } }
+    })
+    if(error) throw error
+    // Update profile with phone and role
+    if(data.user){
+      await db.from('profiles').upsert({
+        id: data.user.id, email, first_name: first, last_name: last, phone, role: selectedRole
+      })
+    }
+    showSucc('up-succ', '✓ Account created! Check your email to verify, then sign in.')
+    btn.textContent = '✓ Account Created!'
+    btn.style.background = 'var(--green)'
+    btn.style.color = 'var(--bg)'
+  } catch(err){
+    showErr('up-err', err.message || 'Sign up failed. Please try again.')
+    btn.textContent = 'Create Free Account →'; btn.disabled = false
+  }
+}
+
+// Allow Enter key
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    if(document.getElementById('view-in').style.display !== 'none') doSignIn()
+    else doSignUp()
+  }
+})
+
+// Check if already signed in
+db.auth.getUser().then(({ data: { user } }) => {
+  if(user){
+    const redirect = new URLSearchParams(window.location.search).get('redirect')
+    window.location.href = redirect || '14-homepage-fixed.html'
+  }
+})
+</script>
+</body>
+</html>

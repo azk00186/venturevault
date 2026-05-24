@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List Your Business — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09090e;--s1:#13131a;--s2:#1a1a24;--b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);--w:#fff;--m1:rgba(255,255,255,0.55);--m2:rgba(255,255,255,0.3);--green:#2dd4a0;--red:#f87171;--r:14px}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--w);font-size:15px;line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(9,9,14,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:7px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.ln{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
+.ln em{font-style:italic;color:var(--gold)}
+.nav-r{display:flex;gap:10px}
+.nbtn{background:var(--gold);color:var(--bg);border:none;padding:9px 20px;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer}
+.nghost{background:none;border:1px solid var(--b2);color:var(--m1);padding:8px 16px;border-radius:40px;font-size:13px;cursor:pointer;transition:all 0.2s}
+.nghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* PROGRESS */
+.prog-wrap{margin-top:64px;background:var(--s1);border-bottom:1px solid var(--b1);padding:14px 28px}
+.prog-bar-outer{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.prog-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.5s ease}
+.prog-label{font-size:13px;color:var(--m1);text-align:right}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:32px 28px 80px;display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:28px;margin-bottom:14px}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:5px}
+.card>p{font-size:13px;color:var(--m1);margin-bottom:22px;line-height:1.7}
+.fg{margin-bottom:15px}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.fi,.fs,.fta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:14px;padding:11px 14px;border-radius:9px;outline:none;transition:border-color 0.2s}
+.fi:focus,.fs:focus,.fta:focus{border-color:rgba(200,146,42,0.5)}
+.fi::placeholder,.fta::placeholder{color:var(--m2)}
+.fs option{background:var(--s1)}
+.fta{resize:vertical;min-height:110px;line-height:1.6}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.actions{display:flex;gap:10px;margin-top:8px}
+.btn-next{flex:1;background:var(--gold);color:var(--bg);border:none;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.btn-next:hover{background:var(--gold-l)}
+.btn-next:disabled{opacity:0.6;cursor:not-allowed}
+.btn-back{background:none;border:1px solid var(--b2);color:var(--m1);padding:13px 22px;border-radius:10px;font-size:13px;cursor:pointer;transition:all 0.2s}
+.btn-back:hover{border-color:var(--w);color:var(--w)}
+
+/* SCORE SIDEBAR */
+.score-panel{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;position:sticky;top:84px}
+.sp-head{padding:14px 18px;background:rgba(200,146,42,0.07);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.sp-title{font-size:13px;font-weight:700}
+.sp-score{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--green)}
+.sp-body{padding:16px 18px}
+.sp-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sp-bar-label{font-size:12px;color:var(--m1);width:100px;flex-shrink:0}
+.sp-bar-track{flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden}
+.sp-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width 0.6s ease}
+.sp-bar-val{font-size:11px;font-weight:700;color:var(--gold);width:24px;text-align:right;flex-shrink:0}
+.sp-tip{background:rgba(200,146,42,0.05);border:1px solid rgba(200,146,42,0.12);border-radius:8px;padding:11px;font-size:12px;color:var(--m1);line-height:1.7;margin-top:12px}
+.sp-tip strong{color:var(--gold-l);display:block;margin-bottom:3px}
+
+/* UPLOAD */
+.uz{border:1.5px dashed var(--b2);border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:all 0.3s}
+.uz:hover{border-color:rgba(200,146,42,0.4);background:rgba(200,146,42,0.03)}
+.uz.done{border-color:rgba(45,212,160,0.4);background:rgba(45,212,160,0.04)}
+.uz-icon{font-size:26px;display:block;margin-bottom:8px}
+.uz-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.uz-sub{font-size:12px;color:var(--m1)}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* SUCCESS */
+.success-card{text-align:center;padding:44px}
+.sc-icon{font-size:56px;display:block;margin-bottom:16px}
+.sc-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;margin-bottom:10px}
+.sc-title em{font-style:italic;color:var(--gold)}
+.sc-text{color:var(--m1);font-size:14px;max-width:440px;margin:0 auto 24px;line-height:1.8}
+.sc-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.sc-step{background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:10px;padding:16px;text-align:left}
+.sc-step-n{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--gold);opacity:0.5;display:block;margin-bottom:5px}
+.sc-step-t{font-size:13px;font-weight:600;margin-bottom:4px}
+.sc-step-d{font-size:12px;color:var(--m1);line-height:1.6}
+.sc-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.sc-btn{background:var(--gold);color:var(--bg);border:none;padding:13px 26px;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.sc-btn:hover{background:var(--gold-l)}
+.sc-ghost{background:none;border:1px solid var(--b2);color:var(--m1);padding:12px 24px;border-radius:40px;font-size:13px;cursor:pointer;transition:all 0.2s}
+.sc-ghost:hover{border-color:var(--w);color:var(--w)}
+
+/* ERR */
+.err-msg{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+
+@media(max-width:900px){
+  nav{padding:0 16px}
+  .wrap{grid-template-columns:1fr;padding:20px 16px 60px}
+  .score-panel{position:static}
+  .f2,.f3{grid-template-columns:1fr}
+  .upload-grid{grid-template-columns:1fr}
+  .sc-steps{grid-template-columns:1fr}
+  .prog-wrap{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="14-homepage-fixed.html"><div class="lm">V</div><span class="ln">Venture<em>Vault</em></span></a>
+  <div class="nav-r">
+    <button class="nghost" onclick="location.href='10-deep-ai-agent.html'">Try AI Listing Instead</button>
+    <button class="nbtn" onclick="location.href='auth.html'">Sign In</button>
+  </div>
+</nav>
+
+<div class="prog-wrap">
+  <div class="prog-bar-outer"><div class="prog-bar-fill" id="progFill" style="width:25%"></div></div>
+  <div class="prog-label" id="progLabel">Step 1 of 4 — Business Details</div>
+</div>
+
+<div class="wrap">
+  <div id="formArea">
+
+    <!-- STEP 1 -->
+    <div id="step1">
+      <div class="card">
+        <h2>Business Details</h2>
+        <p>Tell us about your business. This forms the core of your listing.</p>
+        <div class="err-msg" id="s1-err"></div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Business Type / Name</label><input class="fi" id="s1-title" placeholder="e.g. Indian Restaurant, Hair Salon" oninput="updatePreview()"></div>
+          <div class="fg"><label class="fl">Sector</label>
+            <select class="fs" id="s1-sector" onchange="updateScore('sector',15);updatePreview()">
+              <option value="">Select sector...</option>
+              <option>Food & Takeaway</option><option>Retail & Shops</option>
+              <option>Pub / Bar</option><option>Hair & Beauty</option>
+              <option>Post Office</option><option>Hotel / B&B</option>
+              <option>Care & Health</option><option>Automotive</option>
+              <option>Pet Services</option><option>Online / Tech</option>
+            </select>
+          </div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Town / City</label><input class="fi" id="s1-city" placeholder="e.g. Birmingham" oninput="updatePreview()"></div>
+          <div class="fg"><label class="fl">Region</label>
+            <select class="fs" id="s1-region">
+              <option>Greater London</option><option>South East</option><option>North West</option>
+              <option>Yorkshire</option><option>West Midlands</option><option>East Midlands</option>
+              <option>Scotland</option><option>Wales</option><option>South West</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Description</label><textarea class="fta" id="s1-desc" placeholder="Describe your business, its history, what makes it a great opportunity..." oninput="updateScore('desc',this.value.length>80?20:this.value.length>20?10:0)"></textarea></div>
+        <div class="f3">
+          <div class="fg"><label class="fl">Years Trading</label>
+            <select class="fs" id="s1-years"><option>Under 1 year</option><option>1–3 years</option><option>3–5 years</option><option>5–10 years</option><option>10–20 years</option><option>20+ years</option></select>
+          </div>
+          <div class="fg"><label class="fl">Staff</label><input class="fi" id="s1-staff" placeholder="e.g. 4 full-time"></div>
+          <div class="fg"><label class="fl">Opening Days</label>
+            <select class="fs" id="s1-days"><option>7 Days</option><option>6 Days</option><option>5 Days</option><option>Variable</option></select>
+          </div>
+        </div>
+        <div class="actions"><button class="btn-next" onclick="nextStep(1)">Continue → Financials</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" style="display:none">
+      <div class="card">
+        <h2>Financial Details</h2>
+        <p>Accurate financials massively increase serious buyer enquiries. All figures stay hidden until you approve access.</p>
+        <div class="err-msg" id="s2-err"></div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Asking Price (£)</label><input class="fi" id="s2-price" type="number" placeholder="e.g. 150000" oninput="updateScore('price',this.value?25:0);updatePreview()"></div>
+          <div class="fg"><label class="fl">Tenure</label>
+            <select class="fs" id="s2-tenure"><option>Leasehold</option><option>Freehold</option><option>Share of Freehold</option></select>
+          </div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Weekly Turnover (£)</label><input class="fi" id="s2-turnover" type="number" placeholder="e.g. 5000" oninput="updateScore('turnover',this.value?15:0);updatePreview()"></div>
+          <div class="fg"><label class="fl">Annual Net Profit (£)</label><input class="fi" id="s2-profit" type="number" placeholder="e.g. 60000" oninput="updateScore('profit',this.value?10:0)"></div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Premises Size</label><input class="fi" id="s2-size" placeholder="e.g. 1,200 ft²"></div>
+          <div class="fg"><label class="fl">Lease Remaining</label><input class="fi" id="s2-lease" placeholder="e.g. 15 years"></div>
+        </div>
+        <div class="actions">
+          <button class="btn-back" onclick="prevStep(2)">← Back</button>
+          <button class="btn-next" onclick="nextStep(2)">Continue → Photos & Docs</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" style="display:none">
+      <div class="card">
+        <h2>Photos & Documents</h2>
+        <p>Photos get 4× more enquiries. Documents stay hidden — buyers see a badge confirming they exist.</p>
+        <div style="margin-bottom:18px">
+          <label class="fl" style="margin-bottom:8px">Photos (up to 20)</label>
+          <div class="upload-grid">
+            <div class="uz" id="uz-photos" onclick="fakeUpload(this,'photos',10)">
+              <span class="uz-icon">📷</span>
+              <div class="uz-title">Upload Photos</div>
+              <div class="uz-sub">JPG, PNG · Up to 20 images</div>
+            </div>
+            <div class="uz" id="uz-video" onclick="fakeUpload(this,'video',10)">
+              <span class="uz-icon">🎥</span>
+              <div class="uz-title">Video Walkthrough</div>
+              <div class="uz-sub">MP4 · Optional but powerful</div>
+            </div>
+          </div>
+        </div>
+        <label class="fl" style="margin-bottom:8px">Documents (hidden from public)</label>
+        <div class="upload-grid">
+          <div class="uz" id="uz-accounts" onclick="fakeUpload(this,'accounts',25)">
+            <span class="uz-icon">📄</span>
+            <div class="uz-title">Business Accounts +25pts</div>
+            <div class="uz-sub">Last 2–3 years · PDF</div>
+          </div>
+          <div class="uz" id="uz-lease" onclick="fakeUpload(this,'lease',20)">
+            <span class="uz-icon">📋</span>
+            <div class="uz-title">Lease Agreement +20pts</div>
+            <div class="uz-sub">Current lease document</div>
+          </div>
+          <div class="uz" id="uz-hygiene" onclick="fakeUpload(this,'hygiene',15)">
+            <span class="uz-icon">⭐</span>
+            <div class="uz-title">Hygiene Certificate +15pts</div>
+            <div class="uz-sub">FSA certificate</div>
+          </div>
+          <div class="uz" id="uz-other" onclick="fakeUpload(this,'other',10)">
+            <span class="uz-icon">📎</span>
+            <div class="uz-title">Other Documents +10pts</div>
+            <div class="uz-sub">Licences, contracts etc</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-back" onclick="prevStep(3)">← Back</button>
+          <button class="btn-next" onclick="nextStep(3)">Continue → Contact & Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="step4" style="display:none">
+      <div class="card">
+        <h2>Contact Details</h2>
+        <p>How buyers and our team reach you. Your number is only shared with verified buyers you choose to engage.</p>
+        <div class="err-msg" id="s4-err"></div>
+        <div class="f2">
+          <div class="fg"><label class="fl">Your Name</label><input class="fi" id="s4-name" placeholder="Full name"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" id="s4-phone" placeholder="07700 000 000"></div>
+        </div>
+        <div class="fg"><label class="fl">Email Address</label><input class="fi" id="s4-email" type="email" placeholder="your@email.com"></div>
+        <div class="fg"><label class="fl">Create Account Password (to manage your listing)</label><input class="fi" id="s4-pass" type="password" placeholder="At least 8 characters"></div>
+        <div style="padding:14px;background:rgba(45,212,160,0.04);border:1px solid rgba(45,212,160,0.12);border-radius:9px;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">✓ What happens after you submit</div>
+          <div style="font-size:13px;color:var(--m1);display:flex;flex-direction:column;gap:6px">
+            <div>1. Listing auto-reviewed — live within 2 hours</div>
+            <div>2. Published on VentureVault + 6 partner sites</div>
+            <div>3. You get instant SMS for every buyer enquiry</div>
+            <div>4. Every buyer is ID-checked — no time-wasters</div>
+            <div>5. You pay nothing until your sale completes</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-back" onclick="prevStep(4)">← Back</button>
+          <button class="btn-next" id="submitBtn" onclick="submitListing()">Submit My Listing Free →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="stepSuccess" style="display:none">
+      <div class="card success-card">
+        <span class="sc-icon">🎉</span>
+        <h2 class="sc-title">Your Listing Is <em>Live!</em></h2>
+        <p class="sc-text">Your business is now visible to 94,000+ buyers across VentureVault and 6 partner platforms. You'll receive an SMS for every enquiry.</p>
+        <div class="sc-steps">
+          <div class="sc-step"><span class="sc-step-n">01</span><div class="sc-step-t">Listing Published</div><div class="sc-step-d">Live on VentureVault, Daltons, BusinessesForSale, RightBiz and 3 more.</div></div>
+          <div class="sc-step"><span class="sc-step-n">02</span><div class="sc-step-t">Buyers Notified</div><div class="sc-step-d">Buyers with matching saved searches have been auto-alerted.</div></div>
+          <div class="sc-step"><span class="sc-step-n">03</span><div class="sc-step-t">SMS Alerts On</div><div class="sc-step-d">You'll get a text the moment a verified buyer enquires.</div></div>
+          <div class="sc-step"><span class="sc-step-n">04</span><div class="sc-step-t">No Fee Until Sale</div><div class="sc-step-d">You owe nothing until your business legally completes.</div></div>
+        </div>
+        <div class="sc-btns">
+          <button class="sc-btn" onclick="location.href='seller-dashboard.html'">View in Dashboard →</button>
+          <button class="sc-ghost" onclick="location.href='14-homepage-fixed.html'">Back to Homepage</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE PANEL -->
+  <div class="score-panel" id="scorePanel">
+    <div class="sp-head">
+      <span class="sp-title">📊 Transparency Score</span>
+      <span class="sp-score" id="totalScore">0<span style="font-size:15px;color:var(--m1)">/100</span></span>
+    </div>
+    <div class="sp-body">
+      <div class="sp-bar-row"><span class="sp-bar-label">Business Info</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-desc" style="width:0%"></div></div><span class="sp-bar-val" id="val-desc">0</span></div>
+      <div class="sp-bar-row"><span class="sp-bar-label">Sector</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-sector" style="width:0%"></div></div><span class="sp-bar-val" id="val-sector">0</span></div>
+      <div class="sp-bar-row"><span class="sp-bar-label">Asking Price</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-price" style="width:0%"></div></div><span class="sp-bar-val" id="val-price">0</span></div>
+      <div class="sp-bar-row"><span class="sp-bar-label">Turnover</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-turnover" style="width:0%"></div></div><span class="sp-bar-val" id="val-turnover">0</span></div>
+      <div class="sp-bar-row"><span class="sp-bar-label">Documents</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-accounts" style="width:0%"></div></div><span class="sp-bar-val" id="val-accounts">0</span></div>
+      <div class="sp-bar-row"><span class="sp-bar-label">Photos</span><div class="sp-bar-track"><div class="sp-bar-fill" id="bar-photos" style="width:0%"></div></div><span class="sp-bar-val" id="val-photos">0</span></div>
+      <div class="sp-tip" id="sp-tip"><strong>💡 Next Step</strong>Fill in your business details to start building your score.</div>
+    </div>
+    <!-- Live preview -->
+    <div style="padding:14px 18px;border-top:1px solid var(--b1)">
+      <div style="font-size:10px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Live Preview</div>
+      <div style="background:var(--s2);border:1px solid rgba(200,146,42,0.15);border-radius:10px;overflow:hidden">
+        <div style="height:80px;background:linear-gradient(135deg,#1a1408,#0d0d0f);display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.4" id="previewEmoji">🏪</div>
+        <div style="padding:12px">
+          <div style="font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px" id="prevSector">Your Sector</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:3px;min-height:20px" id="prevTitle">Your Business Name</div>
+          <div style="font-size:11px;color:var(--m1);margin-bottom:8px" id="prevLoc">📍 Location</div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--b1);padding-top:8px">
+            <div><div style="font-size:8px;color:var(--m2);text-transform:uppercase;letter-spacing:1px">Price</div><div style="font-size:15px;font-weight:600;font-family:'Cormorant Garamond',serif;color:var(--gold)" id="prevPrice">—</div></div>
+            <div><div style="font-size:8px;color:var(--m2);text-transform:uppercase;letter-spacing:1px">Turnover</div><div style="font-size:12px;font-weight:600;color:var(--green)" id="prevTurn">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://azmjhgvkweaibdbntzze.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_RW2tSWtiL6aVq_rlEhnD3w__WhSv5Ve'
+const { createClient } = supabase
+const db = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const STEPS = ['step1','step2','step3','step4']
+const PROG_LABELS = ['Step 1 of 4 — Business Details','Step 2 of 4 — Financials','Step 3 of 4 — Photos & Documents','Step 4 of 4 — Contact & Submit']
+const PROG_WIDTHS = ['25%','50%','75%','100%']
+let curStep = 1
+let scores = {desc:0,sector:0,price:0,turnover:0,profit:0,photos:0,accounts:0,lease:0,hygiene:0,other:0,video:0}
+let listingId = null
+
+const EMOJI_MAP = {'Food & Takeaway':'🍕','Retail & Shops':'🛒','Pub / Bar':'🍺','Hair & Beauty':'✂️','Post Office':'📮','Hotel / B&B':'🏨','Care & Health':'🏥','Automotive':'🚗','Pet Services':'🐕','Online / Tech':'💻'}
+
+function showErr(id, msg){ const el=document.getElementById(id); if(el){el.textContent=msg;el.style.display='block'} }
+function hideErr(id){ const el=document.getElementById(id); if(el)el.style.display='none' }
+
+function nextStep(from){
+  hideErr('s'+from+'-err')
+  if(from===1){
+    if(!document.getElementById('s1-title').value.trim()){ showErr('s1-err','Please enter your business name.'); return }
+    if(!document.getElementById('s1-sector').value){ showErr('s1-err','Please select a sector.'); return }
+  }
+  if(from===2){
+    if(!document.getElementById('s2-price').value){ showErr('s2-err','Please enter an asking price.'); return }
+  }
+  const next = from + 1
+  STEPS.forEach(id => document.getElementById(id).style.display='none')
+  document.getElementById('step'+next).style.display='block'
+  document.getElementById('progFill').style.width = PROG_WIDTHS[next-1]
+  document.getElementById('progLabel').textContent = PROG_LABELS[next-1]
+  curStep = next
+  window.scrollTo({top:80,behavior:'smooth'})
+}
+
+function prevStep(from){
+  STEPS.forEach(id => document.getElementById(id).style.display='none')
+  document.getElementById('step'+(from-1)).style.display='block'
+  document.getElementById('progFill').style.width = PROG_WIDTHS[from-2]
+  document.getElementById('progLabel').textContent = PROG_LABELS[from-2]
+  curStep = from-1
+  window.scrollTo({top:80,behavior:'smooth'})
+}
+
+function updateScore(key, val){
+  scores[key] = val
+  const total = Object.values(scores).reduce((a,b)=>a+b,0)
+  document.getElementById('totalScore').innerHTML = Math.min(total,100)+'<span style="font-size:15px;color:var(--m1)">/100</span>'
+  const bars = {desc:20,sector:15,price:25,turnover:15,profit:10,photos:10,accounts:25,video:10}
+  Object.entries(bars).forEach(([k,max])=>{
+    const b=document.getElementById('bar-'+k), v=document.getElementById('val-'+k)
+    if(b) b.style.width=Math.min((scores[k]/max)*100,100)+'%'
+    if(v) v.textContent=scores[k]
+  })
+  const tips = total<20?'Fill in business details and add your asking price.'
+    :total<40?'Upload business accounts (+25pts) to attract serious buyers.'
+    :total<60?'Add photos (+10pts) to get 4× more enquiries.'
+    :total<80?'Upload your lease and hygiene certificate for a stronger score.'
+    :'🏆 Excellent score! Your listing will stand out.'
+  document.getElementById('sp-tip').innerHTML = `<strong>💡 ${total>=80?'Excellent!':'Next Step'}</strong>${tips}`
+}
+
+function updatePreview(){
+  const title = document.getElementById('s1-title')?.value || 'Your Business'
+  const sector = document.getElementById('s1-sector')?.value || ''
+  const city = document.getElementById('s1-city')?.value || 'Location'
+  const price = document.getElementById('s2-price')?.value
+  const turnover = document.getElementById('s2-turnover')?.value
+  const emoji = EMOJI_MAP[sector] || '🏪'
+  document.getElementById('previewEmoji').textContent = emoji
+  document.getElementById('prevTitle').textContent = title
+  document.getElementById('prevSector').textContent = sector || 'Your Sector'
+  document.getElementById('prevLoc').textContent = '📍 ' + city
+  if(price) document.getElementById('prevPrice').textContent = '£'+parseInt(price).toLocaleString()
+  if(turnover) document.getElementById('prevTurn').textContent = '£'+parseInt(turnover).toLocaleString()+'/wk'
+  updateScore('desc', title.length>5?20:0)
+}
+
+function fakeUpload(el, type, pts){
+  el.classList.add('done')
+  el.querySelector('.uz-icon').textContent='✅'
+  el.querySelector('.uz-title').textContent='Uploaded ✓'
+  el.onclick=null
+  scores[type]=(scores[type]||0)+pts
+  updateScore(type, scores[type])
+}
+
+async function submitListing(){
+  const name = document.getElementById('s4-name').value.trim()
+  const email = document.getElementById('s4-email').value.trim()
+  const phone = document.getElementById('s4-phone').value.trim()
+  const pass = document.getElementById('s4-pass').value
+  hideErr('s4-err')
+  if(!name||!email){ showErr('s4-err','Please enter your name and email.'); return }
+  if(pass.length < 8){ showErr('s4-err','Password must be at least 8 characters.'); return }
+  const btn = document.getElementById('submitBtn')
+  btn.textContent='Submitting...'; btn.disabled=true
+  try {
+    // 1. Create account or sign in
+    let userId
+    const { data: signUpData, error: signUpErr } = await db.auth.signUp({
+      email, password: pass,
+      options: { data: { first_name: name.split(' ')[0], last_name: name.split(' ').slice(1).join(' ') || '' } }
+    })
+    if(signUpErr && !signUpErr.message.includes('already registered')){
+      // Try signing in if already exists
+      const { data: signInData, error: signInErr } = await db.auth.signInWithPassword({ email, password: pass })
+      if(signInErr) throw signInErr
+      userId = signInData.user.id
+    } else {
+      userId = signUpData.user?.id
+    }
+    if(!userId) throw new Error('Could not create account')
+
+    // 2. Upsert profile
+    await db.from('profiles').upsert({ id: userId, email, first_name: name.split(' ')[0], last_name: name.split(' ').slice(1).join(' ')||'', phone, role:'seller' })
+
+    // 3. Create listing
+    const { data: listing, error: listingErr } = await db.from('listings').insert({
+      seller_id: userId,
+      title: document.getElementById('s1-title').value.trim(),
+      sector: document.getElementById('s1-sector').value,
+      city: document.getElementById('s1-city').value.trim(),
+      region: document.getElementById('s1-region').value,
+      description: document.getElementById('s1-desc').value.trim(),
+      years_trading: document.getElementById('s1-years').value,
+      num_employees: document.getElementById('s1-staff').value.trim(),
+      opening_days: document.getElementById('s1-days').value,
+      asking_price: parseFloat(document.getElementById('s2-price').value)||null,
+      tenure_type: document.getElementById('s2-tenure').value,
+      weekly_turnover: parseFloat(document.getElementById('s2-turnover').value)||null,
+      annual_profit: parseFloat(document.getElementById('s2-profit').value)||null,
+      premises_size: document.getElementById('s2-size').value.trim(),
+      lease_remaining: document.getElementById('s2-lease').value.trim(),
+      trust_score: Math.min(Object.values(scores).reduce((a,b)=>a+b,0),100),
+      status: 'pending'
+    }).select().single()
+    if(listingErr) throw listingErr
+    listingId = listing.id
+
+    // 4. Show success
+    STEPS.forEach(id=>document.getElementById(id).style.display='none')
+    document.getElementById('stepSuccess').style.display='block'
+    document.getElementById('scorePanel').style.display='none'
+    document.getElementById('progFill').style.width='100%'
+    document.getElementById('progLabel').textContent='✓ Listing Submitted!'
+
+  } catch(err){
+    console.error(err)
+    showErr('s4-err', err.message || 'Submission failed. Please try again.')
+    btn.textContent='Submit My Listing Free →'; btn.disabled=false
+  }
+}
+</script>
+</body>
+</html>

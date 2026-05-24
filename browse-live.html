@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Listings — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09090e;--s1:#13131a;--s2:#1a1a24;--b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);--w:#fff;--m1:rgba(255,255,255,0.55);--m2:rgba(255,255,255,0.3);--green:#2dd4a0;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;--r:12px}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--w);font-size:15px;line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(9,9,14,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:7px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.ln{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}.ln em{font-style:italic;color:var(--gold)}
+.nav-r{display:flex;gap:10px;align-items:center}
+.nbtn{background:var(--gold);color:var(--bg);border:none;padding:9px 18px;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer}
+.nghost{background:none;border:1px solid var(--b2);color:var(--m1);padding:8px 16px;border-radius:40px;font-size:13px;cursor:pointer;transition:all 0.2s}
+.nghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* SEARCH BAR */
+.search-bar{margin-top:64px;background:var(--s1);border-bottom:1px solid var(--b1);padding:16px 28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sb-input{flex:1;min-width:200px;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:14px;padding:10px 16px;border-radius:9px;outline:none;transition:border-color 0.2s}
+.sb-input:focus{border-color:rgba(200,146,42,0.5)}
+.sb-input::placeholder{color:var(--m2)}
+.sb-sel{background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--m1);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;border-radius:9px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none}
+.sb-sel option{background:var(--s1)}
+.sb-btn{background:var(--gold);color:var(--bg);border:none;padding:10px 24px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.sb-btn:hover{background:var(--gold-l)}
+.sb-count{font-size:13px;color:var(--m1);white-space:nowrap}
+
+/* LAYOUT */
+.wrap{max-width:1200px;margin:0 auto;padding:24px 28px 80px;display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:start}
+
+/* FILTER SIDEBAR */
+.filters{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;position:sticky;top:84px}
+.filt-head{padding:14px 18px;border-bottom:1px solid var(--b1);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.filt-reset{font-size:12px;color:var(--gold);cursor:pointer;font-weight:500}
+.filt-reset:hover{opacity:0.7}
+.filt-sec{padding:14px 18px;border-bottom:1px solid var(--b1)}
+.filt-sec:last-child{border-bottom:none}
+.filt-lbl{font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block}
+.filt-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:rgba(255,255,255,0.03);border:1px solid var(--b2);color:var(--m1);font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+.chip:hover{border-color:rgba(200,146,42,0.3)}
+.chip.on{background:var(--gold-d);border-color:rgba(200,146,42,0.4);color:var(--gold);font-weight:600}
+.range-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.range-sl{flex:1;accent-color:var(--gold);cursor:pointer}
+.range-val{font-size:12px;font-weight:600;color:var(--gold);width:60px;text-align:right;flex-shrink:0}
+.filt-toggle{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.filt-toggle-lbl{font-size:13px;color:var(--m1)}
+.tog{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;cursor:pointer;transition:background 0.3s}
+.tog.on{background:var(--gold)}
+.tog::after{content:'';width:14px;height:14px;background:var(--w);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform 0.3s}
+.tog.on::after{transform:translateX(16px)}
+
+/* MAIN */
+.main-col{}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.sort-sel{background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--m1);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 14px;border-radius:8px;outline:none;cursor:pointer}
+.result-count{font-size:14px;color:var(--m1);font-weight:500}
+
+/* LISTING CARDS */
+.listings-grid{display:flex;flex-direction:column;gap:14px}
+.lcard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all 0.3s;display:grid;grid-template-columns:180px 1fr auto}
+.lcard:hover{border-color:rgba(200,146,42,0.3);transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,0.4)}
+.lcard-vis{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lv-em{font-size:44px;opacity:0.15}
+.lv-ring{position:absolute;bottom:8px;right:8px}
+.lcard-body{padding:16px 18px;min-width:0}
+.lc-sector{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.lc-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:4px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-loc{font-size:12px;color:var(--m1);margin-bottom:10px}
+.lc-stats{display:flex;gap:0;border-top:1px solid var(--b1);padding-top:10px}
+.lcs{flex:1;border-right:1px solid var(--b1);padding:0 10px}
+.lcs:first-child{padding-left:0}
+.lcs:last-child{border-right:none}
+.lcs-l{font-size:9px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+.lcs-v{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;display:block}
+.lcs-v.g{color:var(--gold)}
+.lcs-v.gr{color:var(--green);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600}
+.lcard-aside{padding:16px;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;border-left:1px solid var(--b1);min-width:140px}
+.la-price-lbl{font-size:10px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+.la-price{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--gold);display:block}
+.la-tenure{font-size:11px;color:var(--m2);display:block;margin-top:1px}
+.la-btns{display:flex;flex-direction:column;gap:7px;width:100%}
+.la-enq{background:var(--gold);color:var(--bg);border:none;padding:9px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;width:100%}
+.la-enq:hover{background:var(--gold-l)}
+.la-save{background:none;border:1px solid var(--b2);color:var(--m1);padding:8px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-align:center;transition:all 0.2s;width:100%}
+.la-save:hover{border-color:var(--gold);color:var(--gold)}
+.la-save.saved{background:var(--gold-d);border-color:rgba(200,146,42,0.3);color:var(--gold)}
+.badges{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px}
+.badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;backdrop-filter:blur(8px);width:fit-content}
+.badge-g{background:rgba(45,212,160,0.15);border:1px solid rgba(45,212,160,0.3);color:var(--green)}
+.badge-o{background:rgba(200,146,42,0.15);border:1px solid rgba(200,146,42,0.3);color:var(--gold-l)}
+
+/* EMPTY / LOADING */
+.loading-cards{display:flex;flex-direction:column;gap:14px}
+.skeleton{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);height:120px;animation:shimmer 1.5s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:0.5}50%{opacity:0.8}}
+.empty-state{text-align:center;padding:60px 20px;color:var(--m1)}
+.empty-icon{font-size:48px;display:block;margin-bottom:16px}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:8px}
+.empty-sub{font-size:14px;color:var(--m2);margin-bottom:20px}
+.load-more-btn{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--m1);padding:14px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;margin-top:10px}
+.load-more-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ENQUIRY MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:950;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-ov.open{display:flex}
+.modal-box{background:var(--s1);border:1px solid var(--b2);border-radius:16px;width:100%;max-width:420px;padding:28px;position:relative;animation:mIn 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes mIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.05);border:1px solid var(--b1);color:var(--m1);width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:13px;cursor:pointer;transition:all 0.2s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-box h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:5px}
+.modal-box p{color:var(--m1);font-size:13px;margin-bottom:18px;line-height:1.6}
+.mfg{margin-bottom:12px}
+.mfl{display:block;font-size:11px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.mfi{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:14px;padding:10px 13px;border-radius:9px;outline:none;transition:border-color 0.2s}
+.mfi:focus{border-color:rgba(200,146,42,0.5)}
+.mfi::placeholder{color:var(--m2)}
+.mfta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--w);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:9px;outline:none;resize:vertical;min-height:80px;line-height:1.5;transition:border-color 0.2s}
+.mfta:focus{border-color:rgba(200,146,42,0.5)}
+.mfta::placeholder{color:var(--m2)}
+.mfr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msub{width:100%;background:var(--gold);color:var(--bg);border:none;padding:13px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:all 0.2s}
+.msub:hover{background:var(--gold-l)}
+.msub:disabled{opacity:0.6;cursor:not-allowed}
+.mnote{text-align:center;font-size:12px;color:var(--m2);margin-top:9px}
+.merr{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);border-radius:8px;padding:10px;font-size:13px;margin-bottom:12px;display:none}
+
+@media(max-width:900px){
+  nav{padding:0 16px}
+  .search-bar{padding:12px 16px}
+  .wrap{grid-template-columns:1fr;padding:16px 16px 60px}
+  .filters{position:static;display:none}
+  .lcard{grid-template-columns:120px 1fr}
+  .lcard-aside{display:none}
+  .toolbar{flex-direction:column;align-items:flex-start}
+  .mfr{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="14-homepage-fixed.html"><div class="lm">V</div><span class="ln">Venture<em>Vault</em></span></a>
+  <div class="nav-r">
+    <button class="nghost" onclick="location.href='auth.html'">Sign In</button>
+    <button class="nbtn" onclick="location.href='seller-live.html'">List Free →</button>
+  </div>
+</nav>
+
+<!-- SEARCH BAR -->
+<div class="search-bar">
+  <input class="sb-input" id="searchInput" placeholder="Business type, location..." oninput="debounceSearch()">
+  <select class="sb-sel" id="sectorSel" onchange="loadListings()">
+    <option value="">All Sectors</option>
+    <option>Food & Takeaway</option><option>Retail & Shops</option>
+    <option>Pub / Bar</option><option>Hair & Beauty</option>
+    <option>Post Office</option><option>Care & Health</option>
+    <option>Automotive</option><option>Pet Services</option>
+    <option>Online / Tech</option>
+  </select>
+  <select class="sb-sel" id="regionSel" onchange="loadListings()">
+    <option value="">All Regions</option>
+    <option>Greater London</option><option>South East</option>
+    <option>North West</option><option>Yorkshire</option>
+    <option>West Midlands</option><option>Scotland</option><option>Wales</option>
+  </select>
+  <select class="sb-sel" id="priceSel" onchange="loadListings()">
+    <option value="">Any Price</option>
+    <option value="50000">Under £50k</option>
+    <option value="100000">Under £100k</option>
+    <option value="250000">Under £250k</option>
+    <option value="500000">Under £500k</option>
+  </select>
+  <button class="sb-btn" onclick="loadListings()">Search</button>
+  <span class="sb-count" id="resultCount"></span>
+</div>
+
+<div class="wrap">
+  <!-- FILTERS -->
+  <aside class="filters">
+    <div class="filt-head"><span>🎯 Filters</span><span class="filt-reset" onclick="resetFilters()">Reset All</span></div>
+    <div class="filt-sec">
+      <span class="filt-lbl">Sector</span>
+      <div class="filt-chips" id="sectorChips">
+        <span class="chip" onclick="toggleChip(this,'Food & Takeaway')">🍕 Food</span>
+        <span class="chip" onclick="toggleChip(this,'Retail & Shops')">🛒 Retail</span>
+        <span class="chip" onclick="toggleChip(this,'Pub / Bar')">🍺 Pub</span>
+        <span class="chip" onclick="toggleChip(this,'Hair & Beauty')">✂️ Salon</span>
+        <span class="chip" onclick="toggleChip(this,'Post Office')">📮 Post Office</span>
+        <span class="chip" onclick="toggleChip(this,'Care & Health')">🏥 Care</span>
+        <span class="chip" onclick="toggleChip(this,'Automotive')">🚗 Auto</span>
+        <span class="chip" onclick="toggleChip(this,'Pet Services')">🐕 Pets</span>
+      </div>
+    </div>
+    <div class="filt-sec">
+      <span class="filt-lbl">Max Price</span>
+      <div class="range-row">
+        <input type="range" class="range-sl" min="10000" max="1000000" step="5000" value="500000" id="priceRange" oninput="document.getElementById('priceRangeVal').textContent='£'+parseInt(this.value).toLocaleString();loadListings()">
+        <span class="range-val" id="priceRangeVal">£500,000</span>
+      </div>
+    </div>
+    <div class="filt-sec">
+      <span class="filt-lbl">Show Only</span>
+      <div class="filt-toggle"><span class="filt-toggle-lbl">Verified sellers only</span><div class="tog" onclick="this.classList.toggle('on');loadListings()"></div></div>
+      <div class="filt-toggle"><span class="filt-toggle-lbl">High trust score (80+)</span><div class="tog" onclick="this.classList.toggle('on');loadListings()"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+    <div class="toolbar">
+      <div class="result-count" id="toolbarCount">Loading listings...</div>
+      <select class="sort-sel" id="sortSel" onchange="loadListings()">
+        <option value="created_at">Newest First</option>
+        <option value="trust_score">Highest Trust Score</option>
+        <option value="asking_price_asc">Price: Low to High</option>
+        <option value="asking_price_desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div id="listingsContainer">
+      <div class="loading-cards">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
+    <button class="load-more-btn" id="loadMoreBtn" style="display:none" onclick="loadMore()">Load More Listings</button>
+  </div>
+</div>
+
+<!-- ENQUIRY MODAL -->
+<div class="modal-ov" id="enqModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-title">Send Enquiry</h3>
+    <p id="modal-sub">The seller will be notified instantly by SMS and email.</p>
+    <div class="merr" id="modal-err"></div>
+    <div class="mfr">
+      <div class="mfg"><label class="mfl">First Name</label><input class="mfi" id="enq-first" placeholder="John"></div>
+      <div class="mfg"><label class="mfl">Last Name</label><input class="mfi" id="enq-last" placeholder="Smith"></div>
+    </div>
+    <div class="mfg"><label class="mfl">Email</label><input class="mfi" id="enq-email" type="email" placeholder="john@example.com"></div>
+    <div class="mfg"><label class="mfl">Phone</label><input class="mfi" id="enq-phone" placeholder="07700 000 000"></div>
+    <div class="mfg"><label class="mfl">Message (optional)</label><textarea class="mfta" id="enq-msg" placeholder="I'd like to find out more about this business..."></textarea></div>
+    <button class="msub" id="enq-btn" onclick="submitEnquiry()">Send Enquiry →</button>
+    <p class="mnote">Free · Verified · Seller notified instantly</p>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://azmjhgvkweaibdbntzze.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_RW2tSWtiL6aVq_rlEhnD3w__WhSv5Ve'
+const { createClient } = supabase
+const db = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const SECTOR_EMOJI = {'Food & Takeaway':'🍕','Retail & Shops':'🛒','Pub / Bar':'🍺','Hair & Beauty':'✂️','Post Office':'📮','Hotel / B&B':'🏨','Care & Health':'🏥','Automotive':'🚗','Pet Services':'🐕','Online / Tech':'💻'}
+
+let offset = 0
+const PAGE = 12
+let currentListingId = null
+let currentSellerId = null
+let activeSectors = new Set()
+let savedIds = new Set()
+let searchTimer = null
+
+function debounceSearch(){ clearTimeout(searchTimer); searchTimer = setTimeout(loadListings, 400) }
+
+async function loadListings(reset = true){
+  if(reset) offset = 0
+  const container = document.getElementById('listingsContainer')
+  if(reset) container.innerHTML = '<div class="loading-cards"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>'
+
+  const search = document.getElementById('searchInput').value.trim()
+  const sector = document.getElementById('sectorSel').value || [...activeSectors][0] || ''
+  const region = document.getElementById('regionSel').value
+  const maxPrice = parseInt(document.getElementById('priceSel').value) || parseInt(document.getElementById('priceRange').value) || null
+  const sort = document.getElementById('sortSel').value
+
+  let query = db.from('listings')
+    .select('*, profiles!seller_id(first_name, last_name, id_verified)', { count: 'exact' })
+    .eq('status', 'live')
+    .range(offset, offset + PAGE - 1)
+
+  if(sector) query = query.eq('sector', sector)
+  if(region) query = query.eq('region', region)
+  if(maxPrice) query = query.lte('asking_price', maxPrice)
+  if(search) query = query.or(`title.ilike.%${search}%,city.ilike.%${search}%,description.ilike.%${search}%`)
+
+  if(sort === 'trust_score') query = query.order('trust_score', { ascending: false })
+  else if(sort === 'asking_price_asc') query = query.order('asking_price', { ascending: true })
+  else if(sort === 'asking_price_desc') query = query.order('asking_price', { ascending: false })
+  else query = query.order('created_at', { ascending: false })
+
+  const { data, error, count } = await query
+
+  if(error){
+    container.innerHTML = `<div class="empty-state"><span class="empty-icon">⚠️</span><div class="empty-title">Could not load listings</div><div class="empty-sub">${error.message}</div></div>`
+    return
+  }
+
+  // Also load saved listings for current user
+  const { data: { user } } = await db.auth.getUser()
+  if(user){
+    const { data: saved } = await db.from('saved_listings').select('listing_id').eq('user_id', user.id)
+    savedIds = new Set((saved||[]).map(s => s.listing_id))
+  }
+
+  document.getElementById('resultCount').textContent = `${count||0} listing${count!==1?'s':''} found`
+  document.getElementById('toolbarCount').textContent = `${count||0} listing${count!==1?'s':''}`
+
+  if(!data || !data.length){
+    container.innerHTML = `<div class="empty-state"><span class="empty-icon">🔍</span><div class="empty-title">No listings found</div><div class="empty-sub">Try adjusting your filters or search terms</div><button class="sbtn" style="background:var(--gold);color:var(--bg);border:none;padding:12px 24px;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer" onclick="resetFilters()">Clear Filters</button></div>`
+    document.getElementById('loadMoreBtn').style.display = 'none'
+    return
+  }
+
+  if(reset) container.innerHTML = ''
+  data.forEach(l => container.appendChild(buildCard(l)))
+  document.getElementById('loadMoreBtn').style.display = (count > offset + PAGE) ? 'block' : 'none'
+}
+
+function buildCard(l){
+  const emoji = SECTOR_EMOJI[l.sector] || '🏪'
+  const price = l.asking_price ? '£'+l.asking_price.toLocaleString() : 'POA'
+  const turnover = l.weekly_turnover ? '£'+l.weekly_turnover.toLocaleString()+' p/w' : '—'
+  const score = l.trust_score || 0
+  const scoreColor = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--gold)' : 'var(--red)'
+  const circumference = 2 * Math.PI * 16
+  const offset = circumference - (score / 100) * circumference
+  const isSaved = savedIds.has(l.id)
+  const verified = l.profiles?.id_verified
+
+  const div = document.createElement('div')
+  div.className = 'lcard'
+  div.onclick = () => window.location.href = `15-photos-video-edit.html?id=${l.id}`
+  div.innerHTML = `
+    <div class="lcard-vis" style="background:linear-gradient(135deg,#1a1408,#0d0d0f)">
+      <div class="lv-em">${emoji}</div>
+      <div class="badges">
+        ${verified ? '<span class="badge badge-g">✓ Verified</span>' : ''}
+        ${score>=80 ? '<span class="badge badge-o">⭐ Top Rated</span>' : ''}
+      </div>
+      <div class="lv-ring">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
+          <circle cx="20" cy="20" r="16" fill="none" stroke="${scoreColor}" stroke-width="4"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+            stroke-linecap="round" transform="rotate(-90 20 20)"/>
+          <text x="20" y="24" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="10" font-weight="700" fill="${scoreColor}">${score}</text>
+        </svg>
+      </div>
+    </div>
+    <div class="lcard-body">
+      <div class="lc-sector">${l.sector || 'Business'}</div>
+      <div class="lc-title">${l.title}</div>
+      <div class="lc-loc">📍 ${[l.city, l.region].filter(Boolean).join(', ') || 'UK'}</div>
+      <div class="lc-stats">
+        <div class="lcs"><span class="lcs-l">Price</span><span class="lcs-v g">${price}</span></div>
+        <div class="lcs"><span class="lcs-l">Turnover</span><span class="lcs-v gr">${turnover}</span></div>
+        <div class="lcs"><span class="lcs-l">Est.</span><span class="lcs-v">${l.years_trading || '—'}</span></div>
+      </div>
+    </div>
+    <div class="lcard-aside">
+      <div>
+        <span class="la-price-lbl">Asking Price</span>
+        <span class="la-price">${price}</span>
+        <span class="la-tenure">${l.tenure_type || 'Leasehold'}</span>
+      </div>
+      <div class="la-btns">
+        <button class="la-enq" onclick="event.stopPropagation();openEnquiry('${l.id}','${l.seller_id}','${l.title.replace(/'/g,"\\'")}')">Enquire →</button>
+        <button class="la-save ${isSaved?'saved':''}" id="save-${l.id}" onclick="event.stopPropagation();toggleSave('${l.id}')">
+          ${isSaved ? '♥ Saved' : '♡ Save'}
+        </button>
+      </div>
+    </div>
+  `
+  return div
+}
+
+function toggleChip(el, sector){
+  el.classList.toggle('on')
+  if(el.classList.contains('on')) activeSectors.add(sector)
+  else activeSectors.delete(sector)
+  loadListings()
+}
+
+function resetFilters(){
+  document.getElementById('searchInput').value = ''
+  document.getElementById('sectorSel').value = ''
+  document.getElementById('regionSel').value = ''
+  document.getElementById('priceSel').value = ''
+  document.getElementById('priceRange').value = 500000
+  document.getElementById('priceRangeVal').textContent = '£500,000'
+  activeSectors.clear()
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'))
+  loadListings()
+}
+
+async function loadMore(){
+  offset += PAGE
+  loadListings(false)
+}
+
+async function toggleSave(listingId){
+  const { data: { user } } = await db.auth.getUser()
+  if(!user){ window.location.href = 'auth.html?redirect=browse-live.html'; return }
+  const btn = document.getElementById('save-'+listingId)
+  const existing = savedIds.has(listingId)
+  if(existing){
+    await db.from('saved_listings').delete().eq('user_id', user.id).eq('listing_id', listingId)
+    savedIds.delete(listingId)
+    btn.textContent = '♡ Save'
+    btn.classList.remove('saved')
+  } else {
+    await db.from('saved_listings').insert({ user_id: user.id, listing_id: listingId })
+    savedIds.add(listingId)
+    btn.textContent = '♥ Saved'
+    btn.classList.add('saved')
+  }
+}
+
+function openEnquiry(listingId, sellerId, title){
+  currentListingId = listingId
+  currentSellerId = sellerId
+  document.getElementById('modal-title').textContent = 'Enquire — ' + title
+  document.getElementById('enqModal').classList.add('open')
+  document.body.style.overflow = 'hidden'
+  // Pre-fill if logged in
+  db.auth.getUser().then(({ data: { user } }) => {
+    if(user){
+      db.from('profiles').select('first_name,last_name,phone,email').eq('id',user.id).single()
+        .then(({ data: p }) => {
+          if(!p) return
+          if(p.first_name) document.getElementById('enq-first').value = p.first_name
+          if(p.last_name) document.getElementById('enq-last').value = p.last_name
+          if(p.email) document.getElementById('enq-email').value = p.email
+          if(p.phone) document.getElementById('enq-phone').value = p.phone
+        })
+    }
+  })
+}
+
+function closeModal(){
+  document.getElementById('enqModal').classList.remove('open')
+  document.body.style.overflow = ''
+  document.getElementById('modal-err').style.display = 'none'
+}
+
+async function submitEnquiry(){
+  const first = document.getElementById('enq-first').value.trim()
+  const last = document.getElementById('enq-last').value.trim()
+  const email = document.getElementById('enq-email').value.trim()
+  const phone = document.getElementById('enq-phone').value.trim()
+  const msg = document.getElementById('enq-msg').value.trim()
+  const btn = document.getElementById('enq-btn')
+  const errEl = document.getElementById('modal-err')
+  errEl.style.display = 'none'
+
+  if(!first||!email){ errEl.textContent='Please enter your name and email.'; errEl.style.display='block'; return }
+
+  btn.textContent = 'Sending...'; btn.disabled = true
+
+  try {
+    // Get or create user session
+    let userId
+    const { data: { user } } = await db.auth.getUser()
+    if(user){
+      userId = user.id
+      await db.from('profiles').upsert({ id:user.id, first_name:first, last_name:last, phone, email })
+    } else {
+      // Create anonymous-style account for enquiry tracking
+      const tempPass = 'VV'+Date.now()+'!'
+      const { data: su } = await db.auth.signUp({ email, password: tempPass, options:{ data:{ first_name:first, last_name:last }}})
+      userId = su.user?.id
+      if(userId) await db.from('profiles').upsert({ id:userId, email, first_name:first, last_name:last, phone, role:'buyer' })
+    }
+
+    if(!userId) throw new Error('Could not create account')
+
+    // Save enquiry
+    const { error } = await db.from('enquiries').insert({
+      listing_id: currentListingId,
+      buyer_id: userId,
+      seller_id: currentSellerId,
+      initial_message: msg || 'I would like to find out more about this business.',
+      status: 'new'
+    })
+    if(error && !error.message.includes('duplicate')) throw error
+
+    // Success
+    btn.textContent = '✓ Enquiry Sent!'
+    btn.style.background = 'var(--green)'
+    btn.style.color = 'var(--bg)'
+    setTimeout(() => {
+      closeModal()
+      alert('✓ Enquiry sent!\n\nThe seller has been notified. You should receive a response within 2 hours.\n\nCreate an account to track your enquiry and receive messages.')
+      btn.textContent='Send Enquiry →'; btn.style.background=''; btn.style.color=''; btn.disabled=false
+    }, 1000)
+
+  } catch(err){
+    errEl.textContent = err.message || 'Failed to send. Please try again.'
+    errEl.style.display = 'block'
+    btn.textContent='Send Enquiry →'; btn.disabled=false
+  }
+}
+
+document.getElementById('enqModal').addEventListener('click', e => { if(e.target.id==='enqModal') closeModal() })
+
+// Init
+loadListings()
+
+// Check URL params
+const params = new URLSearchParams(window.location.search)
+if(params.get('sector')) document.getElementById('sectorSel').value = params.get('sector')
+if(params.get('region')) document.getElementById('regionSel').value = params.get('region')
+</script>
+</body>
+</html>

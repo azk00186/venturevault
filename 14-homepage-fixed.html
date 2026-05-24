@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VentureVault — Buy & Sell Any Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090e;--surface:#111116;--surface2:#181820;--surface3:#1e1e2a;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.12);
+  --gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.14);
+  --white:#fff;--m1:rgba(255,255,255,0.44);--m2:rgba(255,255,255,0.2);
+  --green:#2dd4a0;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;--pink:#f472b6;--cyan:#22d3ee;
+  --r:16px;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;line-height:1.6}
+img{max-width:100%;display:block}
+button{font-family:'Outfit',sans-serif;cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;transition:background 0.3s,border-color 0.3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(7,7,10,0.95);backdrop-filter:blur(20px);border-color:var(--b1)}
+.nav-logo{display:flex;align-items:center;gap:9px}
+.logo-box{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:7px;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold);transition:all 0.3s;flex-shrink:0}
+.logo-box:hover{background:var(--gold);color:var(--bg)}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.logo-text em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{color:var(--m1);font-size:13px;font-weight:500;padding:7px 13px;border-radius:7px;transition:color 0.2s;cursor:pointer;white-space:nowrap}
+.nav-links a:hover{color:var(--white)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nav-ghost{background:none;border:1px solid var(--b2);color:var(--m1);padding:7px 16px;border-radius:40px;font-size:12px;font-weight:500;transition:all 0.2s;white-space:nowrap}
+.nav-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.nav-btn{background:var(--gold);color:var(--bg);border:none;padding:8px 18px;border-radius:40px;font-size:13px;font-weight:700;transition:all 0.2s;white-space:nowrap}
+.nav-btn:hover{background:var(--gold-l)}
+.nav-menu-btn{display:none;background:none;border:1px solid var(--b2);color:var(--m1);width:38px;height:38px;border-radius:8px;font-size:18px;align-items:center;justify-content:center}
+
+/* ── MOBILE NAV DRAWER ── */
+.nav-drawer{position:fixed;top:64px;left:0;right:0;background:rgba(7,7,10,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);z-index:899;padding:16px 24px 24px;display:none;flex-direction:column;gap:4px}
+.nav-drawer.open{display:flex}
+.nd-link{color:var(--m1);font-size:14px;font-weight:500;padding:12px 0;border-bottom:1px solid var(--b1);cursor:pointer;transition:color 0.2s}
+.nd-link:last-of-type{border-bottom:none}
+.nd-link:hover{color:var(--white)}
+.nd-btns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.nd-btn-p{background:var(--gold);color:var(--bg);border:none;padding:13px;border-radius:10px;font-size:14px;font-weight:700;text-align:center}
+.nd-btn-g{background:none;border:1px solid var(--b2);color:var(--m1);padding:12px;border-radius:10px;font-size:13px;text-align:center}
+
+/* ── URGENCY BAR ── */
+.ubar{background:rgba(200,146,42,0.05);border-bottom:1px solid rgba(200,146,42,0.1);overflow:hidden;height:36px;display:flex;align-items:center;margin-top:64px;position:relative}
+.ubar::before,.ubar::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none}
+.ubar::before{left:0;background:linear-gradient(to right,var(--bg),transparent)}
+.ubar::after{right:0;background:linear-gradient(to left,var(--bg),transparent)}
+.ubar-track{display:flex;gap:48px;width:max-content;animation:uscroll 35s linear infinite;white-space:nowrap}
+@keyframes uscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ui{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--m1)}
+.ui strong{font-weight:700}
+.ui.red strong,.ud.red{color:var(--red)}
+.ui.gold strong,.ud.gold{color:var(--gold)}
+.ui.green strong,.ud.green{color:var(--green)}
+.ui.purple strong,.ud.purple{color:var(--purple)}
+.ui.blue strong,.ud.blue{color:var(--blue)}
+.ui.pink strong,.ud.pink{color:var(--pink)}
+.ud{width:5px;height:5px;border-radius:50%;flex-shrink:0;animation:udp 2s ease-in-out infinite}
+@keyframes udp{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── HERO ── */
+.hero{min-height:100svh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:80px 24px 60px;text-align:center}
+/* Backgrounds */
+.hero-mesh{position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 10% 10%,rgba(167,139,250,0.1) 0%,transparent 50%),
+  radial-gradient(ellipse 70% 50% at 90% 20%,rgba(200,146,42,0.13) 0%,transparent 50%),
+  radial-gradient(ellipse 60% 70% at 50% 100%,rgba(45,212,160,0.07) 0%,transparent 55%),
+  radial-gradient(ellipse 40% 40% at 80% 80%,rgba(96,165,250,0.07) 0%,transparent 50%),
+  linear-gradient(160deg,#0c0a18 0%,#0a0d16 40%,#08110e 70%,#0d0a08 100%);
+  animation:meshA 16s ease-in-out infinite}
+@keyframes meshA{0%,100%{opacity:1}50%{opacity:0.75}}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.016) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 15%,transparent 100%)}
+
+/* Live counter pill */
+.hero-live{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:40px;padding:6px 16px;margin-bottom:24px;position:relative;z-index:2;animation:fup 0.7s ease both}
+.hl-dot{width:7px;height:7px;background:var(--red);border-radius:50%;flex-shrink:0;animation:livep 1.5s ease-in-out infinite}
+@keyframes livep{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(248,113,113,0.4)}50%{opacity:0.7;box-shadow:0 0 0 5px rgba(248,113,113,0)}}
+.hl-text{font-size:12px;font-weight:600;color:rgba(248,113,113,0.9)}
+.hl-num{color:var(--white);font-weight:700}
+
+/* Mode toggle */
+.hero-toggle{display:inline-flex;background:rgba(255,255,255,0.04);border:1px solid var(--b2);border-radius:40px;padding:3px;margin-bottom:22px;position:relative;z-index:2;animation:fup 0.7s 0.05s ease both}
+.ht-btn{padding:7px 18px;border-radius:40px;font-size:12px;font-weight:600;border:none;background:none;color:var(--m1);transition:all 0.3s;cursor:pointer;white-space:nowrap}
+.ht-btn.active{background:var(--gold);color:var(--bg)}
+.ht-btn.active.digital{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--white)}
+
+/* H1 */
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,10vw,96px);font-weight:300;line-height:0.95;letter-spacing:-2.5px;margin-bottom:16px;position:relative;z-index:2;animation:fup 0.8s 0.1s ease both}
+.h1-l1,.h1-l3{display:block;color:var(--white)}
+.h1-l2{display:block;font-style:italic;font-weight:400;transition:all 0.4s}
+.h1-l2.physical{color:var(--gold)}
+.h1-l2.digital{background:linear-gradient(135deg,var(--purple),var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.hero-sub{font-size:clamp(14px,2vw,17px);font-weight:300;color:var(--m1);max-width:520px;margin:0 auto 12px;line-height:1.8;position:relative;z-index:2;animation:fup 0.8s 0.2s ease both}
+
+/* World pills */
+.hero-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:28px;position:relative;z-index:2;animation:fup 0.8s 0.25s ease both}
+.hp{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;padding:5px 13px;border-radius:40px;border:1px solid;cursor:pointer;transition:all 0.25s;white-space:nowrap}
+.hp-p{color:var(--gold);border-color:rgba(200,146,42,0.25);background:rgba(200,146,42,0.06)}
+.hp-p:hover{background:rgba(200,146,42,0.14)}
+.hp-d{color:var(--purple);border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.06)}
+.hp-d:hover{background:rgba(167,139,250,0.14)}
+.hp-h{color:var(--cyan);border-color:rgba(34,211,238,0.25);background:rgba(34,211,238,0.06)}
+.hp-h:hover{background:rgba(34,211,238,0.12)}
+
+/* Search */
+.hero-search{width:100%;max-width:720px;background:rgba(255,255,255,0.05);border:1px solid var(--b2);border-radius:14px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:6px;margin:0 auto 14px;backdrop-filter:blur(20px);position:relative;z-index:2;animation:fup 0.8s 0.35s ease both;transition:border-color 0.3s}
+.hero-search:focus-within{border-color:rgba(200,146,42,0.45)}
+.hero-search input{flex:1;background:none;border:none;outline:none;color:var(--white);font-family:'Outfit',sans-serif;font-size:14px;padding:9px 0;min-width:0}
+.hero-search input::placeholder{color:var(--m2)}
+.hs-div{width:1px;height:24px;background:var(--b2);flex-shrink:0}
+.hero-search select{background:none;border:none;outline:none;color:var(--m1);font-family:'Outfit',sans-serif;font-size:12px;padding:9px 10px;cursor:pointer;appearance:none;-webkit-appearance:none;flex-shrink:0}
+.hero-search select option{background:var(--surface)}
+.hs-btn{background:var(--gold);color:var(--bg);border:none;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;transition:all 0.2s}
+.hs-btn:hover{background:var(--gold-l)}
+
+.hero-hint{font-size:13px;color:var(--m2);position:relative;z-index:2;animation:fup 0.8s 0.4s ease both;margin-bottom:36px}
+.hero-hint span{color:var(--gold);cursor:pointer}
+.hero-hint span:hover{text-decoration:underline}
+
+/* Feature badges */
+.hero-feats{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;position:relative;z-index:2;animation:fup 0.8s 0.45s ease both}
+.hf{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--m1);background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:9px;padding:8px 14px;transition:all 0.25s;cursor:pointer}
+.hf:hover{border-color:rgba(200,146,42,0.28);color:var(--white);background:rgba(200,146,42,0.05)}
+
+/* Floating cards */
+.hero-floats{position:absolute;inset:0;pointer-events:none;z-index:2}
+.fc{position:absolute;background:rgba(9,9,14,0.92);border-radius:12px;padding:12px 16px;backdrop-filter:blur(20px);animation:fcFloat 7s ease-in-out infinite;max-width:200px}
+.fc:nth-child(1){top:18%;left:1%;animation-delay:0s;border:1px solid rgba(200,146,42,0.18)}
+.fc:nth-child(2){top:50%;right:1%;animation-delay:-3.5s;border:1px solid rgba(167,139,250,0.2)}
+.fc:nth-child(3){top:76%;left:4%;animation-delay:-1.5s;border:1px solid rgba(45,212,160,0.18)}
+.fc:nth-child(4){top:24%;right:4%;animation-delay:-5s;border:1px solid rgba(96,165,250,0.15)}
+@keyframes fcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.fc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.fc-dot{width:5px;height:5px;border-radius:50%;animation:udp 1.5s ease-in-out infinite;flex-shrink:0}
+.fc-big{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;display:block;line-height:1;margin-bottom:2px}
+.fc-sm{font-size:11px;color:var(--m1);display:block}
+.fc-row{display:flex;align-items:center;gap:8px}
+.fc-em{font-size:20px}
+.fc-name{font-size:12px;font-weight:600}
+.fc-val{font-size:11px;margin-top:1px}
+.fc-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:5px}
+.fcb-g{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.2)}
+.fcb-p{background:rgba(167,139,250,0.1);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.fcb-r{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.fcb-b{background:rgba(96,165,250,0.1);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+
+/* Scroll cue */
+.scroll-cue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;z-index:2;animation:fup 1s 1.2s ease both}
+.sc-l{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scp 2.5s ease-in-out infinite}
+@keyframes scp{0%,100%{opacity:1}50%{opacity:0.2}}
+.sc-t{font-size:11px;letter-spacing:2px;color:var(--m2);text-transform:uppercase}
+@keyframes fup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PROOF STRIP ── */
+.proof{background:var(--surface);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);padding:18px 24px}
+.proof-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ps{text-align:center;flex-shrink:0}
+.ps-n{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;display:block;color:var(--white)}
+.ps-l{font-size:13px;color:var(--m1);display:block;margin-top:1px}
+.ps-div{width:1px;height:28px;background:var(--b2)}
+.ps-testi{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--b1);border-radius:9px;flex:1;min-width:200px}
+.ps-av{width:32px;height:32px;border-radius:50%;background:var(--gold-d);display:grid;place-items:center;font-size:14px;flex-shrink:0;border:1px solid rgba(200,146,42,0.2)}
+.ps-stars{color:var(--gold);font-size:13px}
+.ps-txt{font-size:13px;color:var(--m1);font-style:italic;line-height:1.4;margin-top:2px}
+.ps-name{font-size:12px;color:var(--gold);font-weight:600;margin-top:3px}
+
+/* ── SECTIONS ── */
+.sec{padding:64px 24px;max-width:1300px;margin:0 auto}
+.sec-sm{padding:48px 24px;max-width:1300px;margin:0 auto}
+.sec-hdr{text-align:center;margin-bottom:40px}
+.sec-eye{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--m1);background:rgba(255,255,255,0.03);border:1px solid var(--b2);border-radius:40px;padding:5px 14px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,50px);font-weight:400;letter-spacing:-1.5px;line-height:1.05;margin-bottom:10px}
+.sec-title em{font-style:italic;color:var(--gold)}
+.sec-sub{color:var(--m1);font-size:14px;max-width:480px;margin:0 auto;line-height:1.8;font-weight:300}
+
+/* ── TWO WORLDS ── */
+.worlds{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.world{border-radius:var(--r);overflow:hidden;border:1px solid var(--b1)}
+.world-head{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wh-physical{background:linear-gradient(135deg,rgba(200,146,42,0.1),rgba(200,146,42,0.03))}
+.wh-digital{background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(96,165,250,0.03))}
+.wh-left{display:flex;align-items:center;gap:10px}
+.wh-icon{font-size:26px}
+.wh-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
+.wh-physical .wh-title{color:var(--gold)}
+.wh-digital .wh-title{background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wh-desc{font-size:13px;color:var(--m1);margin-top:2px}
+.wh-count{font-size:13px;font-weight:600;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.wh-physical .wh-count{background:rgba(200,146,42,0.1);color:var(--gold);border:1px solid rgba(200,146,42,0.18)}
+.wh-digital .wh-count{background:rgba(167,139,250,0.1);color:var(--purple);border:1px solid rgba(167,139,250,0.18)}
+.world-cats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b1)}
+.wcat{background:var(--surface);padding:13px 16px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:9px}
+.wcat:hover{background:var(--surface2)}
+.wcat-icon{font-size:20px;flex-shrink:0}
+.wcat-name{font-size:12px;font-weight:600;color:var(--white);line-height:1.3}
+.wcat-count{font-size:12px;color:var(--m1);margin-top:1px}
+.wcat-arr{margin-left:auto;color:var(--m2);font-size:13px;flex-shrink:0;transition:transform 0.2s,color 0.2s}
+.wcat:hover .wcat-arr{transform:translateX(3px);color:var(--gold)}
+.digital .wcat:hover .wcat-arr{color:var(--purple)}
+.dm-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.dm{font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px}
+.dm-s{background:rgba(167,139,250,0.1);color:var(--purple)}
+.dm-r{background:rgba(45,212,160,0.1);color:var(--green)}
+.dm-e{background:rgba(96,165,250,0.1);color:var(--blue)}
+
+/* ── FEATURED LISTINGS ── */
+.listing-tabs{display:flex;gap:7px;margin-bottom:24px;flex-wrap:wrap}
+.ltab{background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--m1);font-size:13px;font-weight:600;padding:7px 16px;border-radius:40px;border:1px solid var(--b2);transition:all 0.2s;white-space:nowrap}
+.ltab.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.ltab.on.d{background:linear-gradient(135deg,var(--purple),var(--blue));border-color:transparent;color:var(--white)}
+.listings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+/* Card */
+.lcard{background:var(--surface);border:1px solid var(--b1);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s}
+.lcard:hover{transform:translateY(-4px);box-shadow:0 16px 44px rgba(0,0,0,0.45)}
+.lcard.p:hover{border-color:rgba(200,146,42,0.3)}
+.lcard.d:hover{border-color:rgba(167,139,250,0.3)}
+/* card vis */
+.lv{height:154px;position:relative;overflow:hidden}
+.lv-bg{position:absolute;inset:0;transition:transform 0.5s}
+.lcard:hover .lv-bg{transform:scale(1.05)}
+.lv-em{position:absolute;inset:0;display:grid;place-items:center;font-size:52px;opacity:0.13}
+.lv-em2{position:absolute;bottom:10px;left:14px;font-size:24px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.8))}
+/* trust ring */
+.trust-ring{position:absolute;top:10px;right:10px;width:42px;height:42px}
+.trust-ring svg{width:42px;height:42px;transform:rotate(-90deg)}
+/* platform badge */
+.plat{position:absolute;top:10px;left:10px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;backdrop-filter:blur(10px)}
+.plat-yt{background:rgba(255,0,0,0.15);border:1px solid rgba(255,80,80,0.2);color:#ff7070}
+.plat-ig{background:rgba(244,114,182,0.15);border:1px solid rgba(244,114,182,0.2);color:var(--pink)}
+.plat-sh{background:rgba(150,191,100,0.15);border:1px solid rgba(150,191,100,0.2);color:#86efac}
+.plat-web{background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.2);color:var(--blue)}
+/* digital stats bar */
+.dsbar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);padding:6px 12px 10px;display:flex;gap:10px}
+.dsb{text-align:center}
+.dsb-v{font-size:12px;font-weight:700;display:block;color:var(--white);line-height:1}
+.dsb-l{font-size:11px;color:rgba(255,255,255,0.5);display:block}
+/* card body */
+.lb{padding:14px 16px}
+.lb-type{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.lb-tag{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.p .lb-tag{color:var(--gold)}
+.d .lb-tag{color:var(--purple)}
+.lb-ver{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.18)}
+.lb-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;line-height:1.3;margin-bottom:4px}
+.lb-loc{font-size:13px;color:var(--m1);margin-bottom:10px}
+/* stats row */
+.lb-stats{display:flex;border-top:1px solid var(--b1);padding-top:11px}
+.lbs{flex:1;border-right:1px solid var(--b1);padding:0 10px}
+.lbs:first-child{padding-left:0}
+.lbs:last-child{border-right:none;padding-right:0}
+.lbs-l{font-size:10px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+.lbs-v{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;display:block}
+.lbs-v.g{color:var(--gold)}
+.lbs-v.gr{color:var(--green);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600}
+.lbs-v.pu{color:var(--purple);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600}
+/* digital kpis */
+.dkpis{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px;padding-top:11px;border-top:1px solid var(--b1)}
+.dkpi{background:rgba(255,255,255,0.02);border:1px solid var(--b1);border-radius:6px;padding:7px 8px;text-align:center}
+.dkpi-v{font-size:13px;font-weight:700;display:block;line-height:1;margin-bottom:1px}
+.dkpi-l{font-size:11px;color:var(--m2);display:block;text-transform:uppercase;letter-spacing:0.5px}
+/* card footer */
+.lb-foot{display:flex;align-items:center;justify-content:space-between;margin-top:11px;padding-top:11px;border-top:1px solid var(--b1)}
+.lb-price{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.p .lb-price{color:var(--gold)}
+.d .lb-price{background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lb-enq{background:none;border:1px solid;font-size:12px;font-weight:600;padding:6px 13px;border-radius:40px;transition:all 0.2s}
+.p .lb-enq{border-color:rgba(200,146,42,0.3);color:var(--gold)}
+.p .lb-enq:hover{background:var(--gold);color:var(--bg)}
+.d .lb-enq{border-color:rgba(167,139,250,0.3);color:var(--purple)}
+.d .lb-enq:hover{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--white);border-color:transparent}
+
+/* ── FOMO SECTION ── */
+.fomo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fomo-card{border-radius:var(--r);padding:24px;transition:transform 0.3s;cursor:pointer;position:relative;overflow:hidden}
+.fomo-card:hover{transform:translateY(-3px)}
+.fomo-p{background:linear-gradient(135deg,rgba(248,113,113,0.07),rgba(248,113,113,0.02));border:1px solid rgba(248,113,113,0.14)}
+.fomo-d{background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(96,165,250,0.03));border:1px solid rgba(167,139,250,0.15)}
+.fomo-h{background:linear-gradient(135deg,rgba(200,146,42,0.08),rgba(200,146,42,0.02));border:1px solid rgba(200,146,42,0.16)}
+.fomo-icon{font-size:28px;margin-bottom:10px;display:block}
+.fomo-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:7px}
+.fomo-p .fomo-title{color:var(--red)}
+.fomo-d .fomo-title{color:var(--purple)}
+.fomo-h .fomo-title{color:var(--gold)}
+.fomo-text{font-size:12px;color:var(--m1);line-height:1.75;margin-bottom:14px}
+.fomo-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;display:block;line-height:1}
+.fomo-p .fomo-num{color:var(--red)}
+.fomo-d .fomo-num{background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.fomo-h .fomo-num{color:var(--gold)}
+.fomo-lbl{font-size:13px;color:var(--m1);display:block;margin-top:2px}
+
+/* ── JOURNEY ── */
+.journey{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.journey::before{content:'';position:absolute;top:28px;left:calc(12.5%);right:calc(12.5%);height:1px;background:linear-gradient(to right,transparent,var(--gold),var(--gold),transparent);opacity:0.25}
+.js{text-align:center;padding:0 16px}
+.js-num{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin:0 auto 16px;position:relative;z-index:1;transition:transform 0.3s}
+.js:hover .js-num{transform:scale(1.1)}
+.jsn-1{background:rgba(200,146,42,0.1);border:2px solid rgba(200,146,42,0.28);color:var(--gold)}
+.jsn-2{background:rgba(167,139,250,0.1);border:2px solid rgba(167,139,250,0.28);color:var(--purple)}
+.jsn-3{background:rgba(96,165,250,0.1);border:2px solid rgba(96,165,250,0.28);color:var(--blue)}
+.jsn-4{background:rgba(45,212,160,0.1);border:2px solid rgba(45,212,160,0.28);color:var(--green)}
+.js-icon{font-size:22px;margin-bottom:10px;display:block}
+.js-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px}
+.js-text{font-size:12px;color:var(--m1);line-height:1.7}
+.js-time{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;margin-top:8px}
+.jst-1{background:rgba(200,146,42,0.1);color:var(--gold)}
+.jst-2{background:rgba(167,139,250,0.1);color:var(--purple)}
+.jst-3{background:rgba(96,165,250,0.1);color:var(--blue)}
+.jst-4{background:rgba(45,212,160,0.1);color:var(--green)}
+
+/* ── TRUST WALL ── */
+.trust-bg{background:var(--surface);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tc{background:var(--surface2);border:1px solid var(--b1);border-radius:14px;padding:22px;transition:all 0.3s}
+.tc:hover{transform:translateY(-3px)}
+.tc.tp:hover{border-color:rgba(200,146,42,0.2)}
+.tc.td:hover{border-color:rgba(167,139,250,0.2)}
+.tc-stars{font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:10px}
+.tc-q{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.75;font-style:italic;margin-bottom:14px}
+.tc-auth{display:flex;align-items:center;gap:9px}
+.tc-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.tp .tc-av{background:var(--gold-d);border:1px solid rgba(200,146,42,0.2)}
+.td .tc-av{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)}
+.tc-name{font-size:13px;font-weight:600}
+.tc-role{font-size:13px;color:var(--m1)}
+.tc-bdg{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block}
+.tp .tc-bdg{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.2)}
+.td .tc-bdg{background:rgba(167,139,250,0.1);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+
+/* ── RECENT SALES ── */
+.sales-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sale-card{background:var(--surface2);border:1px solid var(--b1);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:all 0.3s}
+.sale-card:hover{transform:translateY(-3px)}
+.sale-card::before{content:'SOLD';position:absolute;top:12px;right:-20px;background:var(--green);color:var(--bg);font-size:9px;font-weight:800;padding:3px 26px;transform:rotate(35deg);letter-spacing:1px}
+.sc-em{font-size:26px;margin-bottom:10px;display:block}
+.sc-sec{font-size:11px;font-weight:700;color:var(--green);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+.sc-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:2px}
+.sc-loc{font-size:10px;color:var(--m1);margin-bottom:10px}
+.sc-price{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;display:block}
+.sc-dt{font-size:10px;color:var(--m2)}
+.sc-days{display:inline-block;background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.15);color:var(--green);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:6px}
+
+/* ── DUAL CTA ── */
+.cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cta-card{border-radius:20px;overflow:hidden;position:relative}
+.ctac-p{background:linear-gradient(135deg,#0d0b06,#1a1408);border:1px solid rgba(200,146,42,0.14)}
+.ctac-d{background:linear-gradient(135deg,#07051a,#100828);border:1px solid rgba(167,139,250,0.14)}
+.cta-orb{position:absolute;width:280px;height:280px;border-radius:50%;filter:blur(60px);pointer-events:none}
+.ctac-p .cta-orb{background:radial-gradient(circle,rgba(200,146,42,0.14),transparent);top:-120px;right:-60px}
+.ctac-d .cta-orb{background:radial-gradient(circle,rgba(167,139,250,0.14),transparent);top:-120px;left:-60px}
+.cta-in{position:relative;z-index:2;padding:44px}
+.cta-eye{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;padding:4px 12px;border-radius:40px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.ctac-p .cta-eye{background:rgba(200,146,42,0.1);border:1px solid rgba(200,146,42,0.18);color:var(--gold)}
+.ctac-d .cta-eye{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.18);color:var(--purple)}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,38px);font-weight:400;line-height:1.1;letter-spacing:-1px;margin-bottom:12px}
+.ctac-p .cta-title em{font-style:italic;color:var(--gold)}
+.ctac-d .cta-title em{font-style:italic;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-text{font-size:13px;color:var(--m1);line-height:1.8;font-weight:300;margin-bottom:20px}
+.cta-pts{display:flex;flex-direction:column;gap:7px;margin-bottom:22px}
+.cta-pt{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--m1)}
+.cta-pt .ck{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:9px;flex-shrink:0}
+.ctac-p .cta-pt .ck{background:rgba(200,146,42,0.1);color:var(--gold)}
+.ctac-d .cta-pt .ck{background:rgba(167,139,250,0.1);color:var(--purple)}
+.cta-btn{padding:13px 26px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;border:none;transition:all 0.25s;cursor:pointer}
+.ctac-p .cta-btn{background:var(--gold);color:var(--bg)}
+.ctac-p .cta-btn:hover{background:var(--gold-l)}
+.ctac-d .cta-btn{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--white)}
+.ctac-d .cta-btn:hover{opacity:0.9;transform:scale(1.02)}
+
+/* ── FOOTER ── */
+.footer{background:var(--surface);border-top:1px solid var(--b1);padding:52px 24px 28px}
+.footer-inner{max-width:1300px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.f-desc{font-size:13px;color:var(--m1);line-height:1.8;margin-top:12px;font-weight:300}
+.f-col h4{font-size:10px;font-weight:700;color:var(--white);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+.f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.f-col ul li a{color:var(--m1);font-size:12px;cursor:pointer;transition:color 0.2s}
+.f-col ul li a:hover{color:var(--gold)}
+.f-digital ul li a:hover{color:var(--purple)}
+.footer-bottom{padding-top:22px;border-top:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.footer-copy{font-size:13px;color:var(--m2)}
+.footer-trust{display:flex;gap:14px;flex-wrap:wrap}
+.ft-item{font-size:13px;color:var(--m2);display:flex;align-items:center;gap:4px}
+
+/* ── NOTIFICATIONS ── */
+.nb{position:fixed;bottom:20px;right:20px;z-index:800;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:280px}
+.notif{background:rgba(8,8,12,0.96);border-radius:11px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;pointer-events:all;animation:nIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 6px 28px rgba(0,0,0,0.6);backdrop-filter:blur(16px)}
+@keyframes nIn{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}
+.notif.out{animation:nOut 0.25s ease forwards}
+@keyframes nOut{to{opacity:0;transform:translateX(36px)}}
+.notif.np{border:1px solid rgba(200,146,42,0.18)}
+.notif.nd{border:1px solid rgba(167,139,250,0.18)}
+.notif.ns{border:1px solid rgba(45,212,160,0.18)}
+.n-ico{font-size:18px;flex-shrink:0;margin-top:1px}
+.n-title{font-size:12px;font-weight:700;color:var(--white)}
+.n-text{font-size:11px;color:var(--m1);margin-top:1px;line-height:1.4}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:950;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-ov.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--b2);border-radius:18px;width:100%;max-width:440px;padding:28px;position:relative;animation:mIn 0.3s cubic-bezier(0.34,1.56,0.64,1);max-height:90vh;overflow-y:auto}
+@keyframes mIn{from{opacity:0;transform:scale(0.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.05);border:1px solid var(--b1);color:var(--m1);width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:13px;cursor:pointer;transition:all 0.2s}
+.modal-close:hover{border-color:var(--gold);color:var(--gold)}
+.modal-box h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:5px}
+.modal-box p{color:var(--m1);font-size:12px;margin-bottom:18px;line-height:1.6}
+.mf-r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mf-g{margin-bottom:12px}
+.mf-g label{display:block;font-size:10px;font-weight:700;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.mf-g input,.mf-g textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b2);color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 12px;border-radius:8px;outline:none;transition:border-color 0.2s}
+.mf-g input:focus,.mf-g textarea:focus{border-color:rgba(200,146,42,0.48)}
+.mf-g input::placeholder,.mf-g textarea::placeholder{color:var(--m2)}
+.mf-g textarea{resize:vertical;min-height:72px}
+.modal-submit{width:100%;background:var(--gold);color:var(--bg);border:none;padding:13px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:4px}
+.modal-submit:hover{background:var(--gold-l)}
+.modal-submit.dm{background:linear-gradient(135deg,var(--purple),var(--blue));color:var(--white)}
+.modal-note{text-align:center;font-size:11px;color:var(--m2);margin-top:10px}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(22px);transition:opacity 0.65s ease,transform 0.65s ease}
+.rv.vis{opacity:1;transform:translateY(0)}
+.d1{transition-delay:0.08s}.d2{transition-delay:0.16s}.d3{transition-delay:0.24s}.d4{transition-delay:0.32s}
+
+/* ════════════════════════
+   RESPONSIVE — TABLET
+════════════════════════ */
+@media(max-width:1024px){
+  .worlds{grid-template-columns:1fr}
+  .listings-grid{grid-template-columns:1fr 1fr}
+  .trust-grid{grid-template-columns:1fr 1fr}
+  .sales-grid{grid-template-columns:1fr 1fr}
+  .cta-grid{grid-template-columns:1fr}
+  .fomo-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .footer-grid>.f-brand{grid-column:1/-1}
+  .journey::before{display:none}
+  .journey{grid-template-columns:1fr 1fr;gap:20px}
+}
+
+/* ════════════════════════
+   RESPONSIVE — MOBILE
+════════════════════════ */
+@media(max-width:700px){
+  /* Nav */
+  .nav{padding:0 16px;height:60px}
+  .nav-links,.nav-ghost{display:none}
+  .nav-menu-btn{display:flex}
+  .nav-btn{padding:7px 14px;font-size:12px}
+  .ubar{margin-top:60px}
+  .nav-drawer{top:60px;padding:14px 16px 20px}
+
+  /* Hero */
+  .hero{padding:60px 16px 52px;min-height:100svh}
+  .hero-floats{display:none}
+  .hero-h1{font-size:clamp(44px,13vw,68px);letter-spacing:-2px}
+  .hero-toggle{padding:2px}
+  .ht-btn{padding:6px 14px;font-size:11px}
+  .hero-pills{gap:6px}
+  .hp{font-size:10px;padding:4px 11px}
+  .hero-search{flex-direction:column;padding:12px;gap:10px;border-radius:12px}
+  .hs-div{width:100%;height:1px}
+  .hero-search select{width:100%;padding:8px 4px}
+  .hs-btn{width:100%;padding:12px;border-radius:9px}
+  .hero-feats{gap:6px}
+  .hf{font-size:10px;padding:7px 11px}
+
+  /* Proof */
+  .proof{padding:14px 16px}
+  .proof-inner{gap:10px}
+  .ps-div{display:none}
+  .ps-testi{flex:1 1 100%;min-width:unset}
+
+  /* Sections */
+  .sec,.sec-sm{padding:44px 16px}
+  .sec-title{font-size:clamp(26px,7vw,38px);letter-spacing:-1px}
+
+  /* Worlds */
+  .worlds{grid-template-columns:1fr;gap:14px}
+  .world-cats{grid-template-columns:1fr}
+  .wcat{padding:12px 14px}
+
+  /* Listings */
+  .listing-tabs{gap:6px}
+  .ltab{font-size:11px;padding:6px 13px}
+  .listings-grid{grid-template-columns:1fr}
+  .lv{height:140px}
+
+  /* Fomo */
+  .fomo-grid{grid-template-columns:1fr}
+  .fomo-num{font-size:44px}
+
+  /* Journey */
+  .journey{grid-template-columns:1fr 1fr;gap:16px}
+  .js{padding:0 8px}
+  .js-num{width:48px;height:48px;font-size:17px}
+
+  /* Trust */
+  .trust-grid{grid-template-columns:1fr}
+
+  /* Sales */
+  .sales-grid{grid-template-columns:1fr 1fr}
+
+  /* CTA */
+  .cta-grid{grid-template-columns:1fr}
+  .cta-in{padding:28px 20px}
+  .cta-title{font-size:clamp(24px,6vw,34px)}
+
+  /* Footer */
+  .footer{padding:40px 16px 24px}
+  .footer-grid{grid-template-columns:1fr;gap:20px}
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:10px}
+
+  /* Notifications */
+  .nb{bottom:12px;right:12px;max-width:240px}
+}
+
+@media(max-width:400px){
+  .sales-grid{grid-template-columns:1fr}
+  .journey{grid-template-columns:1fr}
+  .hero-feats{display:none}
+  .hero-pills{display:none}
+  .hero-h1{font-size:clamp(40px,14vw,60px)}
+  .mf-r{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#">
+    <div class="logo-box">V</div>
+    <span class="logo-text">Venture<em>Vault</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="browse-live.html">Buy</a></li>
+    <li><a href="10-deep-ai-agent.html">Sell</a></li>
+    <li><a href="03-valuation.html">AI Valuation</a></li>
+    <li><a href="07-profile-match.html">My Matches</a></li>
+    <li><a href="06-admin-dashboard.html">Admin</a></li>
+  </ul>
+  <div class="nav-r">
+    <button class="nav-ghost" onclick="location.href='04-buyer-passport.html'">Buyer Passport</button>
+    <button class="nav-btn" onclick="location.href='10-deep-ai-agent.html'">List Free →</button>
+    <button class="nav-menu-btn" onclick="toggleMenu()" id="menuBtn">☰</button>
+  </div>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="drawer">
+  <span class="nd-link" onclick="location.href='browse-live.html'">🏪 Buy a Business</span>
+  <span class="nd-link" onclick="location.href='10-deep-ai-agent.html'">💼 Sell a Business</span>
+  <span class="nd-link" onclick="location.href='03-valuation.html'">🤖 AI Valuation</span>
+  <span class="nd-link" onclick="location.href='07-profile-match.html'">🎯 My Matches</span>
+  <span class="nd-link" onclick="location.href='04-buyer-passport.html'">🪪 Buyer Passport</span>
+  <span class="nd-link" onclick="location.href='06-admin-dashboard.html'">⚙️ Admin</span>
+  <div class="nd-btns">
+    <button class="nd-btn-p" onclick="location.href='10-deep-ai-agent.html'">List Your Business Free →</button>
+    <button class="nd-btn-g" onclick="location.href='04-buyer-passport.html'">Create Buyer Passport</button>
+  </div>
+</div>
+
+<!-- URGENCY BAR -->
+<div class="ubar">
+  <div class="ubar-track">
+    <div class="ui red"><span class="ud red"></span><strong>JUST SOLD</strong> Indian Restaurant, Croydon — £145,000 · 18 days</div>
+    <div class="ui purple"><span class="ud purple"></span><strong>DIGITAL SALE</strong> YouTube Channel 180k subs — £42,000</div>
+    <div class="ui gold"><span class="ud gold"></span><strong>HOT</strong> Sports Bar, Kent — 34 enquiries today</div>
+    <div class="ui blue"><span class="ud blue"></span><strong>NEW</strong> Shopify Store · £8.2k MRR · Just listed</div>
+    <div class="ui green"><span class="ud green"></span><strong>94 buyers</strong> browsing the platform right now</div>
+    <div class="ui pink"><span class="ud pink"></span><strong>NEW</strong> Instagram page · 220k followers · Beauty niche</div>
+    <div class="ui red"><span class="ud red"></span><strong>JUST SOLD</strong> Indian Restaurant, Croydon — £145,000 · 18 days</div>
+    <div class="ui purple"><span class="ud purple"></span><strong>DIGITAL SALE</strong> YouTube Channel 180k subs — £42,000</div>
+    <div class="ui gold"><span class="ud gold"></span><strong>HOT</strong> Sports Bar, Kent — 34 enquiries today</div>
+    <div class="ui blue"><span class="ud blue"></span><strong>NEW</strong> Shopify Store · £8.2k MRR · Just listed</div>
+    <div class="ui green"><span class="ud green"></span><strong>94 buyers</strong> browsing the platform right now</div>
+    <div class="ui pink"><span class="ud pink"></span><strong>NEW</strong> Instagram page · 220k followers · Beauty niche</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <!-- Abstract SVG pattern -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.045;z-index:1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="hex" x="0" y="0" width="60" height="52" patternUnits="userSpaceOnUse">
+        <polygon points="30,2 58,17 58,35 30,50 2,35 2,17" fill="none" stroke="rgba(200,146,42,1)" stroke-width="0.8"/>
+      </pattern>
+      <radialGradient id="fade" cx="50%" cy="50%" r="50%">
+        <stop offset="20%" stop-color="white" stop-opacity="1"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <mask id="vignette">
+        <rect width="100%" height="100%" fill="url(#fade)"/>
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#hex)" mask="url(#vignette)"/>
+  </svg>
+
+  <!-- Floating cards (hidden on mobile) -->
+  <div class="hero-floats">
+    <div class="fc">
+      <div class="fc-label" style="color:var(--red)"><span class="fc-dot" style="background:var(--red)"></span>Just Sold</div>
+      <div class="fc-row"><span class="fc-em">🍛</span><div><div class="fc-name">Indian Restaurant</div><div class="fc-val" style="color:var(--gold)">£145,000</div></div></div>
+      <span class="fc-badge fcb-g">✓ SOLD 18 DAYS</span>
+    </div>
+    <div class="fc">
+      <div class="fc-label" style="color:var(--purple)"><span class="fc-dot" style="background:var(--purple)"></span>Digital Sale</div>
+      <div class="fc-row"><span class="fc-em">📺</span><div><div class="fc-name">YouTube Channel</div><div class="fc-val" style="color:var(--purple)">180k · £42k</div></div></div>
+      <span class="fc-badge fcb-p">⚡ DIGITAL</span>
+    </div>
+    <div class="fc">
+      <div class="fc-label" style="color:var(--red)"><span class="fc-dot" style="background:var(--red)"></span>Live Now</div>
+      <span class="fc-big" style="color:var(--white)" id="liveNum">94</span>
+      <span class="fc-sm">buyers browsing</span>
+    </div>
+    <div class="fc">
+      <div class="fc-label" style="color:var(--gold)"><span class="fc-dot" style="background:var(--gold)"></span>Hot Listing</div>
+      <div class="fc-row"><span class="fc-em">🛍️</span><div><div class="fc-name">Shopify Store</div><div class="fc-val" style="color:var(--green)">£8.2k MRR</div></div></div>
+      <span class="fc-badge fcb-b">📈 E-COMMERCE</span>
+    </div>
+  </div>
+
+  <div style="position:relative;z-index:2;width:100%">
+    <!-- Live counter -->
+    <div style="display:flex;justify-content:center;margin-bottom:20px">
+      <div class="hero-live">
+        <div class="hl-dot"></div>
+        <span class="hl-text"><span class="hl-num" id="liveCount">94</span> buyers on the platform right now</span>
+      </div>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div style="display:flex;justify-content:center;margin-bottom:20px">
+      <div class="hero-toggle">
+        <button class="ht-btn active" id="tab-all" onclick="setMode('all')">🌍 All</button>
+        <button class="ht-btn" id="tab-physical" onclick="setMode('physical')">🏪 Physical</button>
+        <button class="ht-btn digital" id="tab-digital" onclick="setMode('digital')">⚡ Digital</button>
+      </div>
+    </div>
+
+    <h1 class="hero-h1">
+      <span class="h1-l1">Britain's Home</span>
+      <span class="h1-l2 physical" id="h1mid">For Every Business</span>
+      <span class="h1-l3">Physical or Digital</span>
+    </h1>
+
+    <p class="hero-sub" id="heroSub">From corner shops to YouTube channels. From pubs to Shopify stores. If it earns, it belongs here.</p>
+
+    <div class="hero-pills">
+      <span class="hp hp-p">🏪 Pubs · Salons · Takeaways</span>
+      <span class="hp hp-d">⚡ YouTube · Instagram · Shopify</span>
+      <span class="hp hp-h">🔀 Hybrid Businesses</span>
+    </div>
+
+    <div style="display:flex;justify-content:center">
+      <div class="hero-search">
+        <input type="text" placeholder="Business type — physical or digital...">
+        <div class="hs-div"></div>
+        <select>
+          <option>All Types</option>
+          <option>🏪 Physical</option>
+          <option>⚡ Digital</option>
+          <option>🔀 Hybrid</option>
+        </select>
+        <div class="hs-div"></div>
+        <select>
+          <option>Any Budget</option>
+          <option>Under £10k</option>
+          <option>Under £50k</option>
+          <option>Under £100k</option>
+          <option>Under £250k</option>
+          <option>£250k+</option>
+        </select>
+        <button class="hs-btn" onclick="location.href='browse-live.html'">Search →</button>
+      </div>
+    </div>
+
+    <p class="hero-hint" style="margin-top:12px">
+      Trending: <span onclick="location.href='browse-live.html'">Indian restaurant</span> ·
+      <span onclick="location.href='browse-live.html'">YouTube channel</span> ·
+      <span onclick="location.href='browse-live.html'">Shopify store</span> ·
+      <span onclick="location.href='browse-live.html'">Instagram page</span> ·
+      <span onclick="location.href='browse-live.html'">Post office</span>
+    </p>
+
+    <div class="hero-feats">
+      <div class="hf" onclick="location.href='04-buyer-passport.html'">🪪 Buyer Passport</div>
+      <div class="hf" onclick="location.href='03-valuation.html'">🤖 AI Valuation</div>
+      <div class="hf">📊 Transparency Scores</div>
+      <div class="hf">🔐 ID Verified Users</div>
+      <div class="hf">💬 Instant Messaging</div>
+      <div class="hf">📈 Sold Price Data</div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span class="sc-t">Scroll</span>
+    <div class="sc-l"></div>
+  </div>
+</section>
+
+<!-- PROOF STRIP -->
+<div class="proof rv">
+  <div class="proof-inner">
+    <div class="ps"><span class="ps-n">1,247</span><span class="ps-l">Listings Live</span></div>
+    <div class="ps-div"></div>
+    <div class="ps"><span class="ps-n" style="background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent">312</span><span class="ps-l">Digital Assets</span></div>
+    <div class="ps-div"></div>
+    <div class="ps"><span class="ps-n">94k</span><span class="ps-l">Monthly Buyers</span></div>
+    <div class="ps-div"></div>
+    <div class="ps"><span class="ps-n">4 hrs</span><span class="ps-l">Avg First Enquiry</span></div>
+    <div class="ps-div"></div>
+    <div class="ps"><span class="ps-n">£0</span><span class="ps-l">Upfront Fee</span></div>
+    <div class="ps-testi">
+      <div class="ps-av">📺</div>
+      <div>
+        <div class="ps-stars">★★★★★</div>
+        <div class="ps-txt">"Sold my YouTube channel for £42k. Nothing else existed for digital creators."</div>
+        <div class="ps-name">Jake T. — 180k subscribers</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TWO WORLDS -->
+<div class="sec rv">
+  <div class="sec-hdr">
+    <div class="sec-eye">🌍 Two Worlds, One Platform</div>
+    <h2 class="sec-title">Whatever You <em>Built</em>, We'll Help You Sell It</h2>
+    <p class="sec-sub">Traditional UK businesses and digital income streams — bought and sold in the same place, for the first time.</p>
+  </div>
+  <div class="worlds">
+    <!-- Physical -->
+    <div class="world">
+      <div class="world-head wh-physical">
+        <div class="wh-left"><span class="wh-icon">🏪</span><div><div class="wh-title">Physical Businesses</div><div class="wh-desc">Brick-and-mortar UK businesses</div></div></div>
+        <span class="wh-count">935 listings</span>
+      </div>
+      <div class="world-cats">
+        <div class="wcat"><span class="wcat-icon">🍕</span><div><div class="wcat-name">Food & Takeaway</div><div class="wcat-count">312 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🛒</span><div><div class="wcat-name">Retail & Shops</div><div class="wcat-count">262 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🍺</span><div><div class="wcat-name">Pubs & Bars</div><div class="wcat-count">98 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">✂️</span><div><div class="wcat-name">Hair & Beauty</div><div class="wcat-count">143 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">📮</span><div><div class="wcat-name">Post Offices</div><div class="wcat-count">44 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🏨</span><div><div class="wcat-name">Hotels & B&Bs</div><div class="wcat-count">57 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🚗</span><div><div class="wcat-name">Automotive</div><div class="wcat-count">71 listings</div></div><span class="wcat-arr">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🏥</span><div><div class="wcat-name">Care & Health</div><div class="wcat-count">38 listings</div></div><span class="wcat-arr">→</span></div>
+      </div>
+    </div>
+    <!-- Digital -->
+    <div class="world digital">
+      <div class="world-head wh-digital">
+        <div class="wh-left"><span class="wh-icon">⚡</span><div><div class="wh-title">Digital Businesses</div><div class="wh-desc">Online assets & digital income streams</div></div></div>
+        <span class="wh-count">312 listings</span>
+      </div>
+      <div class="world-cats">
+        <div class="wcat"><span class="wcat-icon">📺</span><div><div class="wcat-name">YouTube Channels</div><div class="wcat-count">48 listings</div><div class="dm-tags"><span class="dm dm-s">Subscribers</span><span class="dm dm-r">AdSense</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">📸</span><div><div class="wcat-name">Instagram Pages</div><div class="wcat-count">61 listings</div><div class="dm-tags"><span class="dm dm-s">Followers</span><span class="dm dm-e">Engagement</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🎵</span><div><div class="wcat-name">TikTok Accounts</div><div class="wcat-count">34 listings</div><div class="dm-tags"><span class="dm dm-s">Followers</span><span class="dm dm-e">Views/mo</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🛍️</span><div><div class="wcat-name">Shopify Stores</div><div class="wcat-count">52 listings</div><div class="dm-tags"><span class="dm dm-r">MRR</span><span class="dm dm-e">Orders/mo</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">📦</span><div><div class="wcat-name">Amazon FBA</div><div class="wcat-count">28 listings</div><div class="dm-tags"><span class="dm dm-r">Monthly Rev</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">💻</span><div><div class="wcat-name">SaaS & Apps</div><div class="wcat-count">22 listings</div><div class="dm-tags"><span class="dm dm-r">MRR</span><span class="dm dm-s">Users</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">📧</span><div><div class="wcat-name">Newsletters</div><div class="wcat-count">19 listings</div><div class="dm-tags"><span class="dm dm-s">Subscribers</span><span class="dm dm-e">Open Rate</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+        <div class="wcat"><span class="wcat-icon">🌐</span><div><div class="wcat-name">Websites & Blogs</div><div class="wcat-count">48 listings</div><div class="dm-tags"><span class="dm dm-r">Monthly Rev</span><span class="dm dm-e">Traffic</span></div></div><span class="wcat-arr" style="color:var(--purple)">→</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURED LISTINGS -->
+<div class="sec-sm rv" style="padding-top:0">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div class="sec-eye" style="display:inline-flex;margin-bottom:8px">🔥 Featured Opportunities</div>
+      <h2 class="sec-title" style="margin-bottom:0;font-size:clamp(24px,4vw,38px)">Physical & Digital, <em>Side by Side</em></h2>
+    </div>
+    <div class="listing-tabs">
+      <button class="ltab on" onclick="setTab(this,'all')">All</button>
+      <button class="ltab" onclick="setTab(this,'p')">🏪 Physical</button>
+      <button class="ltab d" onclick="setTab(this,'d')">⚡ Digital</button>
+    </div>
+  </div>
+  <div class="listings-grid" id="lGrid">
+
+    <!-- P1: Sports Bar -->
+    <div class="lcard p" onclick="openModal('Sports Bar & Restaurant','p')">
+      <div class="lv">
+        <div class="lv-bg" style="background:linear-gradient(135deg,#1a0f05,#2d1a08)"></div>
+        <div class="lv-em">🍺</div>
+        <div class="lv-em2">🍺</div>
+        <svg class="trust-ring" viewBox="0 0 42 42"><circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="3"/><circle cx="21" cy="21" r="17" fill="none" stroke="var(--green)" stroke-width="3" stroke-dasharray="107" stroke-dashoffset="8" stroke-linecap="round"/><text x="21" y="25" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="700" transform="rotate(90,21,21)">94</text></svg>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag">Pub / Bar</span><span class="lb-ver">✓ Verified</span></div>
+        <div class="lb-title">Sports Bar & Restaurant</div>
+        <div class="lb-loc">📍 Maidstone, Kent</div>
+        <div class="lb-stats">
+          <div class="lbs"><span class="lbs-l">Price</span><span class="lbs-v g">£275k</span></div>
+          <div class="lbs"><span class="lbs-l">Turnover</span><span class="lbs-v gr">£18k p/w</span></div>
+          <div class="lbs"><span class="lbs-l">Sq Ft</span><span class="lbs-v">2,250</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price">£275,000</span><button class="lb-enq" onclick="event.stopPropagation();openModal('Sports Bar','p')">Enquire →</button></div>
+      </div>
+    </div>
+
+    <!-- D1: YouTube -->
+    <div class="lcard d" onclick="openModal('YouTube Channel — Cooking Niche','d')">
+      <div class="lv" style="background:linear-gradient(135deg,#1a0005,#2d000a)">
+        <div class="lv-em" style="color:var(--red)">📺</div>
+        <div class="lv-em2">📺</div>
+        <span class="plat plat-yt">▶ YouTube</span>
+        <div class="dsbar">
+          <div class="dsb"><span class="dsb-v">180k</span><span class="dsb-l">Subs</span></div>
+          <div class="dsb"><span class="dsb-v">2.1M</span><span class="dsb-l">Views/mo</span></div>
+          <div class="dsb"><span class="dsb-v">£3.2k</span><span class="dsb-l">Rev/mo</span></div>
+        </div>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag" style="color:var(--purple)">⚡ YouTube Channel</span><span class="lb-ver" style="background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.2)">✓ Stats Verified</span></div>
+        <div class="lb-title">Cooking Channel · 180k Subs</div>
+        <div class="lb-loc">🌐 UK-based · Food niche · 5 yrs old</div>
+        <div class="dkpis">
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--purple)">180k</span><span class="dkpi-l">Subscribers</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--green)">£3.2k</span><span class="dkpi-l">Monthly Rev</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--blue)">4.8%</span><span class="dkpi-l">Eng Rate</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price">£42,000</span><button class="lb-enq" onclick="event.stopPropagation();openModal('YouTube Channel','d')">Enquire →</button></div>
+      </div>
+    </div>
+
+    <!-- D2: Instagram -->
+    <div class="lcard d" onclick="openModal('Instagram Page — Beauty','d')">
+      <div class="lv" style="background:linear-gradient(135deg,#1a0012,#2d0020)">
+        <div class="lv-em" style="color:var(--pink)">📸</div>
+        <div class="lv-em2">📸</div>
+        <span class="plat plat-ig">📸 Instagram</span>
+        <div class="dsbar">
+          <div class="dsb"><span class="dsb-v">220k</span><span class="dsb-l">Followers</span></div>
+          <div class="dsb"><span class="dsb-v">6.2%</span><span class="dsb-l">Engagement</span></div>
+          <div class="dsb"><span class="dsb-v">£2.8k</span><span class="dsb-l">Brand Deals</span></div>
+        </div>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag" style="color:var(--pink)">⚡ Instagram Page</span><span class="lb-ver" style="background:rgba(244,114,182,0.1);color:var(--pink);border-color:rgba(244,114,182,0.18)">✓ Stats Verified</span></div>
+        <div class="lb-title">Beauty Instagram · 220k Followers</div>
+        <div class="lb-loc">🌐 UK audience · 73% female · 18–34</div>
+        <div class="dkpis">
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--pink)">220k</span><span class="dkpi-l">Followers</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--green)">£2.8k</span><span class="dkpi-l">Monthly Rev</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--blue)">6.2%</span><span class="dkpi-l">Eng Rate</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price" style="color:var(--pink)">£28,000</span><button class="lb-enq" style="border-color:rgba(244,114,182,0.3);color:var(--pink)" onclick="event.stopPropagation();openModal('Instagram Page','d')">Enquire →</button></div>
+      </div>
+    </div>
+
+    <!-- P2: Convenience -->
+    <div class="lcard p" onclick="openModal('Convenience Store','p')">
+      <div class="lv">
+        <div class="lv-bg" style="background:linear-gradient(135deg,#050d10,#0a1f2a)"></div>
+        <div class="lv-em">🛒</div>
+        <div class="lv-em2">🛒</div>
+        <svg class="trust-ring" viewBox="0 0 42 42"><circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="3"/><circle cx="21" cy="21" r="17" fill="none" stroke="var(--green)" stroke-width="3" stroke-dasharray="107" stroke-dashoffset="13" stroke-linecap="round"/><text x="21" y="25" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="700" transform="rotate(90,21,21)">88</text></svg>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag">Convenience</span><span class="lb-ver">✓ Verified</span></div>
+        <div class="lb-title">24Hr Store + Alcohol Licence</div>
+        <div class="lb-loc">📍 Islington, North London</div>
+        <div class="lb-stats">
+          <div class="lbs"><span class="lbs-l">Price</span><span class="lbs-v g">£120k</span></div>
+          <div class="lbs"><span class="lbs-l">Turnover</span><span class="lbs-v gr">£5k p/w</span></div>
+          <div class="lbs"><span class="lbs-l">Years</span><span class="lbs-v">14</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price">£120,000</span><button class="lb-enq" onclick="event.stopPropagation();openModal('Convenience Store','p')">Enquire →</button></div>
+      </div>
+    </div>
+
+    <!-- D3: Shopify -->
+    <div class="lcard d" onclick="openModal('Shopify Store','d')">
+      <div class="lv" style="background:linear-gradient(135deg,#0a1400,#142200)">
+        <div class="lv-em" style="color:var(--green)">🛍️</div>
+        <div class="lv-em2">🛍️</div>
+        <span class="plat plat-sh">🛍️ Shopify</span>
+        <div class="dsbar">
+          <div class="dsb"><span class="dsb-v">£8.2k</span><span class="dsb-l">Monthly Rev</span></div>
+          <div class="dsb"><span class="dsb-v">340</span><span class="dsb-l">Orders/mo</span></div>
+          <div class="dsb"><span class="dsb-v">34%</span><span class="dsb-l">Margin</span></div>
+        </div>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag" style="color:var(--green)">⚡ E-commerce</span><span class="lb-ver" style="background:rgba(45,212,160,0.1);color:var(--green);border-color:rgba(45,212,160,0.18)">✓ Revenue Verified</span></div>
+        <div class="lb-title">Shopify Store · Home & Lifestyle</div>
+        <div class="lb-loc">🌐 UK & EU market · 3 years trading</div>
+        <div class="dkpis">
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--green)">£8.2k</span><span class="dkpi-l">Monthly Rev</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--gold)">£2.8k</span><span class="dkpi-l">Net Profit</span></div>
+          <div class="dkpi"><span class="dkpi-v" style="color:var(--blue)">34%</span><span class="dkpi-l">Margin</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price">£55,000</span><button class="lb-enq" style="border-color:rgba(45,212,160,0.3);color:var(--green)" onclick="event.stopPropagation();openModal('Shopify Store','d')">Enquire →</button></div>
+      </div>
+    </div>
+
+    <!-- P3: Salon -->
+    <div class="lcard p" onclick="openModal('Hair Salon','p')">
+      <div class="lv">
+        <div class="lv-bg" style="background:linear-gradient(135deg,#10050f,#200a1e)"></div>
+        <div class="lv-em">✂️</div>
+        <div class="lv-em2">✂️</div>
+        <svg class="trust-ring" viewBox="0 0 42 42"><circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="3"/><circle cx="21" cy="21" r="17" fill="none" stroke="var(--gold)" stroke-width="3" stroke-dasharray="107" stroke-dashoffset="26" stroke-linecap="round"/><text x="21" y="25" text-anchor="middle" fill="var(--gold)" font-size="9" font-weight="700" transform="rotate(90,21,21)">76</text></svg>
+      </div>
+      <div class="lb">
+        <div class="lb-type"><span class="lb-tag">Hair & Beauty</span></div>
+        <div class="lb-title">Unisex Salon + Beauty Rooms</div>
+        <div class="lb-loc">📍 Ealing, West London</div>
+        <div class="lb-stats">
+          <div class="lbs"><span class="lbs-l">Price</span><span class="lbs-v g">£99.5k</span></div>
+          <div class="lbs"><span class="lbs-l">Turnover</span><span class="lbs-v gr">£2.5k p/w</span></div>
+          <div class="lbs"><span class="lbs-l">Years</span><span class="lbs-v">9</span></div>
+        </div>
+        <div class="lb-foot"><span class="lb-price">£99,500</span><button class="lb-enq" onclick="event.stopPropagation();openModal('Hair Salon','p')">Enquire →</button></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOMO -->
+<div class="sec rv" style="padding-top:0">
+  <div class="sec-hdr">
+    <div class="sec-eye">⚡ The Market Right Now</div>
+    <h2 class="sec-title">The Businesses That <em>Wait</em> Get Left Behind</h2>
+    <p class="sec-sub">Physical or digital — buyers are active and the best listings move fast. Every day is a day someone else is acting.</p>
+  </div>
+  <div class="fomo-grid">
+    <div class="fomo-card fomo-p">
+      <span class="fomo-icon">🏪</span>
+      <h3 class="fomo-title">Physical Businesses Sold</h3>
+      <p class="fomo-text">Real businesses, real sellers, real money. This month alone, UK sellers walked away with life-changing sums. The opportunity is already there.</p>
+      <span class="fomo-num">7</span><span class="fomo-lbl">Sales completed this month</span>
+    </div>
+    <div class="fomo-card fomo-d">
+      <span class="fomo-icon">⚡</span>
+      <h3 class="fomo-title">Digital Assets Sold</h3>
+      <p class="fomo-text">YouTube channels, Instagram pages, Shopify stores — a new generation of sellers is cashing out. No marketplace offered this before. We do.</p>
+      <span class="fomo-num">4</span><span class="fomo-lbl">Digital assets sold this month</span>
+    </div>
+    <div class="fomo-card fomo-h">
+      <span class="fomo-icon">🔥</span>
+      <h3 class="fomo-title">Listings With 10+ Enquiries</h3>
+      <p class="fomo-text">These sellers are overwhelmed with interest. Transparency scores above 85. Verified buyers enquiring daily. Some already have offers on the table.</p>
+      <span class="fomo-num">23</span><span class="fomo-lbl">Listings with 10+ enquiries now</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOW EASY -->
+<div class="sec rv" style="padding-top:0">
+  <div class="sec-hdr">
+    <div class="sec-eye">🚀 How Simple Is It?</div>
+    <h2 class="sec-title">From Decision to <em>Done Deal</em></h2>
+    <p class="sec-sub">We stripped away everything complicated. This is the real process on VentureVault — for any type of business.</p>
+  </div>
+  <div class="journey">
+    <div class="js">
+      <div class="js-num jsn-1">01</div>
+      <span class="js-icon">💬</span>
+      <div class="js-title">Chat with Our AI</div>
+      <p class="js-text">Answer friendly questions. The AI writes your entire listing — physical or digital. No forms. No jargon.</p>
+      <span class="js-time jst-1">3 minutes</span>
+    </div>
+    <div class="js">
+      <div class="js-num jsn-2">02</div>
+      <span class="js-icon">🚀</span>
+      <div class="js-title">Go Live Everywhere</div>
+      <p class="js-text">Your listing publishes on VentureVault and 6 partner platforms. 94,000 buyers can see it instantly.</p>
+      <span class="js-time jst-2">2 hours</span>
+    </div>
+    <div class="js">
+      <div class="js-num jsn-3">03</div>
+      <span class="js-icon">📱</span>
+      <div class="js-title">Verified Buyers Come to You</div>
+      <p class="js-text">SMS and email for every enquiry. Every buyer is ID-checked with a Buyer Passport. No time-wasters.</p>
+      <span class="js-time jst-3">Within hours</span>
+    </div>
+    <div class="js">
+      <div class="js-num jsn-4">04</div>
+      <span class="js-icon">🎉</span>
+      <div class="js-title">Sell. Get Paid.</div>
+      <p class="js-text">Average sale in 18 days. You pay nothing until it completes. Then you start your next chapter.</p>
+      <span class="js-time jst-4">18 days avg</span>
+    </div>
+  </div>
+</div>
+
+<!-- RECENT SALES -->
+<div class="trust-bg rv">
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-eye">✅ Real Sales Data</div>
+      <h2 class="sec-title">Recently <em>Sold</em> on VentureVault</h2>
+      <p class="sec-sub">Real businesses, real people, real results. This could be you.</p>
+    </div>
+    <div class="sales-grid">
+      <div class="sale-card"><span class="sc-em">🍛</span><div class="sc-sec">Food & Takeaway</div><div class="sc-name">Indian Restaurant</div><div class="sc-loc">📍 Croydon, London</div><span class="sc-price">£145,000</span><div class="sc-dt">May 2026</div><div class="sc-days">⚡ Sold in 18 days</div></div>
+      <div class="sale-card"><span class="sc-em">📺</span><div class="sc-sec" style="color:var(--purple)">⚡ Digital Asset</div><div class="sc-name">YouTube Channel</div><div class="sc-loc">🌐 Cooking niche · 180k subs</div><span class="sc-price" style="color:var(--purple)">£42,000</span><div class="sc-dt">Apr 2026</div><div class="sc-days" style="background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.15);color:var(--purple)">⚡ Sold in 21 days</div></div>
+      <div class="sale-card"><span class="sc-em">✂️</span><div class="sc-sec">Hair & Beauty</div><div class="sc-name">Unisex Hair Salon</div><div class="sc-loc">📍 Hammersmith, London</div><span class="sc-price">£88,000</span><div class="sc-dt">Apr 2026</div><div class="sc-days">⚡ Sold in 22 days</div></div>
+      <div class="sale-card"><span class="sc-em">🐕</span><div class="sc-sec">Pet Services</div><div class="sc-name">Dog Grooming Parlour</div><div class="sc-loc">📍 High Wycombe</div><span class="sc-price">£24,500</span><div class="sc-dt">Mar 2026</div><div class="sc-days">⚡ Sold in 14 days</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST WALL -->
+<div class="sec rv">
+  <div class="sec-hdr">
+    <div class="sec-eye">💬 Real Reviews</div>
+    <h2 class="sec-title">Two Generations. <em>One Platform.</em></h2>
+    <p class="sec-sub">From retiring shopkeepers to digital entrepreneurs — everyone finds their buyer here.</p>
+  </div>
+  <div class="trust-grid">
+    <div class="tc tp">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-q">"I'd been putting off selling for two years because I thought it would be complicated. I listed on a Tuesday using the AI chat — took me 4 minutes. By Thursday I had 6 enquiries. I couldn't believe how easy it was."</div>
+      <div class="tc-auth"><div class="tc-av">👨</div><div><div class="tc-name">Mohammed A.</div><div class="tc-role">Sold his Indian takeaway · £85,000</div><div class="tc-bdg">✓ Physical Seller</div></div></div>
+    </div>
+    <div class="tc td">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-q">"I spent 3 years building my YouTube cooking channel. When I wanted to sell, there was literally nowhere to go. VentureVault was the first place that understood what I was selling. Sold for £42k in 3 weeks."</div>
+      <div class="tc-auth"><div class="tc-av" style="background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.2)">🎥</div><div><div class="tc-name">Jake T.</div><div class="tc-role">Sold his YouTube channel · £42,000</div><div class="tc-bdg">⚡ Digital Seller</div></div></div>
+    </div>
+    <div class="tc td">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-q">"I was looking to buy an Instagram page to launch my brand. VentureVault had stats-verified accounts — real numbers, not screenshots. Bought a 220k beauty page and we're already profitable."</div>
+      <div class="tc-auth"><div class="tc-av" style="background:rgba(244,114,182,0.1);border-color:rgba(244,114,182,0.2)">👩</div><div><div class="tc-name">Priya M.</div><div class="tc-role">Bought Instagram page · £28,000</div><div class="tc-bdg">⚡ Digital Buyer</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DUAL CTA -->
+<div class="sec rv" style="padding-top:0">
+  <div class="cta-grid">
+    <div class="cta-card ctac-p">
+      <div class="cta-orb"></div>
+      <div class="cta-in">
+        <div class="cta-eye">🏪 Physical Sellers</div>
+        <h2 class="cta-title">Your Business Deserves the <em>Right Buyer</em></h2>
+        <p class="cta-text">List your pub, restaurant, salon or any physical business. Free. No upfront fees. 94,000 buyers per month. AI writes your listing in 3 minutes.</p>
+        <div class="cta-pts">
+          <div class="cta-pt"><div class="ck">✓</div>No sale, no fee — guaranteed</div>
+          <div class="cta-pt"><div class="ck">✓</div>Listed on 6 major UK platforms</div>
+          <div class="cta-pt"><div class="ck">✓</div>Verified buyers only · No time-wasters</div>
+          <div class="cta-pt"><div class="ck">✓</div>Average sale in 18 days</div>
+        </div>
+        <button class="cta-btn" onclick="location.href='10-deep-ai-agent.html'">List Physical Business →</button>
+      </div>
+    </div>
+    <div class="cta-card ctac-d">
+      <div class="cta-orb"></div>
+      <div class="cta-in">
+        <div class="cta-eye">⚡ Digital Creators</div>
+        <h2 class="cta-title">Turn Your Digital Work Into <em>Real Money</em></h2>
+        <p class="cta-text">YouTube channel, Instagram page, Shopify store — if it earns money, you can sell it here. The first UK marketplace that truly gets digital assets.</p>
+        <div class="cta-pts">
+          <div class="cta-pt"><div class="ck" style="background:rgba(167,139,250,0.1);color:var(--purple)">✓</div>Stats auto-verified from platform</div>
+          <div class="cta-pt"><div class="ck" style="background:rgba(167,139,250,0.1);color:var(--purple)">✓</div>Secure escrow for digital transfers</div>
+          <div class="cta-pt"><div class="ck" style="background:rgba(167,139,250,0.1);color:var(--purple)">✓</div>Guided account handover process</div>
+          <div class="cta-pt"><div class="ck" style="background:rgba(167,139,250,0.1);color:var(--purple)">✓</div>AI values digital assets correctly</div>
+        </div>
+        <button class="cta-btn" onclick="location.href='10-deep-ai-agent.html'">List Digital Asset →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <a class="nav-logo" href="#"><div class="logo-box">V</div><span class="logo-text">Venture<em>Vault</em></span></a>
+        <p class="f-desc">Britain's most forward-thinking business marketplace. Physical businesses, digital assets and everything in between — bought and sold with AI, automation and zero upfront fees. Est. 1959, reimagined for today.</p>
+      </div>
+      <div class="f-col">
+        <h4>Physical</h4>
+        <ul>
+          <li><a href="browse-live.html">All Businesses</a></li>
+          <li><a href="browse-live.html">Food & Takeaway</a></li>
+          <li><a href="browse-live.html">Retail & Shops</a></li>
+          <li><a href="browse-live.html">Pubs & Bars</a></li>
+          <li><a href="browse-live.html">Salons</a></li>
+          <li><a href="browse-live.html">Post Offices</a></li>
+        </ul>
+      </div>
+      <div class="f-col f-digital">
+        <h4 style="background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Digital</h4>
+        <ul>
+          <li><a href="browse-live.html">YouTube Channels</a></li>
+          <li><a href="browse-live.html">Instagram Pages</a></li>
+          <li><a href="browse-live.html">Shopify Stores</a></li>
+          <li><a href="browse-live.html">Amazon FBA</a></li>
+          <li><a href="browse-live.html">SaaS & Apps</a></li>
+          <li><a href="browse-live.html">Newsletters</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Sell</h4>
+        <ul>
+          <li><a href="10-deep-ai-agent.html">AI Chat Listing</a></li>
+          <li><a href="seller-live.html">Traditional Form</a></li>
+          <li><a href="03-valuation.html">AI Valuation</a></li>
+          <li><a href="04-buyer-passport.html">Buyer Passport</a></li>
+          <li><a href="07-profile-match.html">My Matches</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="06-admin-dashboard.html">Admin Dashboard</a></li>
+          <li><a href="#">Digital Escrow</a></li>
+          <li><a href="#">Finance Brokers</a></li>
+          <li><a href="#">Solicitors</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 VentureVault Ltd. No Sale No Fee. Physical & Digital Business Marketplace. Est. 1959.</span>
+      <div class="footer-trust">
+        <span class="ft-item">🔐 Stripe Verified</span>
+        <span class="ft-item">🔒 SSL Secured</span>
+        <span class="ft-item">✓ ICO Registered</span>
+        <span class="ft-item">⚡ Digital Escrow</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="m-title">Enquiry</h3>
+    <p id="m-sub">The seller will be notified instantly.</p>
+    <div class="mf-r">
+      <div class="mf-g"><label>First Name</label><input placeholder="John"></div>
+      <div class="mf-g"><label>Last Name</label><input placeholder="Smith"></div>
+    </div>
+    <div class="mf-g"><label>Email</label><input type="email" placeholder="john@example.com"></div>
+    <div class="mf-g"><label>Phone</label><input placeholder="07700 000 000"></div>
+    <div class="mf-g"><label>Message (optional)</label><textarea placeholder="I'd like to find out more..."></textarea></div>
+    <button class="modal-submit" id="m-btn" onclick="submitEnq()">Send Enquiry →</button>
+    <p class="modal-note">100% free · Verified buyers only · Instant notification</p>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="nb" id="nb"></div>
+
+<script>
+// ── NAV ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>40);
+});
+function toggleMenu(){
+  const d=document.getElementById('drawer');
+  const b=document.getElementById('menuBtn');
+  const open=d.classList.toggle('open');
+  b.textContent=open?'✕':'☰';
+}
+
+// ── LIVE COUNT ──
+let lc=92;
+function updateLive(){
+  lc+=Math.random()<0.5?1:-1;
+  lc=Math.max(84,Math.min(110,Math.round(lc)));
+  const els=[document.getElementById('liveCount'),document.getElementById('liveNum')];
+  els.forEach(el=>{if(el)el.textContent=lc});
+}
+setInterval(updateLive,4500);
+
+// ── MODE TOGGLE ──
+const modes={
+  all:{mid:'For Every Business',sub:'From corner shops to YouTube channels. From pubs to Shopify stores. If it earns, it belongs here.',mc:'physical'},
+  physical:{mid:'For Physical Businesses',sub:'Takeaways, pubs, salons, shops, post offices, hotels. The UK\'s most trusted physical business marketplace.',mc:'physical'},
+  digital:{mid:'For Digital Assets',sub:'YouTube channels, Instagram pages, Shopify stores, SaaS apps, newsletters. The first marketplace that truly gets digital.',mc:'digital'}
+};
+function setMode(m){
+  const d=modes[m];
+  const l2=document.getElementById('h1mid');
+  l2.textContent=d.mid;
+  l2.className='h1-l2 '+d.mc;
+  document.getElementById('heroSub').textContent=d.sub;
+  ['all','physical','digital'].forEach(k=>{
+    const btn=document.getElementById('tab-'+k);
+    if(!btn)return;
+    btn.className='ht-btn'+(k===m?' active':'')+( k==='digital'?' digital':'');
+  });
+}
+
+// ── LISTING TAB FILTER ──
+function setTab(el,type){
+  document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('#lGrid .lcard').forEach(c=>{
+    if(type==='all'){c.style.display=''}
+    else c.style.display=c.classList.contains(type)?'':'none';
+  });
+}
+
+// ── SCROLL REVEAL ──
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:0.07,rootMargin:'0px 0px -36px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+// ── MODAL ──
+let mType='p';
+function openModal(name,type){
+  mType=type;
+  document.getElementById('m-title').textContent='Enquire — '+name;
+  document.getElementById('m-sub').textContent=type==='d'
+    ?'Stats are verified. Seller will be notified instantly.'
+    :'Seller will be notified by SMS and email instantly.';
+  const btn=document.getElementById('m-btn');
+  btn.className='modal-submit'+(type==='d'?' dm':'');
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function submitEnq(){
+  alert('Enquiry sent! The seller has been notified instantly.');
+  closeModal();
+}
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+
+// ── NOTIFICATIONS ──
+const notifs=[
+  {icon:'🍛',title:'Business sold!',text:'Indian Restaurant, Croydon — £145,000',type:'ns'},
+  {icon:'📺',title:'Digital sale!',text:'YouTube Channel 180k subs — £42,000',type:'nd'},
+  {icon:'📸',title:'New listing',text:'Instagram page 220k followers · £28,000',type:'nd'},
+  {icon:'🍺',title:'Hot listing',text:'Sports Bar, Kent — 34 enquiries today',type:'np'},
+  {icon:'🛍️',title:'New digital asset',text:'Shopify Store £8.2k MRR · Just listed',type:'nd'},
+  {icon:'🪪',title:'Buyer registered',text:'Budget £250k · Food & Digital sectors',type:'np'},
+  {icon:'📧',title:'Newsletter sold!',text:'38k subscriber newsletter — £18,000',type:'nd'},
+  {icon:'🎉',title:'Offer accepted',text:'Post Office, Worcester — £175,000',type:'ns'},
+];
+let ni=0;
+function showNotif(){
+  const nb=document.getElementById('nb');
+  const n=notifs[ni%notifs.length];
+  const el=document.createElement('div');
+  el.className=`notif ${n.type}`;
+  el.innerHTML=`<div class="n-ico">${n.icon}</div><div><div class="n-title">${n.title}</div><div class="n-text">${n.text}</div></div>`;
+  nb.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),280)},4500);
+  if(nb.children.length>3)nb.removeChild(nb.firstChild);
+  ni++;
+}
+setTimeout(()=>{showNotif();setInterval(showNotif,5500)},3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Match — VentureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#080808;--deep:#0d0d0f;--surface:#131317;--surface2:#1a1a20;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--gold:#c8922a;--gold-l:#e8b84a;--gold-d:rgba(200,146,42,0.15);--white:#fff;--muted:rgba(255,255,255,0.45);--muted2:rgba(255,255,255,0.22);--green:#2dd4a0;--blue:#60a5fa;--red:#f87171;--purple:#a78bfa}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);line-height:1.6;min-height:100vh}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 48px;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-mark{width:36px;height:36px;border:1.5px solid var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--gold)}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--white)}
+.logo-name em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;padding:8px 15px;border-radius:7px;transition:color 0.2s;cursor:pointer}
+.nav-links a:hover{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-pill{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:8px 18px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s}
+.nav-pill:hover{border-color:var(--gold);color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--black);border:none;padding:9px 22px;border-radius:40px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+
+/* HERO */
+.hero{padding:110px 48px 52px;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(167,139,250,0.08) 0%,transparent 60%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(167,139,250,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,0.025) 1px,transparent 1px);background-size:70px 70px}
+.hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.07);color:#c4b5fd;font-size:10px;font-weight:600;padding:5px 15px;border-radius:40px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:22px}
+.hero-inner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,62px);font-weight:400;letter-spacing:-1.5px;line-height:1.05;margin-bottom:14px}
+.hero-inner h1 em{font-style:italic;color:var(--gold)}
+.hero-inner p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto 32px;line-height:1.8;font-weight:300}
+
+/* PASSPORT MINI */
+.passport-mini{display:inline-flex;align-items:center;gap:14px;background:var(--surface);border:1px solid rgba(200,146,42,0.3);border-radius:14px;padding:16px 22px;margin-bottom:40px}
+.pm-avatar{width:44px;height:44px;border-radius:10px;background:var(--gold-d);border:1px solid rgba(200,146,42,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pm-info{}
+.pm-name{font-size:14px;font-weight:600;color:var(--white)}
+.pm-badges{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.pm-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.pmb-v{background:var(--gold-d);color:var(--gold);border:1px solid rgba(200,146,42,0.2)}
+.pmb-c{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.2)}
+.pm-edit{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-left:8px}
+.pm-edit:hover{color:var(--gold)}
+
+/* STATS ROW */
+.stats-row{display:flex;justify-content:center;gap:28px;margin-bottom:0;flex-wrap:wrap}
+.sr-stat{text-align:center}
+.sr-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--gold);display:block;line-height:1}
+.sr-lbl{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+
+/* MAIN LAYOUT */
+.match-wrap{max-width:1200px;margin:0 auto;padding:44px 48px 80px;display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+
+/* FILTER SIDEBAR */
+.match-filters{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:sticky;top:88px}
+.mf-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mf-title{font-size:13px;font-weight:700;color:var(--white)}
+.mf-reset{font-size:11px;color:var(--gold);cursor:pointer;font-weight:500}
+.mf-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
+.mf-sec:last-child{border-bottom:none}
+.mf-lbl{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block}
+.match-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.match-slider{flex:1;accent-color:var(--gold)}
+.slider-val{font-size:12px;font-weight:600;color:var(--gold);width:36px;text-align:right;flex-shrink:0}
+.mf-chips{display:flex;flex-wrap:wrap;gap:6px}
+.mf-chip{background:rgba(255,255,255,0.03);border:1px solid var(--border2);color:var(--muted);font-size:11px;padding:5px 11px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+.mf-chip.on{background:var(--gold-d);border-color:rgba(200,146,42,0.4);color:var(--gold);font-weight:600}
+.mf-toggle{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mf-toggle-label{font-size:12px;color:var(--muted)}
+.toggle-sw{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;cursor:pointer;transition:background 0.3s}
+.toggle-sw.on{background:var(--gold)}
+.toggle-knob{width:14px;height:14px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform 0.3s}
+.toggle-sw.on .toggle-knob{transform:translateX(16px)}
+
+/* SORT/TOOLBAR */
+.match-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.mt-left{}
+.mt-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:2px}
+.mt-sub{font-size:12px;color:var(--muted)}
+.mt-right{display:flex;align-items:center;gap:10px}
+.sort-sel{background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--muted);font-family:'Outfit',sans-serif;font-size:12px;padding:8px 12px;border-radius:8px;outline:none;cursor:pointer}
+.alert-btn{display:flex;align-items:center;gap:7px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all 0.2s}
+.alert-btn:hover{background:rgba(167,139,250,0.2)}
+
+/* MATCH CARDS */
+.match-grid{display:flex;flex-direction:column;gap:16px}
+.match-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:grid;grid-template-columns:200px 1fr auto;transition:all 0.3s;cursor:pointer;position:relative}
+.match-card:hover{border-color:rgba(200,146,42,0.3);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.44)}
+.match-card.top-match{border-color:rgba(167,139,250,0.3)}
+.match-card.top-match:hover{border-color:rgba(167,139,250,0.5)}
+
+/* Match score ring */
+.mc-img{position:relative;overflow:hidden}
+.mc-img-bg{position:absolute;inset:0}
+.mc-img-em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;opacity:0.15}
+.match-ring-wrap{position:absolute;top:10px;right:10px}
+.match-ring{width:52px;height:52px;position:relative}
+.match-ring svg{width:52px;height:52px;transform:rotate(-90deg)}
+.mr-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:4}
+.mr-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.mr-high{stroke:#a78bfa}
+.mr-vhigh{stroke:var(--green)}
+.mr-med{stroke:var(--gold)}
+.match-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.mc-top-badge{position:absolute;top:10px;left:10px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);color:#c4b5fd;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.5px;text-transform:uppercase}
+
+/* Card body */
+.mc-body{padding:18px 20px}
+.mc-sector{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.mc-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--white);margin-bottom:4px;line-height:1.3}
+.mc-loc{font-size:11px;color:var(--muted);margin-bottom:10px}
+.match-reasons{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.mr-pill{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px}
+.mrp-yes{background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.15)}
+.mrp-no{background:rgba(248,113,113,0.08);color:var(--red);border:1px solid rgba(248,113,113,0.12)}
+.mc-stats{display:flex;border-top:1px solid var(--border);padding-top:12px}
+.mc-stat{flex:1;padding:0 12px;border-right:1px solid var(--border)}
+.mc-stat:first-child{padding-left:0}
+.mc-stat:last-child{border-right:none}
+.mcs-l{font-size:8px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+.mcs-v{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;display:block}
+.mcs-v.g{color:var(--gold)}
+.mcs-v.gr{color:var(--green);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600}
+
+/* Card aside */
+.mc-aside{padding:18px 16px;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;border-left:1px solid var(--border);min-width:150px}
+.mc-price-lbl{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+.mc-price{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--gold);display:block}
+.mc-tenure{font-size:10px;color:var(--muted2);margin-top:1px;display:block}
+.mc-turn{text-align:right;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.mc-turn-l{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block}
+.mc-turn-v{font-size:13px;font-weight:600;color:var(--green);display:block;margin-top:1px}
+.mc-actions{display:flex;flex-direction:column;gap:7px;margin-top:12px;width:100%}
+.mc-enq{background:var(--gold);color:var(--black);border:none;padding:9px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center;width:100%}
+.mc-enq:hover{background:var(--gold-l)}
+.mc-save{background:none;border:1px solid var(--border2);color:var(--muted);padding:8px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;text-align:center;width:100%}
+.mc-save:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ALERT MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,0.86);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+.mov.open{display:flex}
+.mbox{background:var(--surface);border:1px solid var(--border2);border-radius:18px;max-width:460px;width:100%;overflow:hidden;animation:mIn 0.3s cubic-bezier(0.34,1.56,0.64,1);padding:32px}
+@keyframes mIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mbox h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:8px}
+.mbox p{color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.7}
+.alert-options{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.ao{display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all 0.2s}
+.ao:hover{border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.05)}
+.ao-icon{font-size:20px;flex-shrink:0}
+.ao-title{font-size:13px;font-weight:600;color:var(--white)}
+.ao-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.modal-btns{display:flex;gap:10px}
+.mbtn-p{flex:1;background:var(--gold);color:var(--black);border:none;padding:13px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.mbtn-p:hover{background:var(--gold-l)}
+.mbtn-g{background:none;border:1px solid var(--border2);color:var(--muted);padding:13px 20px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s}
+.mbtn-g:hover{border-color:var(--white);color:var(--white)}
+
+/* EMPTY / NO MORE */
+.load-more{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--muted);padding:14px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.load-more:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:960px){
+  nav{padding:0 18px}
+  .nav-links,.nav-pill{display:none}
+  .hero{padding:90px 18px 40px}
+  .match-wrap{grid-template-columns:1fr;padding:24px 18px 60px}
+  .match-filters{position:static;display:none}
+  .match-card{grid-template-columns:130px 1fr}
+  .mc-aside{display:none}
+  .stats-row{gap:18px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html"><div class="logo-mark">V</div><span class="logo-name">Venture<em>Vault</em></span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="browse.html">Browse</a></li>
+    <li><a href="valuation.html">AI Valuation</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-pill" onclick="location.href='buyer.html'">My Passport</button>
+    <button class="nav-cta" onclick="location.href='seller.html'">List Free →</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div><div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">✨ New Feature</div>
+    <h1>Your <em>Perfect Match</em><br>Is Already Listed</h1>
+    <p>Based on your Buyer Passport, we've scored every listing against your exact criteria. The closer the match, the faster you should move.</p>
+
+    <!-- Passport Summary -->
+    <div class="passport-mini">
+      <div class="pm-avatar">🪪</div>
+      <div class="pm-info">
+        <div class="pm-name">John Smith — Buyer Passport <span class="pm-edit" onclick="location.href='buyer.html'">Edit</span></div>
+        <div class="pm-badges">
+          <span class="pm-badge pmb-v">✓ ID Verified</span>
+          <span class="pm-badge pmb-c">Cash Buyer</span>
+          <span class="pm-badge pmb-v">Budget: Under £250k</span>
+          <span class="pm-badge pmb-v">Food & Takeaway · Retail</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="sr-stat"><span class="sr-num">47</span><span class="sr-lbl">Listings matched to you</span></div>
+      <div class="sr-stat"><span class="sr-num" style="color:var(--green)">12</span><span class="sr-lbl">90%+ matches</span></div>
+      <div class="sr-stat"><span class="sr-num" style="color:#c4b5fd">3</span><span class="sr-lbl">New since yesterday</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="match-wrap">
+  <!-- FILTERS -->
+  <aside class="match-filters">
+    <div class="mf-head"><span class="mf-title">🎯 Refine Matches</span><span class="mf-reset" onclick="resetFilters()">Reset</span></div>
+    <div class="mf-sec">
+      <span class="mf-lbl">Min Match %</span>
+      <div class="match-slider-row">
+        <input type="range" class="match-slider" min="50" max="100" value="70" id="minMatch" oninput="document.getElementById('minMatchVal').textContent=this.value+'%';filterMatches()">
+        <span class="slider-val" id="minMatchVal">70%</span>
+      </div>
+    </div>
+    <div class="mf-sec">
+      <span class="mf-lbl">Sector</span>
+      <div class="mf-chips">
+        <span class="mf-chip on" onclick="this.classList.toggle('on')">🍕 Food</span>
+        <span class="mf-chip on" onclick="this.classList.toggle('on')">🛒 Retail</span>
+        <span class="mf-chip" onclick="this.classList.toggle('on')">🍺 Pub</span>
+        <span class="mf-chip" onclick="this.classList.toggle('on')">✂️ Salon</span>
+        <span class="mf-chip" onclick="this.classList.toggle('on')">📮 Post Office</span>
+        <span class="mf-chip" onclick="this.classList.toggle('on')">🐕 Pets</span>
+      </div>
+    </div>
+    <div class="mf-sec">
+      <span class="mf-lbl">Max Price</span>
+      <div class="match-slider-row">
+        <input type="range" class="match-slider" min="10000" max="500000" step="5000" value="250000" id="maxPrice" oninput="document.getElementById('maxPriceVal').textContent='£'+parseInt(this.value).toLocaleString()">
+        <span class="slider-val" id="maxPriceVal" style="width:60px;font-size:11px">£250,000</span>
+      </div>
+    </div>
+    <div class="mf-sec">
+      <span class="mf-lbl">Show Only</span>
+      <div class="mf-toggle"><span class="mf-toggle-label">ID Verified sellers</span><div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      <div class="mf-toggle"><span class="mf-toggle-label">High trust score (80+)</span><div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      <div class="mf-toggle"><span class="mf-toggle-label">Fast responders only</span><div class="toggle-sw" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      <div class="mf-toggle"><span class="mf-toggle-label">Documents available</span><div class="toggle-sw" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+    </div>
+    <div class="mf-sec">
+      <span class="mf-lbl">New Listings Alert</span>
+      <button onclick="openAlertModal()" style="width:100%;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">🔔 Set Match Alerts</button>
+    </div>
+  </aside>
+
+  <!-- MATCHES -->
+  <div>
+    <div class="match-toolbar">
+      <div class="mt-left">
+        <div class="mt-title">Your Matches</div>
+        <div class="mt-sub" id="matchSubtitle">Showing 47 listings · Sorted by match score</div>
+      </div>
+      <div class="mt-right">
+        <button class="alert-btn" onclick="openAlertModal()">🔔 Alert me of new matches</button>
+        <select class="sort-sel" onchange="sortMatches(this.value)">
+          <option value="match">Best Match First</option>
+          <option value="price-asc">Price: Low–High</option>
+          <option value="new">Newest First</option>
+          <option value="trust">Trust Score</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="match-grid" id="matchGrid">
+      <!-- Cards injected by JS -->
+    </div>
+    <button class="load-more" onclick="loadMore()">Load More Matches <span id="loadMoreCount">(+35 remaining)</span></button>
+  </div>
+</div>
+
+<!-- ALERT MODAL -->
+<div class="mov" id="alertModal">
+  <div class="mbox">
+    <h3>🔔 Match Alerts</h3>
+    <p>Get notified the moment a new listing matches your passport. Choose how you want to be alerted.</p>
+    <div class="alert-options">
+      <div class="ao"><span class="ao-icon">📱</span><div><div class="ao-title">SMS Alert</div><div class="ao-desc">Instant text message to your mobile — fastest</div></div></div>
+      <div class="ao"><span class="ao-icon">📧</span><div><div class="ao-title">Email Alert</div><div class="ao-desc">Daily digest of new matches to your inbox</div></div></div>
+      <div class="ao"><span class="ao-icon">🔔</span><div><div class="ao-title">Push Notification</div><div class="ao-desc">Browser or app notification when matches appear</div></div></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mbtn-p" onclick="setAlert()">Save Alert Preferences</button>
+      <button class="mbtn-g" onclick="closeAlertModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const listings=[
+  {id:1,emoji:'🍕',bg:'linear-gradient(135deg,#1a0f05,#2d1a08)',sector:'Food & Takeaway',title:'Indian Restaurant & Takeaway',loc:'Croydon, South London',price:145000,tenure:'Leasehold',turn:'£4,200 p/w',sqft:'820 ft²',trust:91,match:96,new:true,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Food sector'},{yes:true,text:'✓ London location'},{yes:true,text:'✓ ID Verified'},{yes:true,text:'✓ Cash buyer priority'}]},
+  {id:2,emoji:'🛒',bg:'linear-gradient(135deg,#050d10,#0a1f2a)',sector:'Retail / Convenience',title:'Convenience Store + Alcohol Licence',loc:'Islington, North London',price:120000,tenure:'Leasehold',turn:'£5,000 p/w',sqft:'980 ft²',trust:88,match:92,new:true,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Retail sector'},{yes:true,text:'✓ London location'},{yes:true,text:'✓ ID Verified'},{yes:false,text:'✗ 7 days opening'}]},
+  {id:3,emoji:'🍕',bg:'linear-gradient(135deg,#120a00,#1e1000)',sector:'Food & Takeaway',title:'Pizza & Pasta Restaurant',loc:'Greenwich, SE London',price:89000,tenure:'Leasehold',turn:'£3,100 p/w',sqft:'650 ft²',trust:84,match:89,new:false,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Food sector'},{yes:true,text:'✓ London location'},{yes:false,text:'✗ No accounts uploaded'},{yes:true,text:'✓ Fast responder'}]},
+  {id:4,emoji:'🥡',bg:'linear-gradient(135deg,#0f0800,#1e1000)',sector:'Food & Takeaway',title:'Chinese Takeaway — Prime Location',loc:'Bromley, South London',price:42000,tenure:'Leasehold',turn:'£2,800 p/w',sqft:'420 ft²',trust:79,match:84,new:false,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Food sector'},{yes:true,text:'✓ SE London'},{yes:false,text:'✗ Not ID verified yet'},{yes:true,text:'✓ 5-Star hygiene'}]},
+  {id:5,emoji:'🛒',bg:'linear-gradient(135deg,#050810,#0a1020)',sector:'Retail / Convenience',title:'Newsagent + Lottery — Established 20 Yrs',loc:'Lewisham, SE London',price:65000,tenure:'Leasehold',turn:'£1,900 p/w',sqft:'560 ft²',trust:86,match:81,new:false,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Retail sector'},{yes:true,text:'✓ London location'},{yes:true,text:'✓ ID Verified'},{yes:false,text:'✗ Below turnover target'}]},
+  {id:6,emoji:'🍔',bg:'linear-gradient(135deg,#100800,#1a0f00)',sector:'Food & Takeaway',title:'Burger & Grill Takeaway',loc:'Hounslow, West London',price:38000,tenure:'Leasehold',turn:'£2,400 p/w',sqft:'380 ft²',trust:72,match:74,new:false,reasons:[{yes:true,text:'✓ Budget match'},{yes:true,text:'✓ Food sector'},{yes:false,text:'✗ West London'},{yes:false,text:'✗ Low trust score'},{yes:true,text:'✓ High turnover ratio'}]},
+];
+
+const CIRCUMFERENCE=2*Math.PI*22;
+
+function getMatchColor(m){return m>=90?'var(--green)':m>=80?'#a78bfa':'var(--gold)'}
+function getMatchLabel(m){return m>=90?'Excellent Match':m>=80?'Great Match':m>=70?'Good Match':'Partial Match'}
+
+function renderCard(l){
+  const offset=CIRCUMFERENCE-(l.match/100)*CIRCUMFERENCE;
+  const color=getMatchColor(l.match);
+  return `<div class="match-card${l.match>=90?' top-match':''}" onclick="openEnquiry('${l.title}')">
+    <div class="mc-img">
+      <div class="mc-img-bg" style="background:${l.bg}"></div>
+      <div class="mc-img-em">${l.emoji}</div>
+      ${l.match>=90?`<div class="mc-top-badge">⭐ Top Match</div>`:''}
+      <div class="match-ring-wrap">
+        <div class="match-ring">
+          <svg viewBox="0 0 52 52"><circle class="mr-bg" cx="26" cy="26" r="22"/><circle class="mr-fill" cx="26" cy="26" r="22" stroke="${color}" stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="${offset}"/></svg>
+          <div class="match-pct" style="color:${color}">${l.match}%</div>
+        </div>
+      </div>
+    </div>
+    <div class="mc-body">
+      <div class="mc-sector">${l.sector}</div>
+      <div class="mc-title">${l.title} ${l.new?'<span style="background:rgba(45,212,160,0.15);border:1px solid rgba(45,212,160,0.25);color:var(--green);font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;font-family:Outfit,sans-serif;vertical-align:middle">NEW</span>':''}</div>
+      <div class="mc-loc">📍 ${l.loc}</div>
+      <div class="match-reasons">${l.reasons.map(r=>`<span class="mr-pill ${r.yes?'mrp-yes':'mrp-no'}">${r.text}</span>`).join('')}</div>
+      <div class="mc-stats">
+        <div class="mc-stat"><span class="mcs-l">Price</span><span class="mcs-v g">£${(l.price/1000).toFixed(0)}k</span></div>
+        <div class="mc-stat"><span class="mcs-l">Turnover</span><span class="mcs-v gr">${l.turn}</span></div>
+        <div class="mc-stat"><span class="mcs-l">Trust</span><span class="mcs-v" style="color:${l.trust>=90?'var(--green)':'var(--gold)'};font-family:Outfit,sans-serif;font-size:13px;font-weight:600">${l.trust}/100</span></div>
+      </div>
+    </div>
+    <div class="mc-aside">
+      <div>
+        <span class="mc-price-lbl">Asking Price</span>
+        <span class="mc-price">£${l.price.toLocaleString()}</span>
+        <span class="mc-tenure">${l.tenure}</span>
+      </div>
+      <div class="mc-turn">
+        <span class="mc-turn-l">Weekly Turnover</span>
+        <span class="mc-turn-v">${l.turn}</span>
+      </div>
+      <div class="mc-actions">
+        <button class="mc-enq" onclick="event.stopPropagation();openEnquiry('${l.title}')">Enquire →</button>
+        <button class="mc-save" onclick="event.stopPropagation();this.textContent=this.textContent.includes('♡')?'♥ Saved':'♡ Save'">♡ Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAll(){
+  document.getElementById('matchGrid').innerHTML=listings.map(renderCard).join('');
+}
+renderAll();
+
+function filterMatches(){
+  const min=parseInt(document.getElementById('minMatch').value);
+  const filtered=listings.filter(l=>l.match>=min);
+  document.getElementById('matchGrid').innerHTML=filtered.map(renderCard).join('');
+  document.getElementById('matchSubtitle').textContent=`Showing ${filtered.length} listings · Sorted by match score`;
+  document.getElementById('loadMoreCount').textContent=`(+${Math.max(0,47-filtered.length)} remaining)`;
+}
+
+function sortMatches(v){
+  const sorted=[...listings];
+  if(v==='price-asc')sorted.sort((a,b)=>a.price-b.price);
+  else if(v==='new')sorted.sort((a,b)=>b.new-a.new);
+  else if(v==='trust')sorted.sort((a,b)=>b.trust-a.trust);
+  else sorted.sort((a,b)=>b.match-a.match);
+  document.getElementById('matchGrid').innerHTML=sorted.map(renderCard).join('');
+}
+
+function loadMore(){
+  alert('In production: loads next 12 matching listings from the database.');
+}
+
+function resetFilters(){
+  document.getElementById('minMatch').value=70;
+  document.getElementById('minMatchVal').textContent='70%';
+  renderAll();
+}
+
+function openAlertModal(){document.getElementById('alertModal').classList.add('open');document.body.style.overflow='hidden'}
+function closeAlertModal(){document.getElementById('alertModal').classList.remove('open');document.body.style.overflow=''}
+function setAlert(){alert('✓ Match alerts set! You\'ll receive instant SMS when a listing matching 80%+ of your criteria goes live.');closeAlertModal()}
+document.getElementById('alertModal').addEventListener('click',function(e){if(e.target===this)closeAlertModal()});
+
+function openEnquiry(title){
+  alert(`Enquiry for: ${title}\n\nIn production: opens full listing detail with enquiry form. Your Buyer Passport is automatically attached so the seller sees your verified profile instantly.`);
+}
+</script>
+</body>
+</html>
